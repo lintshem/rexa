@@ -1,0 +1,70 @@
+*{
+  box-sizing: border-box;
+}
+:root,
+:root[data-theme="dark"] {
+  --c-text: rgb(255, 255, 255);
+  --c-d-text: rgb(187, 177, 177);
+  --c-back: rgb(31, 28, 28);
+  --c-d-back: rgb(114, 100, 100);
+  --c-bord: rgb(85, 71, 71);
+  --c-box: white;
+  --c-hover: blue;
+  --c-but-sec: grey;
+  --c-pri-but: rgb(155, 41, 6);
+  --c-link: yellow;
+  --s-text: 1.0rem;
+  --s-l-text: 1.3rem;
+  --c-main: rgb(193, 218, 81);
+  --c-sec: rgb(128, 0, 38);
+  --c-ter: orange;
+  --c-neu: white;
+}
+
+:root[data-theme="light"] {
+  --c-text: rgb(7, 6, 6);
+  --c-d-text: rgb(75, 67, 67);
+  --c-back: rgb(255, 255, 255);
+  --c-d-back: rgb(216, 211, 202);
+  --c-bord: rgb(211, 193, 193);
+  --c-box: rgb(180, 167, 167);
+  --c-hover: rgb(243, 110, 22);
+  --c-but-sec: rgb(51, 69, 233);
+  --c-pri-but: rgb(16, 16, 187);
+  --c-link: rgb(128, 128, 230);
+  --c-main: rgb(129, 43, 28);
+  --c-sec: rgb(199, 95, 26);
+  --c-ter: rgb(37, 171, 224);
+}
+
+body {
+  margin: 0px;
+  background: var(--c-back);
+  color: var(--c-text);
+
+}
+
+p {
+  margin: 0px;
+
+}
+
+button {
+  border: 0px;
+  font-size: 1.3rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0px;
+}
+
+.App{
+  padding-top:30px;
+  padding-bottom:30px;
+}
