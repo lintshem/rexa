@@ -1,15 +1,14 @@
-.main {
+.resizable {
     border: 1px solid var(--c-bord);
     display: flex;
-    width: 400px;
-    height: 400px;
 }
 
-.item {
-    background: var(--c-d-back);
-    margin: 5px;
+.resizable-item {
+    background: var(--c-back);
+    overflow: hidden;
 }
-.re-divider{
-    background: var(--c-d-back);
+
+.re-divider {
+    background: var(--c-bord);
     cursor: res;
 }

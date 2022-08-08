@@ -2,33 +2,26 @@ import _ from 'lodash';
 import React, { useState } from 'react'
 import useDimensions from 'react-cool-dimensions'
 import "./Resizable.scoped.css"
-export interface IContainer {
-    width: number;
-    height: number;
-}
 
-export const ResizableContainer = ({ width, height }: IContainer) => {
-
-    return (
-        <div style={{ width, height }}  >
-            ResizableContainer
-        </div>
-    )
-}
 
 export interface IResizable {
     children: any,
     defRatio?: number[],
     align?: 'hor' | 'ver',
     minLength?: number,
+    style?: React.HTMLAttributes<HTMLDivElement>,
 }
 
-const Resizable = ({ children, defRatio = [3, 1, 2], align = 'hor', minLength = 30 }: IResizable) => {
+const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {} }: IResizable) => {
+    if (!defRatio) {
+        // use a ratio of 1s as default
+        defRatio = [...Array(children.length)].map(e => 1)
+    }
     const { observe, width: contWidth, height: contHeight, entry } = useDimensions()
     const [ratio, setRatio] = useState(defRatio)
-
+    const dragId = Math.random() + ""
     if (!_.isArray(children)) {
-        return <h1>Expects arrays</h1>
+            return children
     }
     const count = children.length
     const totalRatio = ratio.reduce((p, c) => c + p, 0)
@@ -72,24 +65,24 @@ const Resizable = ({ children, defRatio = [3, 1, 2], align = 'hor', minLength = 
                 return {
                     width: dividerSize,
                     height: '100%',
-                    cursor:'ew-resize',
+                    cursor: 'ew-resize',
                 }
             } else {
                 return {
                     height: dividerSize,
                     width: '100%',
-                    cursor:'ns-resize',
+                    cursor: 'ns-resize',
                 }
             }
 
         }
         const dragStart = (e: React.DragEvent) => {
             //e.preventDefault()
-            e.dataTransfer.setData('divider', "" + i)
+            e.dataTransfer.setData('divider', dragId + "," + i)
 
         }
         return (
-            <div style={dividerStyle()} className='re-divider' draggable={true} onDragStart={dragStart}  >
+            <div key={"divider" + i} style={dividerStyle()} className='re-divider' draggable={true} onDragStart={dragStart}  >
 
             </div>
         )
@@ -103,12 +96,15 @@ const Resizable = ({ children, defRatio = [3, 1, 2], align = 'hor', minLength = 
 
     }
     const drop = (e: React.DragEvent) => {
-        const val = e.dataTransfer.getData('divider')
-        if (!val && entry?.contentRect) return
+        const data = e.dataTransfer.getData('divider')
+        if (!data && entry?.contentRect) return
+        const dataParts = data.split(',')
+        const droppedDragId = dataParts[0]
+        if (droppedDragId != dragId) return
+        const val = dataParts[1]
         const divIndex = parseInt(val)
-        console.log(e, entry)
         const { x, y } = entry!.contentRect
-        const length = align == 'hor' ? e.pageX - x : e.pageY - y
+        const length = align === 'hor' ? e.pageX - x : e.pageY - y
         const sizes = [...Array(count).keys()].map((_, i) => getWidthFromRatio(i))
         let midline = 0
         for (let i = 0; i < divIndex + 1; i++) {
@@ -124,7 +120,6 @@ const Resizable = ({ children, defRatio = [3, 1, 2], align = 'hor', minLength = 
         }
         const totalSizes = sizes.reduce((e, i) => e + i, 0)
         const newSizes = sizes.map(e => e / totalSizes)
-        console.log(sizes, newSizes)
         const belowMin = newSizes.find(e => e < minLength)
         if (belowMin) {
             // TODO not correct
@@ -132,10 +127,10 @@ const Resizable = ({ children, defRatio = [3, 1, 2], align = 'hor', minLength = 
         }
     }
     return (
-        <div className='main' ref={observe} style={getStyles() as any} onDragOver={dragOver} onDrop={drop} >
+        <div className='resizable' ref={observe} style={{ ...style, ...getStyles() } as any} onDragOver={dragOver} onDrop={drop} >
             {children.map((c, i) => {
                 return [
-                    <div key={c} className='item' style={getMeasure(i)} >
+                    <div key={c} className='resizable-item' style={getMeasure(i)} >
                         {c}
                     </div>,
                     getDivider(i)
