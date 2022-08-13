@@ -1,6 +1,5 @@
-import { divide } from 'lodash';
-import { title } from 'process';
 import React, { useState } from 'react'
+
 import "./TabContainer.scoped.css"
 
 
@@ -10,47 +9,49 @@ interface ITabHeader {
     align: 'hor' | 'ver'
     setIndex: Function,
     index: number
+    fullWidth: boolean
 }
-const TabHeader = ({ titles, align, width = 20, setIndex, index = 0 }: ITabHeader) => {
+const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth }: ITabHeader) => {
     const getThStyles = () => {
         if (align === 'hor') {
             return {
-                paddingLeft: 1,
+                width: '100%',
             } as React.HTMLAttributes<HTMLDivElement>
         } else {
             return {
                 flexDirection: 'column',
-                paddingBottom: 1,
+                height: '100%',
             } as React.HTMLAttributes<HTMLDivElement>
         }
     }
-    const TitleElement = ({ title, index, selected = false }: {
-        index: number, title: string, selected: boolean
+    const TitleElement = ({ title, index, selected = false, strictWidth = true }: {
+        index: number, title: string, selected: boolean, strictWidth?: boolean
     }) => {
         const getTeStyles = () => {
             if (align === 'hor') {
                 return {
-                    width: width,
-                    paddingLeft: 1,
+                    width: strictWidth && width,
+                    flex: strictWidth ? 1 : undefined,
                 } as React.HTMLAttributes<HTMLDivElement>
             } else {
                 return {
                     flexDirection: 'column',
-                    height: width,
-                    paddingBottom: 1,
+                    height: strictWidth && width,
+                    width: 20,
                     writingMode: 'sideways-lr',
                 } as React.HTMLAttributes<HTMLDivElement>
             }
         }
         return (
-            <div className={`the-main ${selected && 'the-selected'}`} style={getTeStyles()} onClick={() => setIndex(index)} >
+            <div className={`the-main ${selected && 'the-selected'}`} style={{ ...getTeStyles() }}
+                onClick={() => setIndex(index)} >
                 {title}
             </div>
         )
     }
     return (<div className='th-main' style={getThStyles()}>
         {titles.map((title, i) => {
-            return <TitleElement key={title} title={title} index={i} selected={index === i} />
+            return <TitleElement key={title} title={title} index={i} selected={index === i} strictWidth={!fullWidth} />
         })}
     </div>)
 }
@@ -60,8 +61,13 @@ export interface ITabContainer {
     headerWidth?: number;
     align?: 'ver' | 'hor'
     tab?: number
+    position?: 'start' | 'end'
+    style?: React.HTMLAttributes<HTMLDivElement>
+    className?: string,
+    fullWidth?: boolean
 }
-const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', tab = 0 }: ITabContainer) => {
+const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', position = 'start', tab = 0,
+    className, style, fullWidth = false }: ITabContainer) => {
     const [index, setIndex] = useState(tab)
     if (titles.length !== children.length) {
         console.warn("Got wrong no titles", titles)
@@ -77,12 +83,19 @@ const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', tab =
             } as React.HTMLAttributes<HTMLDivElement>
         }
     }
+    const getHeader = (pos: string) => {
+        if (pos === position) {
+            return <TabHeader width={headerWidth} titles={titles} align={align} setIndex={setIndex} index={index} fullWidth={fullWidth} />
+        }
+        return null
+    }
     return (
-        <div style={getStyles()} className='main' >
-            <TabHeader width={headerWidth} titles={titles} align={align} setIndex={setIndex} index={index} />
-            <div style={{ [align === 'ver' ? 'marginLeft' : '']: 20 }} >
+        <div style={{ ...style, ...getStyles() }} className={`main ${className}`}  >
+            {getHeader('start')}
+            <div style={{ flex: 1 }} >
                 {children[index]}
             </div>
+            {getHeader('end')}
         </div>
     )
 }

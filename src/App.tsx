@@ -52,6 +52,34 @@ const App = () => {
           <h1>'head 4'</h1>
         </div>
       </TabContainer>
+      <TabContainer titles={['one', 'two', 'click', 'done']} align={'ver'} position="end"  >
+        <div>
+          <h1>'head 1'</h1>
+        </div>
+        <div>
+          <h1>'head 2'</h1>
+        </div>
+        <div>
+          <h1>'head 3'</h1>
+        </div>
+        <div>
+          <h1>'head 4'</h1>
+        </div>
+      </TabContainer>
+      <TabContainer titles={['one', 'two', 'click', 'done']} position="end" style={{color:'blue'}} >
+        <div>
+          <h1>'head 1'</h1>
+        </div>
+        <div>
+          <h1>'head 2'</h1>
+        </div>
+        <div>
+          <h1>'head 3'</h1>
+        </div>
+        <div>
+          <h1>'head 4'</h1>
+        </div>
+      </TabContainer>
 
     </div>
   )

@@ -1,13 +1,13 @@
 .th-main {
     display: flex;
-    width: 200;
-
 }
-
 
 .the-main {
     background: var(--c-tab);
     text-align: center;
+    margin-right:1px ;
+    margin-bottom:1px ;
+    
 }
 
 .the-selected {
@@ -15,8 +15,6 @@
 }
 
 .the-main:hover {
-    /* background: var(--c-d);
-     */
     filter: brightness(85%);
     cursor: pointer;
     border: 1px solid var(--d-tab)

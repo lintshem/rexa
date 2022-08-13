@@ -10,9 +10,10 @@ export interface IResizable {
     align?: 'hor' | 'ver',
     minLength?: number,
     style?: React.HTMLAttributes<HTMLDivElement>,
+    className?: string,
 }
 
-const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {} }: IResizable) => {
+const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className }: IResizable) => {
     if (!defRatio) {
         // use a ratio of 1s as default
         defRatio = [...Array(children.length)].map(e => 1)
@@ -21,7 +22,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
     const [ratio, setRatio] = useState(defRatio)
     const dragId = _.uniqueId("resize")
     if (!_.isArray(children)) {
-            return children
+        return children
     }
     const count = children.length
     const totalRatio = ratio.reduce((p, c) => c + p, 0)
