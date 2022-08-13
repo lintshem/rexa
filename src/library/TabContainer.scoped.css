@@ -1,0 +1,27 @@
+.th-main {
+    display: flex;
+    width: 200;
+
+}
+
+
+.the-main {
+    background: var(--c-tab);
+    text-align: center;
+}
+
+.the-selected {
+    background: var(--c-d-tab);
+}
+
+.the-main:hover {
+    /* background: var(--c-d);
+     */
+    filter: brightness(85%);
+    cursor: pointer;
+    border: 1px solid var(--d-tab)
+}
+
+.main{
+    display: flex;
+}

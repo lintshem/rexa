@@ -19,7 +19,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
     }
     const { observe, width: contWidth, height: contHeight, entry } = useDimensions()
     const [ratio, setRatio] = useState(defRatio)
-    const dragId = Math.random() + ""
+    const dragId = _.uniqueId("resize")
     if (!_.isArray(children)) {
             return children
     }
@@ -100,7 +100,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
         if (!data && entry?.contentRect) return
         const dataParts = data.split(',')
         const droppedDragId = dataParts[0]
-        if (droppedDragId != dragId) return
+        if (droppedDragId !== dragId) return
         const val = dataParts[1]
         const divIndex = parseInt(val)
         const { x, y } = entry!.contentRect

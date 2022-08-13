@@ -19,6 +19,9 @@
   --c-sec: rgb(128, 0, 38);
   --c-ter: orange;
   --c-neu: white;
+  --c-tab: rgb(128, 151, 165);
+  --c-d-tab: rgb(118, 180, 231);
+  
 }
 
 :root[data-theme="light"] {
@@ -31,10 +34,13 @@
   --c-hover: rgb(243, 110, 22);
   --c-but-sec: rgb(51, 69, 233);
   --c-pri-but: rgb(16, 16, 187);
-  --c-link: rgb(128, 128, 230);
+  --c-link: rgb(128, 128, 23rgb(238, 213, 75)0);
   --c-main: rgb(129, 43, 28);
   --c-sec: rgb(199, 95, 26);
   --c-ter: rgb(37, 171, 224);
+  --c-tab: rgb(211, 105, 43);
+  --c-d-tab: rgb(238, 213, 75);
+  
 }
 
 body {
