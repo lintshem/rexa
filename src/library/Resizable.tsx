@@ -9,11 +9,11 @@ export interface IResizable {
     defRatio?: number[],
     align?: 'hor' | 'ver',
     minLength?: number,
-    style?: React.HTMLAttributes<HTMLDivElement>,
+    style?: any,
     className?: string,
 }
 
-const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className }: IResizable) => {
+const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {},className='' }: IResizable) => {
     if (!defRatio) {
         // use a ratio of 1s as default
         defRatio = [...Array(children.length)].map(e => 1)
@@ -65,13 +65,13 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
             if (align === 'hor') {
                 return {
                     width: dividerSize,
-                    height: '100%',
+                    height:contHeight,
                     cursor: 'ew-resize',
                 }
             } else {
                 return {
                     height: dividerSize,
-                    width: '100%',
+                    width: contWidth,
                     cursor: 'ns-resize',
                 }
             }
@@ -90,13 +90,14 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
     }
     const dragOver = (e: React.DragEvent) => {
         const val = e.dataTransfer.getData('divider')
-        //console.log(val, e,entry)
         if (!val) return
         e.preventDefault()
+        console.log(val, e,entry)
 
 
     }
     const drop = (e: React.DragEvent) => {
+        console.log('drops')
         const data = e.dataTransfer.getData('divider')
         if (!data && entry?.contentRect) return
         const dataParts = data.split(',')
@@ -128,7 +129,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
         }
     }
     return (
-        <div className='resizable' ref={observe} style={{ ...style, ...getStyles() } as any} onDragOver={dragOver} onDrop={drop} >
+        <div className={`resizable ${className}`} ref={observe} style={{ ...style, ...getStyles() } as any} onDragOver={dragOver} onDrop={drop} >
             {children.map((c, i) => {
                 return [
                     <div key={c} className='resizable-item' style={getMeasure(i)} >

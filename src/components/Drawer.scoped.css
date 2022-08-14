@@ -1,7 +1,5 @@
 .main {
-    width: 500px;
-    height: 400px;
-    background: grey;
+ 
 }
 
 
@@ -9,8 +7,8 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--c-bord);
-    margin: 1px;
-    width: 80px;
+    margin: 3px;
+    width: calc(100%-6px);
     text-align: center;
 }
 
