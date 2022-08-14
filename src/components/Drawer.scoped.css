@@ -1,0 +1,20 @@
+.main {
+    width: 500px;
+    height: 400px;
+    background: grey;
+}
+
+
+.wi-main {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--c-bord);
+    margin: 1px;
+    width: 80px;
+    text-align: center;
+}
+
+
+.da-main{
+    
+}
