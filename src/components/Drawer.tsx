@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai'
+import { useState } from 'react'
 import { EditContainer } from '../library/Editables'
 import Resizable from '../library/Resizable'
 import { Comp, Module } from '../models/Module'
@@ -17,25 +18,26 @@ export const Widgets = () => {
     }
     return (
         <div>
-            {items.map(item => <WidgetItem item={item} />)}
+            {items.map(item => <WidgetItem key={item} item={item} />)}
         </div>
     )
 }
-interface IDrawArea { editable: EditContainer }
-const DrawArea = ({ editable }: IDrawArea) => {
+interface IDrawArea { editable: EditContainer, focused: string }
+const DrawArea = ({ editable, focused }: IDrawArea) => {
     const [,] = useAtom(attribAtom)
     return (
         <div className='da-main' >
-            {editable.draw()}
+            {editable.draw(focused)}
         </div>
     )
 }
-interface ICompTree { editable: EditContainer }
-export const CompTree = ({ editable }: ICompTree) => {
+interface ICompTree { editable: EditContainer, setFocused: Function }
+export const CompTree = ({ editable, setFocused }: ICompTree) => {
     const comp = editable.comp
     const getUi = (id: string, pad: number) => {
         return (
-            <div className='ct-main' style={{ marginLeft: pad }}  >
+            <div key={id} className='ct-main' style={{ marginLeft: pad }}
+                onClick={() => setFocused(id)}  >
                 {id}
             </div>
         )
@@ -79,7 +81,7 @@ export const CompTree = ({ editable }: ICompTree) => {
 
 
 const Drawer = () => {
-
+    const [focused, setFocused] = useState('')
     const mod = new Module('Start')
     const comp0 = new Comp('div', { style: { width: 120, height: 200, background: 'grey' } }, ['Outer'])
     comp0.setId('lsd')
@@ -97,9 +99,9 @@ const Drawer = () => {
         <>
             <Resizable className='main' defRatio={[1, 3, 2]} style={{ height: 400 }}  >
                 <Widgets />
-                <DrawArea editable={editable} />
+                <DrawArea editable={editable} focused={focused} />
                 <Resizable align='ver' defRatio={[1, 1]} style={{ height: '100%' }} >
-                    <CompTree editable={editable} />
+                    <CompTree editable={editable} setFocused={setFocused} />
                     <Attributes editable={editable} />
                 </Resizable>
             </Resizable>

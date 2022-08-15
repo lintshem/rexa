@@ -33,7 +33,7 @@ export class Comp {
         this.id = id
     }
     draw(): any {
-        return React.createElement(this.elem, this.props, this.children.map(comp => this._drawItem(comp)))
+        return React.createElement(this.elem, { key: this.id, ...this.props }, this.children.map(comp => this._drawItem(comp)))
     }
     _drawItem(comp: Child) {
         if (['string', 'number', 'boolean'].includes(typeof comp)) {

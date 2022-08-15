@@ -33,7 +33,7 @@ const Attributes = ({ editable }:IAttributes ) => {
     }
     return (
         <div className="attrib-main" >
-            {propTypes.map(pt => <AttItem type={pt} />)}
+            {propTypes.map(pt => <AttItem key={pt.name} type={pt} />)}
         </div>
     )
 }

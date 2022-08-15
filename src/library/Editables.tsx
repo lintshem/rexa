@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Comp } from '../models/Module'
-import { getPropFlat} from '../util/props'
+import { getPropFlat } from '../util/props'
 import './Editables.scoped.css'
 
 interface IEditableText { parent: Comp, pos: number }
 
 export const EditableText = ({ parent, pos }: IEditableText) => {
-    const [text, ] = useState(parent.children[pos] as string)
+    const [text,] = useState(parent.children[pos] as string)
     return (
         <div className='text-main' contentEditable >
             {text}
@@ -48,8 +48,20 @@ export class EditContainer {
         this.props = rProps
     }
 
-    drawChildren() {
-        return this.comp.children.map(child => this.comp._drawItem(child))
+    drawChildren(editId?: String) {
+        return this.comp.children.map(child => {
+            if ((child as any).id && (child as any).id == editId) {
+                child = child as Comp
+                return (
+                    <div key={child.id} className='div-edit' tabIndex={0} >
+                        <div style={{ ...this.getPropCat(true) }} {...this.getPropCat(false)} >
+                            {this.drawChildren()}
+                        </div>
+                    </div>)
+            } else {
+                return this.comp._drawItem(child)
+            }
+        })
     }
     getPropCat(style = true) {
         const rProps = {} as IPropState
@@ -64,12 +76,16 @@ export class EditContainer {
         }
         return rProps
     }
-    draw(): any {
+    draw(id: string) {
+        // if (id) {
+
+        // }
+        //  else 
         if (this.comp.elem === 'div') {
             return (
                 <div className='div-edit' tabIndex={0} >
                     <div style={{ ...this.getPropCat(true) }} {...this.getPropCat(false)} >
-                        {this.drawChildren()}
+                        {this.drawChildren(id)}
                     </div>
                 </div>)
         } else {
