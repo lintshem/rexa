@@ -50,7 +50,7 @@ export class EditContainer {
 
     drawChildren(editId?: String) {
         return this.comp.children.map(child => {
-            if ((child as any).id && (child as any).id == editId) {
+            if ((child as any).id && (child as any).id === editId) {
                 child = child as Comp
                 return (
                     <div key={child.id} className='div-edit' tabIndex={0} >

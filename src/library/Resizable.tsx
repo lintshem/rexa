@@ -92,12 +92,9 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
         const val = e.dataTransfer.getData('divider')
         if (!val) return
         e.preventDefault()
-        console.log(val, e,entry)
-
-
+      
     }
     const drop = (e: React.DragEvent) => {
-        console.log('drops')
         const data = e.dataTransfer.getData('divider')
         if (!data && entry?.contentRect) return
         const dataParts = data.split(',')

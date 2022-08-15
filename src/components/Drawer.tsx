@@ -65,13 +65,7 @@ export const CompTree = ({ editable, setFocused }: ICompTree) => {
         c.setId('wrapper-ffffffff')
         return c
     }
-    const tree = getComp(wrapComp(comp))//{ children: [comp] } as Comp)
-    const getUiElements = (tree: any[], elements: any[] = []) => {
-        // elements.push(tree[Object.keys(tree)[0]].id)
-        // tree.childs.forEach(t => getUiElements(t, elements))
-        // return elements
-    }
-    console.log(tree, elements)
+    getComp(wrapComp(comp))//{ children: [comp] } as Comp)
     return (
         <div>
             {elements.reverse()}
