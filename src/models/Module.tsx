@@ -1,5 +1,5 @@
 import React from "react"
-import { EditableText, EditContainer } from "../library/Editables"
+import { EditContainer } from "../library/Editables"
 
 
 
@@ -29,17 +29,20 @@ export class Comp {
         this.props = props
         this.children = children
     }
+    setId(id: ID) {
+        this.id = id
+    }
     draw(): any {
-        return React.createElement(this.elem, this.props, this.children.map(comp =>this._drawItem(comp)))
+        return React.createElement(this.elem, this.props, this.children.map(comp => this._drawItem(comp)))
     }
-    _drawItem(comp:Child){
-            if (['string', 'number', 'boolean'].includes(typeof comp)) {
-                return comp
-            } else {
-                return (comp as any).draw()
-            }
+    _drawItem(comp: Child) {
+        if (['string', 'number', 'boolean'].includes(typeof comp)) {
+            return comp
+        } else {
+            return (comp as any).draw()
+        }
     }
-    getEdit(): any {
+    getEdit(): EditContainer {
         return new EditContainer(this)
     }
 }

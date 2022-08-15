@@ -1,0 +1,26 @@
+.attrib-main {
+    overflow: auto;
+    height: 100%;
+}
+
+.attrib-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--c-bord);
+}
+
+.at-name {
+    background: var(--c-d-back);
+}
+
+.at-imput {
+    width: 100px;
+    background: var(--c-d-back);
+}
+
+input {
+    background: inherit;
+    border: 0px;
+    color: inherit;
+}

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Comp } from '../models/Module'
-import { getProps, IProp } from '../util/props'
+import { getPropFlat} from '../util/props'
 import './Editables.scoped.css'
 
 interface IEditableText { parent: Comp, pos: number }
 
 export const EditableText = ({ parent, pos }: IEditableText) => {
-    const [text, setText] = useState(parent.children[pos] as string)
+    const [text, ] = useState(parent.children[pos] as string)
     return (
         <div className='text-main' contentEditable >
             {text}
@@ -21,44 +21,54 @@ export const EditDiv = () => {
     )
 }
 interface IPropState {
-    style: {
-        [key: string]: any
-    },
     [key: string]: any
+}
+export interface ITypeState {
+    name: string,
+    type: string,
+    style: boolean,
 }
 export class EditContainer {
     comp: Comp
     props: IPropState
-    propTypes: IProp | undefined
+    pTypes: ITypeState[]
+    styleTypes: string[]
+
     constructor(comp: Comp) {
         this.comp = comp
-        const propTypes = getProps(comp.elem)
-        this.propTypes = propTypes
-        let defProps = {} as any
-        // convert style array to object of props
-        if (propTypes) {
-            defProps = JSON.parse(JSON.stringify(propTypes))
-            for (const [key, val] of Object.entries(defProps)) {
-                if (key === 'style') {
-                    const styles = [...val as any]
-                    defProps.style = {}
-                    for (const styleProp of styles) {
-                        defProps.style[styleProp.name] = styleProp.def
-                    }
-                }
-            }
-        }
-        this.props = defProps
+        const propsFlat = getPropFlat(comp.elem)
+        this.pTypes = propsFlat.map(p => ({ name: p.name, type: p.type, style: p.style }))
+        const rProps = {} as { [key: string]: any }
+        const styleTypes: string[] = []
+        propsFlat.forEach(p => {
+            rProps[p.name] = p.def
+            if (p.style) styleTypes.push(p.name)
+        })
+        this.styleTypes = styleTypes
+        this.props = rProps
     }
+
     drawChildren() {
         return this.comp.children.map(child => this.comp._drawItem(child))
     }
+    getPropCat(style = true) {
+        const rProps = {} as IPropState
+        for (const [k, v] of Object.entries(this.props)) {
+            if (style) {
+                if (this.styleTypes.includes(k))
+                    rProps[k] = v
+            } else {
+                if (!this.styleTypes.includes(k))
+                    rProps[k] = v
+            }
+        }
+        return rProps
+    }
     draw(): any {
-        console.log(this.props.style)
-        if (this.comp.elem == 'div') {
+        if (this.comp.elem === 'div') {
             return (
                 <div className='div-edit' tabIndex={0} >
-                    <div  {...this.props} >
+                    <div style={{ ...this.getPropCat(true) }} {...this.getPropCat(false)} >
                         {this.drawChildren()}
                     </div>
                 </div>)
@@ -66,21 +76,7 @@ export class EditContainer {
             return 'not' //   this.comp.draw()
         }
     }
-    getType(propName: string): string {
-        if (!this.propTypes) {
-            console.warn('Lacks prop types')
-            return ''
-        }
-        for (const prop of this.propTypes.style) {
-            if (prop.name === propName) {
-                return prop.type
-            }
-        }
-        return ''
-    }
-    setProp(name: string, val: any) {
-        this.props[name] = val
-    }
+
 
 }
 
