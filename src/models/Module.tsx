@@ -1,6 +1,7 @@
-import { uniqueId } from "lodash"
+import _, { uniqueId } from "lodash"
 import React from "react"
 import { EditContainer } from "../library/Editables"
+import { propItems } from "../util/props"
 
 
 
@@ -17,18 +18,21 @@ export class DiedView {
     }
 }
 
+export interface CompType { type: string, name: string }
 export type Child = (Comp | string | number | boolean)
 type ID = string
 export class Comp {
     id: ID = ''
     elem: string = ''
-    props: object = {}
+    props: { [key: string]: any } = {}
     children: Child[] = []
     isText: boolean = true
+    nonStyleProps: string[] = []
 
     constructor(elem: string, props: object, children: Child[]) {
+        this.setDefaultProps()
         this.elem = elem
-        this.props = props
+        this.props = { ...this.props, ...props }
         this.children = children
         this.setBasic()
         this.genId()
@@ -37,7 +41,6 @@ export class Comp {
         this.setId(uniqueId())
     }
     setBasic() {
-        const textTypes = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'button']
 
     }
     setId(id: ID) {
@@ -55,6 +58,46 @@ export class Comp {
     }
     getEdit(): EditContainer {
         return new EditContainer(this)
+    }
+    getTypes(): CompType[] {
+        let props = _.cloneDeep(propItems[this.elem])
+        const propTypes: CompType[] = []
+        for (const prop of props) {
+            propTypes.push({ type: prop.type, name: prop.name })
+        }
+        return propTypes
+    }
+    setDefaultProps() {
+        const props = propItems[this.elem]
+        if (!props) {
+            console.warn("def props not exist", this.toString())
+            return
+        }
+        let defProps = {} as any
+        for (const prop of props) {
+            defProps[prop.name] = prop.def
+            if (prop.notStyle) {
+                this.nonStyleProps.push(prop.name)
+            }
+        }
+        this.props = defProps
+    }
+    findById(id: ID): Comp | undefined {
+        if (this.id === id) {
+            return this
+        }
+        for (const child of this.children) {
+            if (child instanceof Comp) {
+                const res = child.findById(id)
+                if (res) {
+                    return res
+                }
+            }
+        }
+        return undefined
+    }
+    toString() {
+        return `Comp(id:${this.id})`
     }
 }
 export class Module {
@@ -112,5 +155,17 @@ export class Module {
     }
     addComp(comp: Comp) {
         this.tree.push(comp)
+    }
+    setProp(compId: ID, prop: string, val: any) {
+        console.log(prop, val,)
+    }
+    getChildWithId(id: ID) {
+        for (const comp of this.tree) {
+            const resComp = comp.findById(id)
+            if (resComp) {
+                return resComp
+            }
+        }
+        return undefined
     }
 }

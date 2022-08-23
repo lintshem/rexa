@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React from 'react'
 import "./Designer.scoped.css"
 import { Child, Comp, Module } from './Module'
 import { attribAtom, focusedComp } from '../store/main'
@@ -27,12 +27,29 @@ export const Wrapper = ({ comp, modId }: IWrapper) => {
     }
     const clicked = (e: React.MouseEvent) => {
         setFocused(comp.id)
-        console.log(classes)
         e.stopPropagation()
+        console.log(module)
     }
-    const classes = `wrap-main ${focused == comp.id ? 'wrap-focused' : ''} `
+    const classes = `wrap-main ${focused === comp.id ? 'wrap-focused' : ''} `
+    const getStyles = () => {
+        const allProps = { ...comp.props.style || {}, ...comp.props }
+        //TODO remove delete after correcting the app
+        delete allProps['style']
+        const styleProps: { [key: string]: any } = {}
+        const otherProps: { [key: string]: any } = {}
+        for (const [key, val] of Object.entries(allProps)) {
+            if (!comp.nonStyleProps.includes(key)) {
+                styleProps[key] = val
+            } else {
+                otherProps[key] = val
+            }
+        }
+        //console.table(styleProps)
+        return [styleProps, otherProps]
+    }
+    const [styleProps, baseProps] = getStyles()
     return (
-        <div className={classes} style={(comp.props as any).style}
+        <div className={classes} {...baseProps} style={styleProps}
             onClick={clicked}
         >
             {getChildren(comp)}

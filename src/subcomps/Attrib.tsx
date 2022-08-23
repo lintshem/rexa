@@ -1,39 +1,42 @@
 import { useAtom } from "jotai"
 import React from "react"
-import { EditContainer, ITypeState } from "../library/Editables"
+import { CompType, Module } from "../models/Module"
 import { attribAtom } from "../store/main"
 import './Attrib.scoped.css'
+import { focusedComp } from "../store/main"
 
-export interface IAttributes { editable: EditContainer }
-const Attributes = ({ editable }:IAttributes ) => {
-    const propTypes = editable.pTypes
-    interface IAttItem { type: ITypeState }
-    const getValue = (name: string) => {
-        return editable.props[name]
+export interface IAttributes { mod: Module }
+const Attributes = ({ mod }: IAttributes) => {
+    const [focused,] = useAtom(focusedComp(mod.name))
+    const comp = mod.getChildWithId(focused)
+    if (!comp) {
+        return (<div>
+            Select a Component
+        </div>)
     }
+    const types = comp.getTypes()
 
-    const AttItem = ({ type }: IAttItem) => {
-        const [, setUpdate] = useAtom(attribAtom)
-        const setPropValue = (name: string, val: any) => {
-            editable.props[name] = val;
-            setUpdate(p => (p + 1) % 1000)
-        }
+    const AttItem = ({ type }: { type: CompType }) => {
+        const [, updateAttrib] = useAtom(attribAtom)
         const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            setPropValue(type.name, e.target.value)
+            const val = e.target.value
+            comp.props[type.name] = val
+            updateAttrib(Math.random() * 1000)
         }
         return (
             <div className='attrib-item' >
                 <div className='at-name' >{type.name}</div>
                 <div className='at-input' >
-                    <input value={getValue(type.name)}
+                    <input value={comp.props[type.name]}
                         onChange={onChange}
-                    /></div>
+                    />
+                </div>
             </div>
         )
     }
     return (
         <div className="attrib-main" >
-            {propTypes.map(pt => <AttItem key={pt.name} type={pt} />)}
+            {types.map(type => <AttItem key={type.name} type={type} />)}
         </div>
     )
 }

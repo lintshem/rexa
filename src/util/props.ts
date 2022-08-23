@@ -2,6 +2,7 @@ interface IPropRow {
     name: string,
     def: any,
     type: string,
+    notStyle?:true,
 }
 export interface IProp {
     style: IPropRow[],
@@ -35,8 +36,45 @@ export const props = {
             { name: 'background', def: '', type: 's' },
         ],
     },
+    button: {
+        style: [
+            { name: 'borderRadius', def: '', type: 's', },
+            { name: 'height', def: '', type: 's,n' },
+            { name: 'color', def: '', type: 's' },
+            { name: 'background', def: '', type: 's' },
+            { name: 'width', def: '', type: 's,n' },
+        ],
+    },
+
 
 } as IProps
+
+export interface IPropItems { [key: string]: IPropRow[] }
+export const propItems = {
+    div: [
+        { name: 'width', def: '', type: 's,n' },
+        { name: 'height', def: '', type: 's,n' },
+        { name: 'color', def: 'red', type: 's' },
+        { name: 'background', def: '', type: 's' },
+        { name: 'flex', def: 1, type: 'n' },
+
+    ],
+    divs: [
+        { name: 'width', def: '', type: 's,n' },
+        { name: 'height', def: '', type: 's,n' },
+        { name: 'color', def: '', type: 's' },
+        { name: 'background', def: '', type: 's' },
+    ],
+    button: [
+        { name: 'borderRadius', def: '', type: 's', },
+        { name: 'height', def: '', type: 's,n' },
+        { name: 'color', def: '', type: 's' },
+        { name: 'background', def: '', type: 's' },
+        { name: 'width', def: '', type: 's,n' },
+        { name: 'width', def: '', type: 's,n', noneStyle: true },
+
+    ],
+} as IPropItems
 
 export const getProps = (element: string): IProp | undefined => {
     return props[element]

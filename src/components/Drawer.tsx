@@ -1,10 +1,9 @@
 import { useAtom } from 'jotai'
-import { useState } from 'react'
 import { EditContainer } from '../library/Editables'
 import Resizable from '../library/Resizable'
 import Designer from '../models/Designer'
 import { Comp, Module } from '../models/Module'
-import { attribAtom, basicCompsAtom, focusedComp } from '../store/main'
+import { basicCompsAtom, focusedComp } from '../store/main'
 import Attributes from '../subcomps/Attrib'
 import "./Drawer.scoped.css"
 
@@ -23,21 +22,12 @@ export const Widgets = () => {
         </div>
     )
 }
-interface IDrawArea { editable: EditContainer, focused: string }
-const DrawArea = ({ editable, focused }: IDrawArea) => {
-    const [,] = useAtom(attribAtom)
-    return (
-        <div className='da-main' >
-            {editable.draw(focused)}
-        </div>
-    )
-}
 interface ICompTree { editable: EditContainer, focused: string, setFocused: Function }
 export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
     const comp = editable.comp
     const getUi = (id: string, pad: number) => {
         return (
-            <div key={id} className={`ct-main ${id == focused ? 'ct-focused' : ''}`} style={{ marginLeft: pad }}
+            <div key={id} className={`ct-main ${id === focused ? 'ct-focused' : ''}`} style={{ marginLeft: pad }}
                 onClick={() => setFocused(id)}  >
                 {id}
             </div>
@@ -75,7 +65,7 @@ export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
 }
 
 const mod = new Module('Start')
-const comp0 = new Comp('div', { style: { width: 60, height: 60, background: 'grey' } }, ['Outer'])
+const comp0 = new Comp('div', { style: { width: 60, height: 60, background: '' } }, ['Outer'])
 comp0.setId('lsd')
 const comp1 = new Comp('div', { style: { width: 120, height: 200, background: 'lavender' } }, [comp0, 'Outer'])
 comp1.setId('frr')
@@ -88,9 +78,11 @@ mod.addComp(comp2)
 const editable = mod.tree[0].getEdit()
 
 
+// eslint-disable-next-line 
+// global.ed = editable
+
 const Drawer = () => {
     const [focused, setFocused] = useAtom(focusedComp(mod.name))
-
     return (
         <>
             <Resizable className='main' defRatio={[1, 3, 2]} style={{ height: 400 }}  >
@@ -99,7 +91,7 @@ const Drawer = () => {
                 <Designer module={mod} />
                 <Resizable align='ver' defRatio={[1, 1]} style={{ height: '100%' }} >
                     <CompTree editable={editable} focused={focused} setFocused={setFocused} />
-                    <Attributes editable={editable} />
+                    <Attributes mod={mod} />
                 </Resizable>
             </Resizable>
         </>

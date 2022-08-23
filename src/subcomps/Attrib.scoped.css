@@ -12,6 +12,7 @@
 
 .at-name {
     background: var(--c-d-back);
+    padding:0px 3px;
 }
 
 .at-imput {
