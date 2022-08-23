@@ -1,3 +1,4 @@
+import { uniqueId } from "lodash"
 import React from "react"
 import { EditContainer } from "../library/Editables"
 
@@ -16,26 +17,36 @@ export class DiedView {
     }
 }
 
-type Child = (Comp | string | number | boolean)
+export type Child = (Comp | string | number | boolean)
 type ID = string
 export class Comp {
     id: ID = ''
     elem: string = ''
     props: object = {}
     children: Child[] = []
+    isText: boolean = true
 
     constructor(elem: string, props: object, children: Child[]) {
         this.elem = elem
         this.props = props
         this.children = children
+        this.setBasic()
+        this.genId()
+    }
+    genId() {
+        this.setId(uniqueId())
+    }
+    setBasic() {
+        const textTypes = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'button']
+
     }
     setId(id: ID) {
         this.id = id
     }
     draw(): any {
-        return React.createElement(this.elem, { key: this.id, ...this.props }, this.children.map(comp => this._drawItem(comp)))
+        return React.createElement(this.elem, { key: this.id, ...this.props }, this.children.map(comp => Comp._drawItem(comp)))
     }
-    _drawItem(comp: Child) {
+    static _drawItem(comp: Child) {
         if (['string', 'number', 'boolean'].includes(typeof comp)) {
             return comp
         } else {

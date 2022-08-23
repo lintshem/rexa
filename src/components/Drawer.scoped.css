@@ -16,3 +16,6 @@
     background: var(--c-hover);
     cursor:pointer;
 }
+.ct-focused{
+    background: var(--c-active);
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Comp } from '../models/Module'
+import { Child, Comp } from '../models/Module'
 import { getPropFlat } from '../util/props'
 import './Editables.scoped.css'
 
@@ -48,18 +48,18 @@ export class EditContainer {
         this.props = rProps
     }
 
-    drawChildren(editId?: String) {
-        return this.comp.children.map(child => {
+    drawChildren(editId?: string, children: Child[] = []) {
+        return children.map(child => {
             if ((child as any).id && (child as any).id === editId) {
                 child = child as Comp
                 return (
                     <div key={child.id} className='div-edit' tabIndex={0} >
                         <div style={{ ...this.getPropCat(true) }} {...this.getPropCat(false)} >
-                            {this.drawChildren()}
+                            {this.draw(editId, child )}
                         </div>
                     </div>)
             } else {
-                return this.comp._drawItem(child)
+                return Comp._drawItem(child)
             }
         })
     }
@@ -76,12 +76,10 @@ export class EditContainer {
         }
         return rProps
     }
-    draw(id: string) {
-        // if (id) {
-
-        // }
-        //  else 
-        if (this.comp.elem === 'div') {
+    draw(id?: string, comp?: Comp) {
+        //return this.drawChildren(id)
+        const curComp = comp || this.comp
+        if (curComp.elem === 'div') {
             return (
                 <div className='div-edit' tabIndex={0} >
                     <div style={{ ...this.getPropCat(true) }} {...this.getPropCat(false)} >

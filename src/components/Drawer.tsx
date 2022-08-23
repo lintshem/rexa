@@ -2,8 +2,9 @@ import { useAtom } from 'jotai'
 import { useState } from 'react'
 import { EditContainer } from '../library/Editables'
 import Resizable from '../library/Resizable'
+import Designer from '../models/Designer'
 import { Comp, Module } from '../models/Module'
-import { attribAtom, basicCompsAtom } from '../store/main'
+import { attribAtom, basicCompsAtom, focusedComp } from '../store/main'
 import Attributes from '../subcomps/Attrib'
 import "./Drawer.scoped.css"
 
@@ -31,12 +32,12 @@ const DrawArea = ({ editable, focused }: IDrawArea) => {
         </div>
     )
 }
-interface ICompTree { editable: EditContainer, setFocused: Function }
-export const CompTree = ({ editable, setFocused }: ICompTree) => {
+interface ICompTree { editable: EditContainer, focused: string, setFocused: Function }
+export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
     const comp = editable.comp
     const getUi = (id: string, pad: number) => {
         return (
-            <div key={id} className='ct-main' style={{ marginLeft: pad }}
+            <div key={id} className={`ct-main ${id == focused ? 'ct-focused' : ''}`} style={{ marginLeft: pad }}
                 onClick={() => setFocused(id)}  >
                 {id}
             </div>
@@ -73,29 +74,31 @@ export const CompTree = ({ editable, setFocused }: ICompTree) => {
     )
 }
 
+const mod = new Module('Start')
+const comp0 = new Comp('div', { style: { width: 60, height: 60, background: 'grey' } }, ['Outer'])
+comp0.setId('lsd')
+const comp1 = new Comp('div', { style: { width: 120, height: 200, background: 'lavender' } }, [comp0, 'Outer'])
+comp1.setId('frr')
+const comp3 = new Comp('div', { style: { width: 120, height: 200, background: 'pink' } }, ['Outer'])
+comp3.setId('fddd')
+
+const comp2 = new Comp('div', { style: { width: 200, height: 200, background: 'lavender' } }, [comp3, 'Test div', comp1])
+comp2.setId('fdd')
+mod.addComp(comp2)
+const editable = mod.tree[0].getEdit()
+
 
 const Drawer = () => {
-    const [focused, setFocused] = useState('')
-    const mod = new Module('Start')
-    const comp0 = new Comp('div', { style: { width: 120, height: 200, background: 'grey' } }, ['Outer'])
-    comp0.setId('lsd')
-    const comp1 = new Comp('div', { style: { width: 120, height: 200, background: 'grey' } }, [comp0, 'Outer'])
-    comp1.setId('frr')
-    const comp3 = new Comp('div', { style: { width: 120, height: 200, background: 'grey' } }, ['Outer'])
-    comp3.setId('fddd')
-
-    const comp2 = new Comp('div', { style: { width: 200, height: 200, background: 'lavender' } }, [comp3, 'Test div', comp1])
-    comp2.setId('fdd')
-    mod.addComp(comp2)
-    const editable = mod.tree[0].getEdit()
+    const [focused, setFocused] = useAtom(focusedComp(mod.name))
 
     return (
         <>
             <Resizable className='main' defRatio={[1, 3, 2]} style={{ height: 400 }}  >
                 <Widgets />
-                <DrawArea editable={editable} focused={focused} />
+                {/* <DrawArea editable={editable} focused={focused} /> */}
+                <Designer module={mod} />
                 <Resizable align='ver' defRatio={[1, 1]} style={{ height: '100%' }} >
-                    <CompTree editable={editable} setFocused={setFocused} />
+                    <CompTree editable={editable} focused={focused} setFocused={setFocused} />
                     <Attributes editable={editable} />
                 </Resizable>
             </Resizable>
