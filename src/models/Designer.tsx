@@ -9,17 +9,28 @@ interface IWrapper { comp: Comp, modId: string }
 
 export const Wrapper = ({ comp, modId }: IWrapper) => {
     const [focused, setFocused] = useAtom(focusedComp(modId))
-    const EditableText = ({ child }: { child: Child }) => {
+    const EditableText = ({ child, index }: { child: Child, index: number }) => {
+        const editClicked = (e: React.MouseEvent) => {
+            e.stopPropagation()
+        }
+        const saveEdit = (e: React.FocusEvent<HTMLDivElement>) => {
+            comp.children[index] = e.currentTarget.textContent || ''
+            
+        }
         return (
-            <div >
-                ED: {child as string}
+            <div contentEditable
+                suppressContentEditableWarning
+                onClick={editClicked}
+                onBlur={saveEdit}
+            >
+             {child as string}
             </div>
         )
     }
     const getChildren = (comp: Comp) => {
-        return comp.children.map(child => {
+        return comp.children.map((child, i) => {
             if (typeof child == 'string') {
-                return <EditableText child={child} />
+                return <EditableText child={child} index={i} />
             } else {
                 return <Wrapper comp={child as Comp} modId={modId} />
             }

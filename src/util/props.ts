@@ -57,7 +57,11 @@ export const propItems = {
         { name: 'color', def: 'red', type: 's' },
         { name: 'background', def: '', type: 's' },
         { name: 'flex', def: 1, type: 'n' },
-
+        { name: 'overflow', def: '', type: 's' },
+        { name: 'boxShadow', def: '', type: 's' },
+        { name: 'border', def: '', type: 's' },
+        { name: 'borderRadius', def: '', type: 's' },
+        
     ],
     divs: [
         { name: 'width', def: '', type: 's,n' },
