@@ -1,27 +1,13 @@
 import { useAtom } from 'jotai'
+import React from 'react'
 import { EditContainer } from '../library/Editables'
 import Resizable from '../library/Resizable'
 import Designer from '../models/Designer'
 import { Comp, Module } from '../models/Module'
-import { basicCompsAtom, focusedComp } from '../store/main'
+import { focusedCompAtom } from '../store/main'
 import Attributes from '../subcomps/Attrib'
 import "./Drawer.scoped.css"
 
-export const Widgets = () => {
-    const [items] = useAtom(basicCompsAtom)
-    const WidgetItem = ({ item }: { item: string }) => {
-        return (
-            <div className='wi-main' >
-                {item}
-            </div>
-        )
-    }
-    return (
-        <div>
-            {items.map(item => <WidgetItem key={item} item={item} />)}
-        </div>
-    )
-}
 interface ICompTree { editable: EditContainer, focused: string, setFocused: Function }
 export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
     const comp = editable.comp
@@ -48,7 +34,7 @@ export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
                 childTrees.push({ [c.id]: { childs: tree, pad, ui: elem } })
             }
         })
-        elements.push(...childElements.reverse())
+        elements.push(...childElements)
         return childTrees
     }
     const wrapComp = (comp: Comp) => {
@@ -65,15 +51,17 @@ export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
 }
 
 const mod = new Module('Start')
-const comp0 = new Comp('div', { style: { width: 60, height: 60, background: '' } }, ['Outer'])
+const comp6 = new Comp('button', { width: 60, height: 60, background: '' }, ['butons down'])
+comp6.setId('buts')
+const comp0 = new Comp('div', { width: 110, height: 130, background: '' }, ['Firntes', comp6])
 comp0.setId('lsd')
-const comp1 = new Comp('div', { style: { width: 120, height: 200, background: 'lavender' } }, [comp0, 'Outer'])
+const comp1 = new Comp('div', { width: 120, height: 200, background: 'grey' }, [comp0, 'blues'])
 comp1.setId('frr')
-const comp3 = new Comp('div', { style: { width: 120, height: 200, background: 'pink' } }, ['Outer'])
-comp3.setId('fddd')
+const comp3 = new Comp('div', { width: 120, height: 200, background: 'pink' }, ['Outer'])
+comp3.setId('vel')
 
-const comp2 = new Comp('div', { style: { width: 200, height: 200, background: 'lavender' } }, [comp3, 'Test div', comp1])
-comp2.setId('fdd')
+const comp2 = new Comp('div', { width: 200, height: 400, background: 'lavender' }, [comp3, 'Test div', comp1])
+comp2.setId('top')
 mod.addComp(comp2)
 const editable = mod.tree[0].getEdit()
 
@@ -82,12 +70,10 @@ const editable = mod.tree[0].getEdit()
 // global.ed = editable
 
 const Drawer = () => {
-    const [focused, setFocused] = useAtom(focusedComp(mod.name))
+    const [focused, setFocused] = useAtom(focusedCompAtom(mod.name))
     return (
         <>
-            <Resizable className='main' defRatio={[1, 3, 2]} style={{ height: 400 }}  >
-                <Widgets />
-                {/* <DrawArea editable={editable} focused={focused} /> */}
+            <Resizable className='main' defRatio={[6, 2]} style={{ height: 500 }}  >
                 <Designer module={mod} />
                 <Resizable align='ver' defRatio={[1, 1]} style={{ height: '100%' }} >
                     <CompTree editable={editable} focused={focused} setFocused={setFocused} />

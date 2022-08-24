@@ -7,18 +7,7 @@
     width: calc(100%-6px);
     text-align: center;
 }
-.ct-main{
-    background:var(--c-d-back);
-    margin:1px;
-    margin-right:3px;
-}
-.ct-main:hover{
-    background: var(--c-hover);
-    cursor:pointer;
-}
-.ct-focused{
-    background: var(--c-active);
-}
+
 .wid-main{
     user-select: none;
 }

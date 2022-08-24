@@ -2,7 +2,8 @@ interface IPropRow {
     name: string,
     def: any,
     type: string,
-    notStyle?:true,
+    notStyle?: true,
+    vals?: any[],
 }
 export interface IProp {
     style: IPropRow[],
@@ -54,28 +55,47 @@ export const propItems = {
     div: [
         { name: 'width', def: '', type: 's,n' },
         { name: 'height', def: '', type: 's,n' },
-        { name: 'color', def: 'red', type: 's' },
         { name: 'background', def: '', type: 's' },
+        { name: 'color', def: 'red', type: 's' },
+        { name: 'display', def: '', type: 's' },
+        { name: 'flexDirection', def: '', type: 's' },
+        { name: 'justifyContent', def: '', type: 'c', vals: ['one', 'two', 'three', 'four'] },
+        { name: 'alignItem', def: '', type: 's' },
         { name: 'flex', def: 1, type: 'n' },
+        { name: 'flexWrap', def: '', type: 's' },
         { name: 'overflow', def: '', type: 's' },
         { name: 'boxShadow', def: '', type: 's' },
         { name: 'border', def: '', type: 's' },
         { name: 'borderRadius', def: '', type: 's' },
-        
-    ],
-    divs: [
-        { name: 'width', def: '', type: 's,n' },
-        { name: 'height', def: '', type: 's,n' },
-        { name: 'color', def: '', type: 's' },
-        { name: 'background', def: '', type: 's' },
     ],
     button: [
-        { name: 'borderRadius', def: '', type: 's', },
         { name: 'height', def: '', type: 's,n' },
+        { name: 'width', def: '', type: 's,n' },
+        { name: 'borderRadius', def: '', type: 's', },
         { name: 'color', def: '', type: 's' },
         { name: 'background', def: '', type: 's' },
+        { name: 'padding', def: '', type: 's,n', },
+        { name: 'margin', def: '', type: 's,n', },
+
+    ],
+    img: [
+        { name: 'src', def: '', type: 's', notStyle: true },
+        { name: 'height', def: '', type: 's,n' },
         { name: 'width', def: '', type: 's,n' },
-        { name: 'width', def: '', type: 's,n', noneStyle: true },
+        { name: 'borderRadius', def: '', type: 's', },
+        { name: 'color', def: '', type: 's' },
+        { name: 'background', def: '', type: 's' },
+        { name: 'padding', def: '', type: 's,n', },
+        { name: 'margin', def: '', type: 's,n', },
+    ],
+    input: [
+        { name: 'height', def: '', type: 's,n' },
+        { name: 'width', def: '', type: 's,n' },
+        { name: 'borderRadius', def: '', type: 's', },
+        { name: 'color', def: '', type: 's' },
+        { name: 'background', def: '', type: 's' },
+        { name: 'padding', def: '', type: 's,n', },
+        { name: 'margin', def: '', type: 's,n', },
 
     ],
 } as IPropItems

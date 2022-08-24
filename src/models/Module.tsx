@@ -1,4 +1,4 @@
-import _, { uniqueId } from "lodash"
+import _,{ uniqueId } from "lodash"
 import React from "react"
 import { EditContainer } from "../library/Editables"
 import { propItems } from "../util/props"
@@ -30,18 +30,15 @@ export class Comp {
     nonStyleProps: string[] = []
 
     constructor(elem: string, props: object, children: Child[]) {
-        this.setDefaultProps()
         this.elem = elem
+        this.setDefaultProps()
         this.props = { ...this.props, ...props }
         this.children = children
-        this.setBasic()
         this.genId()
+        this.setNonStyleProps()
     }
     genId() {
         this.setId(uniqueId())
-    }
-    setBasic() {
-
     }
     setId(id: ID) {
         this.id = id
@@ -67,16 +64,29 @@ export class Comp {
         }
         return propTypes
     }
+    setNonStyleProps() {
+        const props = propItems[this.elem]
+        for (const prop of props) {
+            if (prop.notStyle) {
+                console.warn('herr', prop)
+                this.nonStyleProps.push(prop.name)
+            }
+        }
+    }
     setDefaultProps() {
         const props = propItems[this.elem]
         if (!props) {
             console.warn("def props not exist", this.toString())
             return
         }
+        if (this.elem === 'img') {
+            console.log(props)
+        }
         let defProps = {} as any
         for (const prop of props) {
             defProps[prop.name] = prop.def
             if (prop.notStyle) {
+                console.warn('herr', prop)
                 this.nonStyleProps.push(prop.name)
             }
         }
@@ -95,6 +105,9 @@ export class Comp {
             }
         }
         return undefined
+    }
+    addChild(child: Child) {
+        this.children.push(child)
     }
     toString() {
         return `Comp(id:${this.id})`
