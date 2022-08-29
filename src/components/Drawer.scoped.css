@@ -1,3 +1,7 @@
+.main {
+    flex: 1;
+    height: 100%;
+}
 
 .wi-main {
     display: flex;
@@ -7,18 +11,33 @@
     width: calc(100%-6px);
     text-align: center;
 }
-.ct-main{
-    background:var(--c-d-back);
-    margin:1px;
-    margin-right:3px;
+
+.ct-main {
+    background: var(--c-d-back);
+    margin: 1px;
+    margin-right: 3px;
 }
-.ct-main:hover{
+
+.ct-main:hover {
     background: var(--c-hover);
-    cursor:pointer;
+    cursor: pointer;
 }
-.ct-focused{
+
+.ct-focused {
     background: var(--c-active);
 }
-.wid-main{
+
+.wid-main {
     user-select: none;
+}
+
+.test {
+    color: pink;
+}
+
+.wrapper {
+    background: red;
+    /* max-height: calc(100%-40px); */
+    height: 99%;
+    /* calc(100%-40px); */
 }

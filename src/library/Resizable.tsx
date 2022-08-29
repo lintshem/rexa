@@ -13,12 +13,13 @@ export interface IResizable {
     className?: string,
 }
 
-const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {},className='' }: IResizable) => {
+const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '',}: IResizable) => {
     if (!defRatio) {
         // use a ratio of 1s as default
         defRatio = [...Array(children.length)].map(e => 1)
     }
     const { observe, width: contWidth, height: contHeight, entry } = useDimensions()
+
     const [ratio, setRatio] = useState(defRatio)
     const dragId = _.uniqueId("resize")
     if (!_.isArray(children)) {
@@ -26,7 +27,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
     }
     const count = children.length
     const totalRatio = ratio.reduce((p, c) => c + p, 0)
-
+    
     const getWidthFromRatio = (index: number) => {
         const space = (align === 'hor' ? contWidth : contHeight)
         const val = ratio[index] / totalRatio * space
@@ -65,7 +66,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
             if (align === 'hor') {
                 return {
                     width: dividerSize,
-                    height:contHeight,
+                    height: contHeight,
                     cursor: 'ew-resize',
                 }
             } else {
@@ -92,7 +93,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
         const val = e.dataTransfer.getData('divider')
         if (!val) return
         e.preventDefault()
-      
+
     }
     const drop = (e: React.DragEvent) => {
         const data = e.dataTransfer.getData('divider')

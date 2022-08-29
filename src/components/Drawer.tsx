@@ -72,15 +72,17 @@ const editable = mod.tree[0].getEdit()
 const Drawer = () => {
     const [focused, setFocused] = useAtom(focusedCompAtom(mod.name))
     return (
-        <>
-            <Resizable className='main' defRatio={[6, 2]} style={{ height: 500 }}  >
-                <Designer module={mod} />
-                <Resizable align='ver' defRatio={[1, 1]} style={{ height: '100%' }} >
+        //     <div className='main'>
+        <Resizable defRatio={[6, 2]}   >
+            <Designer module={mod} />
+            <div className='wrapper' >
+                <Resizable align='ver' defRatio={[1, 1]}  >
                     <CompTree editable={editable} focused={focused} setFocused={setFocused} />
                     <Attributes mod={mod} />
                 </Resizable>
-            </Resizable>
-        </>
+            </div>
+        </Resizable>
+        //   </div>
     )
 }
 

@@ -2,10 +2,11 @@ import React from 'react'
 import Drawer from '../components/Drawer'
 import './WorkSpace.scoped.css'
 
-const WorkSpace = () => {
+interface IWorkSpace { height?: number }
+const WorkSpace = ({ height }: IWorkSpace) => {
   return (
-    <div>
-        <Drawer />
+    <div className='main' >
+      <Drawer />
     </div>
   )
 }

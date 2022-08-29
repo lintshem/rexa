@@ -1,6 +1,8 @@
 .resizable {
     border: 1px solid var(--c-bord);
     display: flex;
+    max-height: 100%;
+   height:100%;
 }
 
 .resizable-item {
@@ -12,4 +14,3 @@
     background: var(--c-bord);
     cursor: res;
 }
-

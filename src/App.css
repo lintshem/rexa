@@ -22,7 +22,7 @@
   --c-tab: rgb(128, 151, 165);
   --c-d-tab: rgb(118, 180, 231);
   --c-active:rgb(105, 66, 66) ;
-  
+  --d-extra:40px;
 }
 
 :root[data-theme="light"] {
@@ -81,4 +81,4 @@ p {
   flex-direction: column;
   width:100vw;
   height:100vh;
-}
+  }

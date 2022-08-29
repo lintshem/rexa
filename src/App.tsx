@@ -8,14 +8,13 @@ import LeftPane from './uibase/Leftpane';
 import RightPane from './uibase/Rightpane';
 import WorkSpace from './uibase/WorkSpace';
 
-
 const App = () => {
-  return (
+   return (
     <div className='app-main' >
       <TitleBar />
-      <Resizable defRatio={[1, 6, 1]} style={{ width: '100%', height: '100%' }} >
+      <Resizable defRatio={[1, 6, 1]}  style={{  }}  >
         <LeftPane />
-        <WorkSpace />
+        <WorkSpace /> 
         <RightPane />
       </Resizable>
       <StatusBar />
