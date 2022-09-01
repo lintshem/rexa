@@ -36,8 +36,5 @@
 }
 
 .wrapper {
-    background: red;
-    /* max-height: calc(100%-40px); */
     height: 99%;
-    /* calc(100%-40px); */
 }

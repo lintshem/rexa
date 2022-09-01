@@ -78,7 +78,6 @@ export const Wrapper = ({ comp, modId }: IWrapper) => {
             } else {
                 randomUpdate(Math.random())
             }
-            console.log(NEW_TEXT)
         }
         //Prevent content editable getting data
         return true
@@ -117,7 +116,9 @@ const Designer = ({ module }: IEditProps) => {
     }
     return (
         <div className='main'  >
-            {getWrappedTree(module)}
+            <div className='main-center'>
+                {getWrappedTree(module)}
+            </div>
         </div>
     )
 

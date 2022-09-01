@@ -18,7 +18,7 @@ export class DiedView {
     }
 }
 
-export interface CompType { type: string, name: string }
+export interface CompType { type: string, name: string,vals:string[] }
 export type Child = (Comp | string | number | boolean)
 type ID = string
 export class Comp {
@@ -60,7 +60,8 @@ export class Comp {
         let props = _.cloneDeep(propItems[this.elem])
         const propTypes: CompType[] = []
         for (const prop of props) {
-            propTypes.push({ type: prop.type, name: prop.name })
+            const vals = prop.vals||[]
+            propTypes.push({ type: prop.type, name: prop.name,vals})
         }
         return propTypes
     }

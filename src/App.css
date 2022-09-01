@@ -23,6 +23,8 @@
   --c-d-tab: rgb(118, 180, 231);
   --c-active:rgb(105, 66, 66) ;
   --d-extra:40px;
+--c-pop:rgb(172, 149, 128);
+--c-shadow:white;
 }
 
 :root[data-theme="light"] {
@@ -42,6 +44,8 @@
   --c-tab: rgb(211, 105, 43);
   --c-d-tab: rgb(238, 213, 75);
   --c-active:rgb(230, 161, 161);
+  --c-pop:rgb(205, 230, 233);
+  --c-shadow:rgb(71, 62, 62);
   
 }
 

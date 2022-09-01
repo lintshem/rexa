@@ -16,12 +16,27 @@
 }
 
 .at-imput {
-    width: 100px;
+    width: 100%;
     background: var(--c-d-back);
+    height:10px;
+    background: cadetblue;
+    width: 120px;
+
 }
 
 input {
     background: inherit;
     border: 0px;
     color: inherit;
+}
+.combo{
+    display:flex;
+    flex-direction: column;
+}
+.combo-item{
+    margin:1px 2px;
+    background: var(--c-back) ;
+}
+.combo-item:hover{
+    background: var(--c-bord);
 }
