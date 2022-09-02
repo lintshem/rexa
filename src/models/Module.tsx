@@ -1,4 +1,4 @@
-import _,{ uniqueId } from "lodash"
+import _, { uniqueId } from "lodash"
 import React from "react"
 import { EditContainer } from "../library/Editables"
 import { propItems } from "../util/props"
@@ -18,7 +18,7 @@ export class DiedView {
     }
 }
 
-export interface CompType { type: string, name: string,vals:string[] }
+export interface CompType { type: string, name: string, vals: string[] }
 export type Child = (Comp | string | number | boolean)
 type ID = string
 export class Comp {
@@ -60,8 +60,8 @@ export class Comp {
         let props = _.cloneDeep(propItems[this.elem])
         const propTypes: CompType[] = []
         for (const prop of props) {
-            const vals = prop.vals||[]
-            propTypes.push({ type: prop.type, name: prop.name,vals})
+            const vals = prop.vals || []
+            propTypes.push({ type: prop.type, name: prop.name, vals })
         }
         return propTypes
     }
@@ -166,7 +166,13 @@ export class Module {
         this.tree.push(comp)
     }
     setProp(compId: ID, prop: string, val: any) {
-        console.log(prop, val,)
+        // console.log(prop, val,)
+        const compElm = this.getChildWithId(compId)
+        if (!compElm) {
+            console.warn("setProp ", compId, 'Not exist')
+            return
+        }
+        compElm.props[prop] = val;
     }
     getChildWithId(id: ID) {
         for (const comp of this.tree) {

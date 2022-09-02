@@ -1,6 +1,7 @@
-*{
+* {
   box-sizing: border-box;
 }
+
 :root,
 :root[data-theme="dark"] {
   --c-text: rgb(255, 255, 255);
@@ -21,10 +22,10 @@
   --c-neu: white;
   --c-tab: rgb(128, 151, 165);
   --c-d-tab: rgb(118, 180, 231);
-  --c-active:rgb(105, 66, 66) ;
-  --d-extra:40px;
---c-pop:rgb(172, 149, 128);
---c-shadow:white;
+  --c-active: rgb(105, 66, 66);
+  --d-extra: 40px;
+  --c-pop: rgb(172, 149, 128);
+  --c-shadow: white;
 }
 
 :root[data-theme="light"] {
@@ -43,10 +44,10 @@
   --c-ter: rgb(37, 171, 224);
   --c-tab: rgb(211, 105, 43);
   --c-d-tab: rgb(238, 213, 75);
-  --c-active:rgb(230, 161, 161);
-  --c-pop:rgb(205, 230, 233);
-  --c-shadow:rgb(71, 62, 62);
-  
+  --c-active: rgb(230, 161, 161);
+  --c-pop: rgb(205, 230, 233);
+  --c-shadow: rgb(71, 62, 62);
+
 }
 
 body {
@@ -76,13 +77,14 @@ p {
   margin: 0px;
 }
 
-.App{
-  padding-top:30px;
-  padding-bottom:30px;
+.App {
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
-.app-main{
-  display:flex;
+
+.app-main {
+  display: flex;
   flex-direction: column;
-  width:100vw;
-  height:100vh;
-  }
+  width: 100vw;
+  height: 100vh;
+}

@@ -45,7 +45,7 @@ const Attributes = ({ mod }: IAttributes) => {
             }
             interface ICombo { item: string, index: number }
             const ComboItem = ({ item, index }: ICombo) => {
-                return <div className="combo-item" onClick={() => selectItem(index)} >{item}</div>
+                return <div className="combo-item" style={{ height: 20 }} onClick={() => selectItem(index)} >{item}</div>
             }
             return (
                 <div className="combo" >
@@ -72,11 +72,11 @@ const Attributes = ({ mod }: IAttributes) => {
             comp.props[type.name] = val
             updateAttrib(Math.random() * 1000)
         }
-        const getValue = ():any => {
+        const getValue = (): any => {
             const val = comp.props[type.name]
-            if(val!==undefined){
+            if (val !== undefined) {
                 return val
-            }else{
+            } else {
                 return ''
             }
 
@@ -84,7 +84,7 @@ const Attributes = ({ mod }: IAttributes) => {
         const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const oldVal = comp.props[type.name] || ''
             const val: string | number = e.target.value
-            const isNum = /^\d+.\d*$/.test(val)
+            const isNum = /^\d+$/.test(val)
             if (isTextType && isNumberType) {
                 if (isNum) {
                     updateValue(Number(val))
@@ -104,7 +104,7 @@ const Attributes = ({ mod }: IAttributes) => {
                     }
                 }
             }
-            if(isCheckType){
+            if (isCheckType) {
                 updateValue(e.target.checked)
             }
         }
@@ -116,7 +116,7 @@ const Attributes = ({ mod }: IAttributes) => {
                 <div className='at-name' >{type.name}</div>
                 <div className='at-input' ref={observe} onDoubleClick={doubleClick} >
                     <input className="input" value={getValue()} checked={getValue()}
-                    type={typeIsNum ? 'number' : isCheckType?'checkbox':'text'}
+                        type={typeIsNum ? 'number' : isCheckType ? 'checkbox' : 'text'}
                         onChange={(e) => onChange(e)}
                     />
                     <Popover open={isHelpable && showHelper} setOpen={setShowHelper} width={width - width * 0.1} >

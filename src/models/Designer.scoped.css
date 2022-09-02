@@ -6,11 +6,11 @@
     justify-content: center;
     align-items: center;
 }
-.main-center{
-    border:4px solid var(--c-main);
-    padding:10px;
-    border-radius:10px;
-    
+
+.main-center {
+    border: 2px solid var(--c-main);
+    padding: 10px;
+    border-radius: 10px;
 
 }
 
@@ -22,4 +22,8 @@
 .wrap-focused {
     border: 2px solid var(--c-sec);
     box-shadow: 0px 0px 3px 3px grey;
+}
+
+.wrap-resize {
+    opacity:0.2;
 }

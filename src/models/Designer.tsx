@@ -4,14 +4,16 @@ import { Child, Comp, Module } from './Module'
 import { attribAtom, focusedCompAtom, isVoidElem, newTextAtom } from '../store/main'
 import { useAtom, useAtomValue } from 'jotai'
 import { receiveDrag } from '../util/utils'
+import { Resizable } from 're-resizable'
 
+interface IWrapper { comp: Comp, modId: string, module: Module }
 
-interface IWrapper { comp: Comp, modId: string }
-
-export const Wrapper = ({ comp, modId }: IWrapper) => {
+export const Wrapper = ({ comp, modId, module }: IWrapper) => {
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const [NEW_TEXT] = useAtomValue(newTextAtom)
     const randomUpdate = useState(12)[1]
+    const isFocused = focused === comp.id
+    const [resizing, setResizing] = useState(false)
     const EditableText = ({ child, index }: { child: Child, index: number }) => {
         const editClicked = (e: React.MouseEvent) => {
             // e.stopPropagation()
@@ -33,7 +35,7 @@ export const Wrapper = ({ comp, modId }: IWrapper) => {
                 return <EditableText key={child} child={child} index={i} />
             } else {
                 child = child as Comp
-                return <Wrapper key={child.id} comp={child} modId={modId} />
+                return <Wrapper key={child.id} comp={child} modId={modId} module={module} />
             }
         })
     }
@@ -41,7 +43,7 @@ export const Wrapper = ({ comp, modId }: IWrapper) => {
         setFocused(comp.id)
         e.stopPropagation()
     }
-    const classes = `wrap-main ${focused === comp.id ? 'wrap-focused' : ''} `
+    const classes = `wrap-main ${isFocused ? 'wrap-focused' : ''} ${resizing ? 'wrap-resize' : ''} `
     const getStyles = () => {
         const allProps = { ...comp.props.style || {}, ...comp.props }
         //TODO remove delete after correcting the app
@@ -86,14 +88,15 @@ export const Wrapper = ({ comp, modId }: IWrapper) => {
     const Component = comp.elem as any
     const [styleProps, baseProps] = getStyles()
     //  console.log(comp.id,baseProps,styleProps,comp.props,comp.nonStyleProps )
+    let componentParent = null
     if (isVoidElem(comp.elem)) {
-        return <Component className={classes} {...baseProps} style={styleProps}
+        componentParent = <Component className={classes} {...baseProps} style={styleProps}
             onClick={clicked}
             onDragOver={dragOver}
             onDrop={drop}
         />
     } else {
-        return (
+        componentParent = (
             <Component className={classes} {...baseProps} style={styleProps}
                 onClick={clicked}
                 onDragOver={dragOver}
@@ -103,6 +106,31 @@ export const Wrapper = ({ comp, modId }: IWrapper) => {
             </Component>
         )
     }
+    const getSize = () => {
+        return { width: comp.props.width, height: comp.props.height }
+    }
+
+    const resized = (e: any, dir: any, ref: any, d: { width: number, height: number }) => {
+        e.stopPropagation()
+        setResizing(false)
+        const size = getSize()
+        size.width = Math.max(10, parseInt(size.width) + d.width) || Math.abs(d.width);
+        size.height = Math.max(10, parseInt(size.height) + d.height) || Math.abs(d.height);
+        module.setProp(comp.id, 'width', size.width)
+        module.setProp(comp.id, 'height', size.height)
+        randomUpdate(r => (r + 1) % 1000)
+    }
+    if (isFocused && componentParent != null) {
+        return (
+            <Resizable size={getSize()} onResizeStop={resized} className={`${resizing ? 'wrap-resizing' : ''}`}
+                onResizeStart={() => setResizing(true)} >
+                {componentParent}
+            </Resizable>
+        )
+    } else {
+        return componentParent
+    }
+
 }
 
 interface IEditProps {
@@ -112,7 +140,7 @@ interface IEditProps {
 const Designer = ({ module }: IEditProps) => {
     const [,] = useAtom(attribAtom)
     const getWrappedTree = (module: Module) => {
-        return module.tree.map(c => <Wrapper key={c.id} comp={c} modId={module.name} />)
+        return module.tree.map(c => <Wrapper key={c.id} comp={c} modId={module.name} module={module} />)
     }
     return (
         <div className='main'  >
