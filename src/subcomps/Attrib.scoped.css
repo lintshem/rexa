@@ -1,6 +1,8 @@
+
 .attrib-main {
     overflow: auto;
     height: 100%;
+    padding-bottom: 20px;
 }
 
 .attrib-item {
@@ -19,15 +21,14 @@
     width: 100%;
     background: var(--c-d-back);
     height:10px;
-    background: cadetblue;
     width: 120px;
-
 }
 
 input {
     background: inherit;
     border: 0px;
     color: inherit;
+    width:100%;
 }
 .combo{
     display:flex;

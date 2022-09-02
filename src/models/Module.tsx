@@ -69,7 +69,6 @@ export class Comp {
         const props = propItems[this.elem]
         for (const prop of props) {
             if (prop.notStyle) {
-                console.warn('herr', prop)
                 this.nonStyleProps.push(prop.name)
             }
         }
@@ -80,14 +79,10 @@ export class Comp {
             console.warn("def props not exist", this.toString())
             return
         }
-        if (this.elem === 'img') {
-            console.log(props)
-        }
         let defProps = {} as any
         for (const prop of props) {
             defProps[prop.name] = prop.def
             if (prop.notStyle) {
-                console.warn('herr', prop)
                 this.nonStyleProps.push(prop.name)
             }
         }

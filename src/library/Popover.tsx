@@ -13,19 +13,19 @@ const Popover = ({ children, width = 80, top = 10, bottom, open = false, setOpen
     // eslint-disable-next-line
   }, [])
   const stopClick = (e: React.MouseEvent) => {
-    console.log('stopping')
-        e.stopPropagation()
+    e.stopPropagation()
   }
   const keyUp = (e: React.KeyboardEvent) => {
-    console.log('closing', e)
+    //TODO this is not being called 
     if (e.key === 'esc') {
       if (setOpen)
         setOpen(false)
     }
   }
   return (
-    <div className='main' onClick={stopClick} onKeyUp={keyUp} >
-      {open && <div className='main-pop' style={{ width, top, bottom }} >
+    <div className='main'  >
+      {open && <div className='main-pop' style={{ width, top, bottom }}
+        onClick={stopClick} onKeyUp={keyUp} >
         {children}
       </div>}
     </div>

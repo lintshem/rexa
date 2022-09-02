@@ -1,0 +1,16 @@
+
+.out{
+    background: green;
+    width:200px;
+    height:200px;
+position: relative;
+}
+
+.inner{
+    position: absolute;
+    background: red;
+    top:0px;
+    bottom:10%;
+    left:30%;
+    right:calc(10% + 30px);
+}
