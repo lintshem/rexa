@@ -19,33 +19,31 @@ export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
             </div>
         )
     }
-    const elements: any[] = []
     const getComp = (comp: Comp, pad = 0) => {
         const tabSize = 10
         const childTrees: any[] = []
-        const childElements: any[] = []
-        comp.children.forEach(c => {
+        const elements: any[] = []
+        comp.children.reverse().forEach(c => {
             if ((c as any).id) {
                 c = c as Comp
                 const tree = getComp(c as Comp, pad + tabSize)
                 const elem = getUi(c.id, pad)
-                childElements.push(elem)
-                //  elements.push(elem)
+                elements.push(elem)
+                elements.push(...tree)
                 childTrees.push({ [c.id]: { childs: tree, pad, ui: elem } })
             }
         })
-        elements.push(...childElements)
-        return childTrees
+        return elements
     }
     const wrapComp = (comp: Comp) => {
         const c = new Comp('div', {}, [comp])
         c.setId('wrapper-ffffffff')
         return c
     }
-    getComp(wrapComp(comp))//{ children: [comp] } as Comp)
+    const elements = getComp(wrapComp(comp))//{ children: [comp] } as Comp)
     return (
         <div>
-            {elements.reverse()}
+            {elements}
         </div>
     )
 }
