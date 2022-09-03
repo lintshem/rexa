@@ -29,3 +29,17 @@ export const receiveDrag = (e: React.DragEvent) => {
         return { action: 'error', data: '' }
     }
 }
+export const sendMessage = (channel: string, message: any) => {
+    window.postMessage({ channel, message })
+}
+
+//TODO possible memory leak
+export const receiveMessage = (channel: string, callBack: (data: any) => void) => {
+    const msgCallback = (msg: MessageEvent) => {
+        if (channel === msg.data.channel) {
+            callBack(msg.data.message)
+        }
+    }
+    window.addEventListener('message', msgCallback)
+    return () => window.removeEventListener('message', msgCallback)
+}

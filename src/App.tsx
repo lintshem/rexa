@@ -29,7 +29,7 @@ const App = () => {
         <DesignMenu />
       </div>
       <ToastContainer position='bottom-left' pauseOnHover
-        theme={theme == 'dark' ? theme : 'light'} autoClose={3000} newestOnTop
+        theme={theme === 'dark' ? theme : 'light'} autoClose={3000} newestOnTop
       />
     </Provider>
   )

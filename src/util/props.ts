@@ -21,7 +21,7 @@ export const propItems = {
     div: [
         { name: 'width', def: '', type: 't,n' },
         { name: 'height', def: '', type: 't,n' },
-        { name: 'background', def: '', type: 't' },
+        { name: 'background', def: '', type: 't,c' },
         { name: 'color', def: 'red', type: 't,c' },
         { name: 'display', def: '', type: 't,s', vals: ['', 'flex', 'block', 'float'] },
         { name: 'flexDirection', def: '', type: 't,s', vals: ['', 'column', 'row'] },

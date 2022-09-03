@@ -16,7 +16,7 @@ export const isVoidElem = (elem: string) => {
 
 export const newTextAtom = atomWithStorage('newText', 'lorem ipsum')
 
-const mod = new Module('Start')
+const mod = new Module('ModTest')
 const comp6 = new Comp('button', { width: 60, height: 60, background: '' }, ['butons down'])
 comp6.setId('buts')
 const comp0 = new Comp('div', { width: 110, height: 130, background: '' }, ['Firntes', comp6])
@@ -32,5 +32,6 @@ mod.addComp(comp2)
 
 export const modulesAtom = atom<Module[]>([mod])
 
-export const themeAtom = atom('dark')
+export const themeAtom = atomWithStorage('theme', 'dark')
 export const activeModAtom = atom('')
+export const modUpdateAtom = atom(1)

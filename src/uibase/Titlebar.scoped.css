@@ -6,4 +6,7 @@
     justify-self: flex-end;
     position: absolute;
     right:5px;
+    background:var(--c-sec);
+    padding:0px 2px;
+    
 }

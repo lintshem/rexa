@@ -10,8 +10,9 @@ interface ITabHeader {
     setIndex: Function,
     index: number
     fullWidth: boolean
+    onAction?:Function
 }
-const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth }: ITabHeader) => {
+const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth,onAction }: ITabHeader) => {
     const getThStyles = () => {
         if (align === 'hor') {
             return {
@@ -42,10 +43,17 @@ const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth }
                 } as React.HTMLAttributes<HTMLDivElement>
             }
         }
+        const callAction=()=>{
+            if(onAction){
+                onAction(index)
+            }
+        }
+        const classes = `action-base ${onAction ? 'the-action' : ''}`
         return (
             <div className={`the-main ${selected && 'the-selected'}`} style={{ ...getTeStyles() }}
                 onClick={() => setIndex(index)} >
                 {title}
+                <div className={classes} onClick={callAction} >X</div>
             </div>
         )
     }
@@ -64,10 +72,11 @@ export interface ITabContainer {
     position?: 'start' | 'end'
     style?: React.HTMLAttributes<HTMLDivElement>
     className?: string,
-    fullWidth?: boolean
+    fullWidth?: boolean,
+    onAction?:Function,
 }
 const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', position = 'start', tab = 0,
-    className, style, fullWidth = false }: ITabContainer) => {
+    className, style, fullWidth = false ,onAction }: ITabContainer) => {
     const [index, setIndex] = useState(tab)
     if (titles.length !== children.length) {
         console.warn("Got wrong no titles", titles)
@@ -85,7 +94,8 @@ const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', posit
     }
     const getHeader = (pos: string) => {
         if (pos === position) {
-            return <TabHeader width={headerWidth} titles={titles} align={align} setIndex={setIndex} index={index} fullWidth={fullWidth} />
+            return <TabHeader width={headerWidth} titles={titles} align={align} setIndex={setIndex} index={index} fullWidth={fullWidth}
+            onAction={onAction} />
         }
         return null
     }

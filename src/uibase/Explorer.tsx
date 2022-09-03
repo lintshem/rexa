@@ -1,11 +1,9 @@
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom,useAtomValue } from 'jotai'
 import React, { useState } from 'react'
-import useDimensions from 'react-cool-dimensions'
 import { toast } from 'react-toastify'
 import Button from '../library/Button'
-import Popover from '../library/Popover'
-import { Module } from '../models/Module'
-import { activeModAtom, modulesAtom } from '../store/main'
+import { Comp, Module } from '../models/Module'
+import { activeModAtom, modulesAtom, modUpdateAtom } from '../store/main'
 import './Explorer.scoped.css'
 interface IModItem { mod: Module }
 const ModuleItem = ({ mod }: IModItem) => {
@@ -20,24 +18,25 @@ const ModuleItem = ({ mod }: IModItem) => {
 }
 const Explorer = () => {
     const [modules, setModules] = useAtom(modulesAtom)
+    const modAttr = useAtomValue(modUpdateAtom)
     const [name, setName] = useState('')
-    const { observe, height } = useDimensions()
     const addModule = () => {
         let modName = name.trim()
         if (!modName || modName.length < 3) {
             toast("Name Short", { type: 'info' })
             return;
         }
-        if (modules.find(m => m.name == name)) {
+        if (modules.find(m => m.name === name)) {
             toast("Name taken", { type: 'info' })
             return
         }
         const mod = new Module(name)
+        mod.addComp(new Comp('div', { width: 100, height: 100 }, []))
         setName('')
         setModules([...modules, mod])
     }
     return (
-        <div ref={observe} >
+        <div  >
             <div>MODULES</div>
             {modules.map(m => <ModuleItem key={m.name} mod={m} />)}
             <div  >
@@ -51,9 +50,9 @@ const Explorer = () => {
 export default Explorer
 
 export const ModuleConfig = () => {
-  return (
-    <div>
-        ModuleConfig
-    </div>
-  )
+    return (
+        <div>
+            ModuleConfig
+        </div>
+    )
 }

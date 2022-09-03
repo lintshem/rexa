@@ -28,7 +28,7 @@ export class Comp {
     children: Child[] = []
     isText: boolean = true
     nonStyleProps: string[] = []
-
+    code: string = ''
     constructor(elem: string, props: object, children: Child[]) {
         this.elem = elem
         this.setDefaultProps()
@@ -36,6 +36,7 @@ export class Comp {
         this.children = children
         this.genId()
         this.setNonStyleProps()
+        this.code = '' //DefaultCode
     }
     genId() {
         this.setId(uniqueId())

@@ -7,8 +7,8 @@ import ModConfig from './ModConfig'
 
 const Leftpane = () => {
   return (
-    <div style={{ width: '98%',background:'green' }} >
-      <Resizable align='ver' defRatio={[1,1]} style={{heigth:300}} >
+    <div className='main'  >
+      <Resizable align='ver' defRatio={[1,1]} >
         <Explorer />
         <ModConfig />
       </Resizable>

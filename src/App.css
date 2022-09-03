@@ -26,6 +26,7 @@
   --d-extra: 40px;
   --c-pop: rgb(172, 149, 128);
   --c-shadow: white;
+  --c-dirty: rgb(238, 8, 8);
 }
 
 :root[data-theme="light"] {
@@ -47,7 +48,7 @@
   --c-active: rgb(241, 217, 217);
   --c-pop: rgb(205, 230, 233);
   --c-shadow: rgb(71, 62, 62);
-
+  --c-dirty: rgb(243, 10, 10);
 }
 
 body {
