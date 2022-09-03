@@ -12,13 +12,23 @@ export interface IResizable {
     style?: any,
     className?: string,
 }
+const useBetterDimensions = (dist = 5) => {
+    const [size, setSize] = useState({ w: 0, h: 0 })
+    const { observe, width, height, entry } = useDimensions()
+    const wd = Math.abs(size.w - width)
+    const wh = Math.abs(size.h - height)
+    if (wd > dist || wh > dist) {
+        setSize({ w: width, h: height})
+    }
+    return { width: size.w, height: size.h, observe,entry}
+}
 
-const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '',}: IResizable) => {
+const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', }: IResizable) => {
     if (!defRatio) {
         // use a ratio of 1s as default
         defRatio = [...Array(children.length)].map(e => 1)
     }
-    const { observe, width: contWidth, height: contHeight, entry } = useDimensions()
+    const { observe, width: contWidth, height: contHeight, entry } = useBetterDimensions()
 
     const [ratio, setRatio] = useState(defRatio)
     const dragId = _.uniqueId("resize")
@@ -27,7 +37,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
     }
     const count = children.length
     const totalRatio = ratio.reduce((p, c) => c + p, 0)
-    
+
     const getWidthFromRatio = (index: number) => {
         const space = (align === 'hor' ? contWidth : contHeight)
         const val = ratio[index] / totalRatio * space

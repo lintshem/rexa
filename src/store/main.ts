@@ -14,7 +14,7 @@ export const isVoidElem = (elem: string) => {
     return ['img', 'input'].includes(elem)
 }
 
-export const newTextAtom = atomWithStorage('newText','lorem ipsum')
+export const newTextAtom = atomWithStorage('newText', 'lorem ipsum')
 
 const mod = new Module('Start')
 const comp6 = new Comp('button', { width: 60, height: 60, background: '' }, ['butons down'])
@@ -30,5 +30,7 @@ const comp2 = new Comp('div', { width: 200, height: 400, background: 'lavender' 
 comp2.setId('top')
 mod.addComp(comp2)
 
-export const modulesAtom =atom<Module[]>([mod])
+export const modulesAtom = atom<Module[]>([mod])
 
+export const themeAtom = atom('dark')
+export const activeModAtom = atom('')

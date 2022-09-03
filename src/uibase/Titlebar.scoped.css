@@ -1,0 +1,9 @@
+.main{
+    display:flex;
+    position: relative;
+}
+.theme{
+    justify-self: flex-end;
+    position: absolute;
+    right:5px;
+}

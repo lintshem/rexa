@@ -1,50 +1,59 @@
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import React, { useState } from 'react'
 import useDimensions from 'react-cool-dimensions'
+import { toast } from 'react-toastify'
 import Button from '../library/Button'
 import Popover from '../library/Popover'
 import { Module } from '../models/Module'
-import { modulesAtom } from '../store/main'
+import { activeModAtom, modulesAtom } from '../store/main'
 import './Explorer.scoped.css'
 interface IModItem { mod: Module }
 const ModuleItem = ({ mod }: IModItem) => {
+    const [activeMod, setActiveMod] = useAtom(activeModAtom)
+    const isFocused = activeMod === mod.name
+    const classes = `${isFocused ? 'mi-focused' : ''}`
     return (
-        <div>
+        <div onClick={() => setActiveMod(mod.name)} className={classes} >
             {mod.name}
         </div>
     )
 }
 const Explorer = () => {
     const [modules, setModules] = useAtom(modulesAtom)
-    const [showAdd, setShowAdd] = useState(false)
     const [name, setName] = useState('')
     const { observe, height } = useDimensions()
-    const openAddDialog = () => {
-        console.info('add')
-        setShowAdd(true)
-    }
     const addModule = () => {
         let modName = name.trim()
-        if (modName && modName.length >= 3) {
-            
+        if (!modName || modName.length < 3) {
+            toast("Name Short", { type: 'info' })
+            return;
         }
+        if (modules.find(m => m.name == name)) {
+            toast("Name taken", { type: 'info' })
+            return
+        }
+        const mod = new Module(name)
+        setName('')
+        setModules([...modules, mod])
     }
     return (
         <div ref={observe} >
             <div>MODULES</div>
             {modules.map(m => <ModuleItem key={m.name} mod={m} />)}
-            <div>
-                <Button onClick={openAddDialog} >ADD</Button>
-                <Popover open={showAdd} top={-height / 2} setOpen={setShowAdd} width={'80px'} >
-
-                </Popover>
-                <div>
-                    <div>Name : <input value={name} onChange={(e) => setName(e.target.value)} /></div>
-                </div>
-                <Button onClick={addModule} >DONE</Button>
+            <div  >
+                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+                <Button onClick={addModule} >ADD</Button>
             </div>
         </div>
     )
 }
 
 export default Explorer
+
+export const ModuleConfig = () => {
+  return (
+    <div>
+        ModuleConfig
+    </div>
+  )
+}
