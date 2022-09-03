@@ -5,6 +5,7 @@ import { attribAtom, focusedCompAtom, isVoidElem, newTextAtom } from '../store/m
 import { useAtom, useAtomValue } from 'jotai'
 import { receiveDrag } from '../util/utils'
 import { Resizable } from 're-resizable'
+import { ContextMenuTrigger } from '../library/ContextMenu'
 
 interface IWrapper { comp: Comp, modId: string, module: Module }
 
@@ -144,9 +145,11 @@ const Designer = ({ module }: IEditProps) => {
     }
     return (
         <div className='main'  >
-            <div className='main-center'>
-                {getWrappedTree(module)}
-            </div>
+            <ContextMenuTrigger id="design-context"  >
+                <div className='main-center'>
+                    {getWrappedTree(module)}
+                </div>
+            </ContextMenuTrigger>
         </div>
     )
 

@@ -24,7 +24,7 @@ const Popover = ({ children, width = 80, top = 10, bottom, open = false, setOpen
   }
   return (
     <div className='main'  >
-      {open && <div className='main-pop' style={{ width, top, bottom }}
+      {open && <div className='main-pop' style={{ width, top, bottom }} 
         onClick={stopClick} onKeyUp={keyUp} >
         {children}
       </div>}

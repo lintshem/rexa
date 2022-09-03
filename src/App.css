@@ -10,9 +10,9 @@
   --c-d-back: rgb(114, 100, 100);
   --c-bord: rgb(85, 71, 71);
   --c-box: white;
-  --c-hover: blue;
+  --c-hover: rgb(179, 179, 179);
   --c-but-sec: grey;
-  --c-pri-but: rgb(155, 41, 6);
+  --c-but-pri: rgb(155, 41, 6);
   --c-link: yellow;
   --s-text: 1.0rem;
   --s-l-text: 1.3rem;
@@ -37,7 +37,7 @@
   --c-box: rgb(180, 167, 167);
   --c-hover: rgb(243, 110, 22);
   --c-but-sec: rgb(51, 69, 233);
-  --c-pri-but: rgb(16, 16, 187);
+  --c-but-pri: rgb(16, 16, 187);
   --c-link: rgb(128, 128, 23rgb(238, 213, 75)0);
   --c-main: rgb(129, 43, 28);
   --c-sec: rgb(199, 95, 26);

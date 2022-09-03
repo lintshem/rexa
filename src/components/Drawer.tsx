@@ -19,19 +19,28 @@ export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
             </div>
         )
     }
-    const getComp = (comp: Comp, pad = 0) => {
+    const getComp = (compElm: Comp, pad = 0) => {
         const tabSize = 10
         const childTrees: any[] = []
         const elements: any[] = []
-        comp.children.reverse().forEach(c => {
+        compElm.children.reverse().forEach((c, i) => {
+            let comp;
             if ((c as any).id) {
+                comp = c
                 c = c as Comp
                 const tree = getComp(c as Comp, pad + tabSize)
                 const elem = getUi(c.id, pad)
                 elements.push(elem)
                 elements.push(...tree)
                 childTrees.push({ [c.id]: { childs: tree, pad, ui: elem } })
+            } else {
+                comp = { id: `$${compElm.id},${i}` }
+                const elem = getUi(comp.id, pad)
+                elements.push(elem)
+            
             }
+
+
         })
         return elements
     }

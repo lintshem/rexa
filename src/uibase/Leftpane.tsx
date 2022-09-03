@@ -1,10 +1,13 @@
 import React from 'react'
+import Explorer from './Explorer'
 import './Leftpane.scoped.css'
 
 
 const Leftpane = () => {
   return (
-    <div>Leftpane</div>
+    <div>
+      <Explorer />
+    </div>
   )
 }
 
