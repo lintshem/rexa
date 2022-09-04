@@ -28,7 +28,6 @@ export class Comp {
     children: Child[] = []
     isText: boolean = true
     nonStyleProps: string[] = []
-    code: string = ''
     constructor(elem: string, props: object, children: Child[]) {
         this.elem = elem
         this.setDefaultProps()
@@ -36,7 +35,6 @@ export class Comp {
         this.children = children
         this.genId()
         this.setNonStyleProps()
-        this.code = '' //DefaultCode
     }
     genId() {
         this.setId(uniqueId())
@@ -110,12 +108,22 @@ export class Comp {
         return `Comp(id:${this.id})`
     }
 }
+const DEFAULT_CODE =
+    `
+const a=12;
+let b=[1,2,3]
+const c=b.map(bb=>b+10)
+console.log(c)
+
+`
 export class Module {
     name: string = ''
     root: Comp | undefined
     tree: Comp[] = []
+    code: string = ''
     constructor(name: string = '') {
         this.name = name;
+        this.code = DEFAULT_CODE
     }
     setRoot(root: Comp | string | number) {
         if (typeof root === 'string') {

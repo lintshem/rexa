@@ -3,18 +3,14 @@ import Drawer from '../components/Drawer'
 import TabContainer from '../library/TabContainer'
 import './WorkSpace.scoped.css'
 import Test from '../components/Test'
-import CodeMirror from '@uiw/react-codemirror'
-import { javascript } from '@codemirror/lang-javascript'
-import { okaidia } from '@uiw/codemirror-theme-okaidia'
-import { basicSetup } from '@uiw/codemirror-extensions-basic-setup'
 import { receiveMessage } from '../util/utils'
 import { toast } from 'react-toastify'
 import Coder from './Coder'
+import _ from 'lodash'
 
 interface IWorkSpace { height?: number }
-const extensions = [basicSetup(), javascript({ jsx: true })]
-let v = ''
 const WorkSpace = ({ height }: IWorkSpace) => {
+  const id = 'ws_' + _.uniqueId()
   useEffect(() => {
     const cleanUp1 = receiveMessage('workspace', updateTabs)
     const cleanUp2 = receiveMessage('rename-module', renameTabs)
@@ -36,7 +32,17 @@ const WorkSpace = ({ height }: IWorkSpace) => {
       comp: <Test />,
       name: 'Test',
       type: '',
-    }
+    },
+    {
+      comp: <Drawer modName='ModTest' />,
+      name: 'ModTest',
+      type: 'design',
+    },
+    {
+      comp: <Coder modName='ModTest' />,
+      name: 'ModTest',
+      type: 'code',
+    },
   ])
   const renameTabs = (data: { old: string, new: string }) => {
     const newViews = views.map(v => {
@@ -56,9 +62,9 @@ const WorkSpace = ({ height }: IWorkSpace) => {
     console.log('not found', data, views)
     const getComp = () => {
       if (data.action === 'design') {
-        return <Drawer modName={data.item} />
+        return <Drawer key={data.item} modName={data.item} />
       } else {
-        return <Coder modName={data.item} />
+        return <Coder key={data.item} modName={data.item} />
       }
     }
     const newView = { comp: getComp(), name: data.item, type: data.action }
@@ -90,7 +96,7 @@ const WorkSpace = ({ height }: IWorkSpace) => {
   const [titles, bodies] = splitTitleView()
   return (
     <div className='main' >
-      <TabContainer titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}
+      <TabContainer id={id} titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}
         onAction={removeTab}  >
         {bodies}
       </TabContainer>

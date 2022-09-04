@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import useCoolDimensions from 'react-cool-dimensions'
 
 export const makeRandColor = () => {
@@ -43,3 +43,14 @@ export const receiveMessage = (channel: string, callBack: (data: any) => void) =
     window.addEventListener('message', msgCallback)
     return () => window.removeEventListener('message', msgCallback)
 }
+export const useBetterDimensions = (dist = 10) => {
+    const [size, setSize] = useState({ w: 0, h: 0 })
+    const { observe, width, height, entry } = useDimensions()
+    const wd = Math.abs(size.w - width)
+    const wh = Math.abs(size.h - height)
+    if (wd > dist || wh > dist) {
+        setSize({ w: width, h: height})
+    }
+    return { width: size.w, height: size.h, observe,entry}
+}
+

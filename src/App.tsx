@@ -12,17 +12,22 @@ import { Provider } from 'react-keep-alive'
 import { ToastContainer } from 'react-toastify';
 import { useAtomValue } from 'jotai';
 import { themeAtom } from './store/main';
+import WorkArea from './uibase/WorkArea';
 
 const App = () => {
   const theme = useAtomValue(themeAtom)
-
+  const updateTheme = () => {
+    const rootElement = document.documentElement;
+    rootElement.dataset.theme = theme;
+  }
+  updateTheme()
   return (
     <Provider>
       <div className='app-main' >
         <TitleBar />
         <Resizable defRatio={[1, 6, 1]} style={{}}  >
           <LeftPane />
-          <WorkSpace />
+          <WorkArea defWs={[<WorkSpace key={1} />, <WorkSpace key={2} /> ]} />
           <RightPane />
         </Resizable>
         <StatusBar />

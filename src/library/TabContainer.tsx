@@ -1,7 +1,10 @@
+import { atom, useAtom } from 'jotai'
 import React, { useState } from 'react'
-
+import { atomFamily } from 'jotai/utils'
 import "./TabContainer.scoped.css"
+import _ from 'lodash'
 
+const tabsFamilyAtoms = atomFamily(param => atom(0))
 
 interface ITabHeader {
     titles: string[]
@@ -10,9 +13,9 @@ interface ITabHeader {
     setIndex: Function,
     index: number
     fullWidth: boolean
-    onAction?:Function
+    onAction?: Function
 }
-const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth,onAction }: ITabHeader) => {
+const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth, onAction }: ITabHeader) => {
     const getThStyles = () => {
         if (align === 'hor') {
             return {
@@ -43,8 +46,8 @@ const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth,o
                 } as React.HTMLAttributes<HTMLDivElement>
             }
         }
-        const callAction=()=>{
-            if(onAction){
+        const callAction = () => {
+            if (onAction) {
                 onAction(index)
             }
         }
@@ -73,11 +76,12 @@ export interface ITabContainer {
     style?: React.HTMLAttributes<HTMLDivElement>
     className?: string,
     fullWidth?: boolean,
-    onAction?:Function,
+    onAction?: Function,
+    id: any,
 }
 const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', position = 'start', tab = 0,
-    className, style, fullWidth = false ,onAction }: ITabContainer) => {
-    const [index, setIndex] = useState(tab)
+    className, style, fullWidth = false, onAction, id }: ITabContainer) => {
+    const [index, setIndex] = useAtom(tabsFamilyAtoms(id))
     if (titles.length !== children.length) {
         console.warn("Got wrong no titles", titles)
     }
@@ -95,7 +99,7 @@ const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', posit
     const getHeader = (pos: string) => {
         if (pos === position) {
             return <TabHeader width={headerWidth} titles={titles} align={align} setIndex={setIndex} index={index} fullWidth={fullWidth}
-            onAction={onAction} />
+                onAction={onAction} />
         }
         return null
     }

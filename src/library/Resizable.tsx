@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { useState } from 'react'
-import useDimensions from 'react-cool-dimensions'
+import { useBetterDimensions } from '../util/utils';
 import "./Resizable.scoped.css"
 
 
@@ -11,16 +11,6 @@ export interface IResizable {
     minLength?: number,
     style?: any,
     className?: string,
-}
-const useBetterDimensions = (dist = 5) => {
-    const [size, setSize] = useState({ w: 0, h: 0 })
-    const { observe, width, height, entry } = useDimensions()
-    const wd = Math.abs(size.w - width)
-    const wh = Math.abs(size.h - height)
-    if (wd > dist || wh > dist) {
-        setSize({ w: width, h: height})
-    }
-    return { width: size.w, height: size.h, observe,entry}
 }
 
 const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', }: IResizable) => {
