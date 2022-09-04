@@ -27,7 +27,7 @@ const App = () => {
         <TitleBar />
         <Resizable defRatio={[1, 6, 1]} style={{}}  >
           <LeftPane />
-          <WorkArea defWs={[<WorkSpace key={1} />, <WorkSpace key={2} /> ]} />
+          <WorkArea defWs={[<WorkSpace id={-1} />, <WorkSpace id={-2} /> ]} />
           <RightPane />
         </Resizable>
         <StatusBar />

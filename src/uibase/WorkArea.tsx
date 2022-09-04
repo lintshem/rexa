@@ -1,10 +1,10 @@
-import _ from 'lodash'
 import React, { useState } from 'react'
 import Resizable from '../library/Resizable'
 import './WorkArea.scoped.css'
 import WorkSpace from './WorkSpace'
 import { MdClose, MdAdd, MdCode, MdToggleOn } from 'react-icons/md'
 
+let WSID = 0
 interface IWorkArea { no?: number, removeArea?: Function, defWs?: any[] }
 const WorkArea = ({ removeArea, defWs = [] }: IWorkArea) => {
     const [hor, setHor] = useState(true)
@@ -23,9 +23,9 @@ const WorkArea = ({ removeArea, defWs = [] }: IWorkArea) => {
         setSpaces(newSpaces)
     }
     const addWsAt = (index: number) => {
-        const newWs = <WorkSpace />
+        const newWs = <WorkSpace id={WSID++} />
         const newSpaces = [...spaces]
-        newSpaces.splice(index, 0, newWs)
+        newSpaces.splice(index + 1, 0, newWs)
         setSpaces(newSpaces)
     }
 
@@ -37,17 +37,14 @@ const WorkArea = ({ removeArea, defWs = [] }: IWorkArea) => {
                 <MdClose onClick={() => removeAt(index)} />
                 <MdAdd onClick={() => addAreaAt(index)} />
                 <MdCode onClick={() => addWsAt(index)} />
-            </div>
+                <MdToggleOn onClick={toggleAlign} />
+             </div>
         </div>
     }
     const toggleAlign = () => setHor(h => !h)
-    console.log(spaces)
     return (
         <div className='main' style={{ flexDirection: hor ? 'row' : 'column' }} >
-            <div className='main-head' >
-                <MdToggleOn onClick={toggleAlign} />
-            </div>
-            <Resizable key={spaces.length} style={{ flex: 1 }} align={hor ? 'hor' : 'ver'} >
+            <Resizable  key={spaces.length} style={{ flex: 1 }} align={hor ? 'hor' : 'ver'} resizeDelta={50} >
                 {spaces.map((s, i) => <SpaceWrap key={s} index={i} >{s}</SpaceWrap>)}
             </Resizable>
         </div>

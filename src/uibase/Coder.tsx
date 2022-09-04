@@ -3,7 +3,6 @@ import './Coder.scoped.css'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { okaidia } from '@uiw/codemirror-theme-okaidia'
-import { basicSetup } from '@uiw/react-codemirror'
 import { useAtomValue } from 'jotai'
 import { codeStyleAtom, modulesAtom, themeAtom } from '../store/main'
 import { useBetterDimensions } from '../util/utils'
@@ -17,7 +16,7 @@ const Coder = ({ modName }: ICoder) => {
     const modules = useAtomValue(modulesAtom)
     const { observe, height } = useBetterDimensions()
     const codeStyle = useAtomValue(codeStyleAtom)
-    const mod = modules.find(m => m.name == modName)
+    const mod = modules.find(m => m.name === modName)
     if (!mod) {
         return (
             <div>No module Wth that name</div>

@@ -8,9 +8,9 @@ import { toast } from 'react-toastify'
 import Coder from './Coder'
 import _ from 'lodash'
 
-interface IWorkSpace { height?: number }
-const WorkSpace = ({ height }: IWorkSpace) => {
-  const id = 'ws_' + _.uniqueId()
+interface IWorkSpace { height?: number,id:any }
+const WorkSpace = ({ height ,id }: IWorkSpace) => {
+  
   useEffect(() => {
     const cleanUp1 = receiveMessage('workspace', updateTabs)
     const cleanUp2 = receiveMessage('rename-module', renameTabs)
@@ -22,24 +22,24 @@ const WorkSpace = ({ height }: IWorkSpace) => {
   interface IView { comp: any, name: string, type: string }
   const [views, setViews] = useState<IView[]>([
     {
-      comp: <div className='ws-main' >
+      comp: <Drawer key="mdtest" modName='ModTest' />,
+      name: 'ModTest',
+      type: 'design',
+    },
+    {
+      comp: <div key={"ws"}  className='ws-main' >
         one
       </div>,
       name: 'TabTest',
       type: '',
     },
     {
-      comp: <Test />,
+      comp: <Test key="test" />,
       name: 'Test',
       type: '',
     },
     {
-      comp: <Drawer modName='ModTest' />,
-      name: 'ModTest',
-      type: 'design',
-    },
-    {
-      comp: <Coder modName='ModTest' />,
+      comp: <Coder key="modcod" modName='ModTest' />,
       name: 'ModTest',
       type: 'code',
     },

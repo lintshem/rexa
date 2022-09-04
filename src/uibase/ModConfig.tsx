@@ -1,9 +1,8 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import React, { useState } from "react"
 import { activeModAtom, modulesAtom, modUpdateAtom } from "../store/main"
 import "./ModConfig.scoped.css"
 import { MdSave } from 'react-icons/md'
-import { useAtomCallback } from "jotai/utils"
 import Button from "../library/Button"
 import { sendMessage } from "../util/utils"
 

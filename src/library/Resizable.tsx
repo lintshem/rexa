@@ -11,14 +11,15 @@ export interface IResizable {
     minLength?: number,
     style?: any,
     className?: string,
+    resizeDelta?:number,
 }
 
-const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', }: IResizable) => {
+const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', resizeDelta}: IResizable) => {
     if (!defRatio) {
         // use a ratio of 1s as default
         defRatio = [...Array(children.length)].map(e => 1)
     }
-    const { observe, width: contWidth, height: contHeight, entry } = useBetterDimensions()
+    const { observe, width: contWidth, height: contHeight, entry } = useBetterDimensions(resizeDelta)
 
     const [ratio, setRatio] = useState(defRatio)
     const dragId = _.uniqueId("resize")

@@ -1,8 +1,7 @@
 import { atom, useAtom } from 'jotai'
-import React, { useState } from 'react'
+import React  from 'react'
 import { atomFamily } from 'jotai/utils'
 import "./TabContainer.scoped.css"
-import _ from 'lodash'
 
 const tabsFamilyAtoms = atomFamily(param => atom(0))
 
