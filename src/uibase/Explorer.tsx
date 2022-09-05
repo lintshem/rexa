@@ -18,6 +18,8 @@ const ModuleItem = ({ mod }: IModItem) => {
 }
 const Explorer = () => {
     const [modules, setModules] = useAtom(modulesAtom)
+    //This line causes rerender due to module rename
+    // eslint-disable-next-line
     const modAttr = useAtomValue(modUpdateAtom)
     const [name, setName] = useState('')
     const addModule = () => {

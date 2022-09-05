@@ -6,7 +6,6 @@ import Test from '../components/Test'
 import { receiveMessage } from '../util/utils'
 import { toast } from 'react-toastify'
 import Coder from './Coder'
-import _ from 'lodash'
 
 interface IWorkSpace { height?: number,id:any }
 const WorkSpace = ({ height ,id }: IWorkSpace) => {

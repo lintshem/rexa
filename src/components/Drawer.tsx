@@ -2,10 +2,12 @@ import { useAtom, useAtomValue } from 'jotai'
 import React from 'react'
 import { EditContainer } from '../library/Editables'
 import Resizable from '../library/Resizable'
+import TabContainer from '../library/TabContainer'
 import Designer from '../models/Designer'
 import { Comp } from '../models/Module'
 import { focusedCompAtom, modulesAtom } from '../store/main'
 import Attributes from '../subcomps/Attrib'
+import Actions from '../uibase/Actions'
 import "./Drawer.scoped.css"
 
 interface ICompTree { editable: EditContainer, focused: string, setFocused: Function }
@@ -62,7 +64,7 @@ const Drawer = ({ modName }: IDrawer) => {
     const modules = useAtomValue(modulesAtom)
     const mod = modules.find(m => m.name === modName)
     const [focused, setFocused] = useAtom(focusedCompAtom(mod?.name || ''))
-    if(!mod){
+    if (!mod) {
         return (
             <div>
                 No module with this Name
@@ -76,7 +78,10 @@ const Drawer = ({ modName }: IDrawer) => {
             <div className='wrapper' >
                 <Resizable align='ver' defRatio={[1, 1]}  >
                     <CompTree editable={editable} focused={focused} setFocused={setFocused} />
-                    <Attributes mod={mod} />
+                    <TabContainer id={`act-${mod.name}`} titles={['Act', 'Att']}>
+                        <Actions mod={mod} />
+                        <Attributes mod={mod} />
+                    </TabContainer>
                 </Resizable>
             </div>
         </Resizable>

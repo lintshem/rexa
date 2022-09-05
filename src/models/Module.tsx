@@ -1,4 +1,4 @@
-import _, { uniqueId } from "lodash"
+import _, { find, uniqueId } from "lodash"
 import React from "react"
 import { EditContainer } from "../library/Editables"
 import { propItems } from "../util/props"
@@ -108,14 +108,25 @@ export class Comp {
         return `Comp(id:${this.id})`
     }
 }
-const DEFAULT_CODE =
-    `
-const a=12;
-let b=[1,2,3]
-const c=b.map(bb=>b+10)
-console.log(c)
+const GETCODE = (name: string) => {
+    return `
+class code{
+    a=12
+    constructor(state){
+        //Assigns the helper method to class
+        Object.assign(this,state )
+    }
+    getName(){
+        return ''
+    }
+ draw(){
 
+ }
+}
+return code
+//# sourceURL=${name.split(' ').join('')}.js
 `
+}
 export class Module {
     name: string = ''
     root: Comp | undefined
@@ -123,8 +134,19 @@ export class Module {
     code: string = ''
     constructor(name: string = '') {
         this.name = name;
-        this.code = DEFAULT_CODE
+        this.code = GETCODE(name)
     }
+    getMethods(): string[] {
+        try {
+            const getCode = Function(this.code)
+            const Code = getCode()
+            const propertyNames = Object.getOwnPropertyNames(Code.prototype);
+            return propertyNames
+        } catch (e) {
+            return []
+        }
+    }
+
     setRoot(root: Comp | string | number) {
         if (typeof root === 'string') {
             let index = this.tree.findIndex(t => {
@@ -191,5 +213,9 @@ export class Module {
             }
         }
         return undefined
+    }
+    getCompFromId(id: ID): Comp | undefined {
+        const comp = this.tree.find(c => c.id == id)
+        return comp
     }
 }
