@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import "./Designer.scoped.css"
 import { Child, Comp, Module } from './Module'
-import { attribAtom, focusedCompAtom, isVoidElem, newTextAtom } from '../store/main'
-import { useAtom, useAtomValue } from 'jotai'
+import { attribAtom, focusedCompAtom, isVoidElem, newTextAtom, prevChangeAtom } from '../store/main'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { receiveDrag } from '../util/utils'
 import { Resizable } from 're-resizable'
 import { ContextMenuTrigger } from '../library/ContextMenu'
@@ -15,6 +15,7 @@ export const Wrapper = ({ comp, modId, module }: IWrapper) => {
     const randomUpdate = useState(12)[1]
     const isFocused = focused === comp.id
     const [resizing, setResizing] = useState(false)
+    const prevUpdate = useSetAtom(prevChangeAtom(module.name))
     const EditableText = ({ child, index }: { child: Child, index: number }) => {
         const editClicked = (e: React.MouseEvent) => {
             // e.stopPropagation()
@@ -120,6 +121,7 @@ export const Wrapper = ({ comp, modId, module }: IWrapper) => {
         module.setProp(comp.id, 'width', size.width)
         module.setProp(comp.id, 'height', size.height)
         randomUpdate(r => (r + 1) % 1000)
+        prevUpdate(p => p % 100 + 1)
     }
     if (isFocused && componentParent != null) {
         return (

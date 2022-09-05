@@ -67,7 +67,7 @@ export const propItems = {
         { name: 'margin', def: '', type: 't,n', },
 
     ],
-    p:[
+    p: [
         { name: 'width', def: '100%', type: 't,n' },
         { name: 'height', def: 20, type: 't,n' },
         { name: 'borderRadius', def: '', type: 't,n' },
@@ -78,10 +78,23 @@ export const propItems = {
         { name: 'disabled', def: '', type: 'b', notStyle: true },
     ],
 } as IPropItems
-
-// export const getProps = (element: string): IProp | undefined => {
-//     return props[element]
-// }
+export interface IActionRow {
+    name: string,
+    func?: Function,
+}
+export interface IActionItems {
+    [key: string]: IActionRow[],
+}
+export const actionItems = {
+    div: [
+        { name: 'onClick' },
+        { name: 'onDrop' },
+    ],
+    button: [
+        { name: 'onClick' },
+        { name: 'onDoubleClick' },
+    ],
+} as IActionItems
 export interface IPropType {
     name: string,
     type: string,
@@ -93,3 +106,6 @@ export const getPropFlat = (element: string, tree: IPropItems | undefined = unde
     return rows
 }
 
+export const getAction = (elem: string) => {
+    return actionItems[elem]
+}

@@ -1,7 +1,7 @@
-import { useAtom } from "jotai"
+import { useAtom, useSetAtom } from "jotai"
 import React, { useState } from "react"
 import { CompType, Module } from "../models/Module"
-import { attribAtom } from "../store/main"
+import { attribAtom, prevChangeAtom } from "../store/main"
 import './Attrib.scoped.css'
 import { focusedCompAtom } from "../store/main"
 import { SketchPicker } from 'react-color'
@@ -61,6 +61,7 @@ const Attributes = ({ mod }: IAttributes) => {
         const { observe, width } = useDimensions()
         const [showHelper, setShowHelper] = useState(false)
         const [, updateAttrib] = useAtom(attribAtom)
+        const prevUpdate = useSetAtom(prevChangeAtom(mod.name))
         const isHelpable = type.type.split(',').filter(t => !['t', 'n'].includes(t)).length > 0;
         const isNumberType = type.type.split(',').find(t => t === 'n') !== undefined;
         const isCheckType = type.type.split(',').find(t => t === 'b') !== undefined;
@@ -71,6 +72,7 @@ const Attributes = ({ mod }: IAttributes) => {
         const updateValue = (val: any) => {
             comp.props[type.name] = val
             updateAttrib(Math.random() * 1000)
+            prevUpdate(p => p % 100 + 1)
         }
         const getValue = (): any => {
             const val = comp.props[type.name]

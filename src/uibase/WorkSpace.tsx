@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import Drawer from '../components/Drawer'
 import TabContainer from '../library/TabContainer'
 import './WorkSpace.scoped.css'
-import Test from '../components/Test'
 import { receiveMessage } from '../util/utils'
 import { toast } from 'react-toastify'
 import Coder from './Coder'
+import Preview from './Preview'
 
-interface IWorkSpace { height?: number,id:any }
-const WorkSpace = ({ height ,id }: IWorkSpace) => {
-  
+interface IWorkSpace { height?: number, id: any }
+const WorkSpace = ({ height, id }: IWorkSpace) => {
+
   useEffect(() => {
     const cleanUp1 = receiveMessage('workspace', updateTabs)
     const cleanUp2 = receiveMessage('rename-module', renameTabs)
@@ -21,20 +21,20 @@ const WorkSpace = ({ height ,id }: IWorkSpace) => {
   interface IView { comp: any, name: string, type: string }
   const [views, setViews] = useState<IView[]>([
     {
+      comp: <Preview key="mdtest" modName='ModTest' />,
+      name: 'ModTest',
+      type: 'live',
+    },
+    {
       comp: <Drawer key="mdtest" modName='ModTest' />,
       name: 'ModTest',
       type: 'design',
     },
     {
-      comp: <div key={"ws"}  className='ws-main' >
+      comp: <div key={"ws"} className='ws-main' >
         one
       </div>,
       name: 'TabTest',
-      type: '',
-    },
-    {
-      comp: <Test key="test" />,
-      name: 'Test',
       type: '',
     },
     {
@@ -62,8 +62,12 @@ const WorkSpace = ({ height ,id }: IWorkSpace) => {
     const getComp = () => {
       if (data.action === 'design') {
         return <Drawer key={data.item} modName={data.item} />
-      } else {
+      } else if (data.action === 'code') {
         return <Coder key={data.item} modName={data.item} />
+      } else if (data.action === 'live') {
+        return <Preview key={data.item} modName={data.item} />
+      } else {
+        return <div>Wrong Editor</div>
       }
     }
     const newView = { comp: getComp(), name: data.item, type: data.action }
@@ -80,6 +84,9 @@ const WorkSpace = ({ height ,id }: IWorkSpace) => {
           break;
         case 'design':
           pos = '-D'
+          break;
+        case 'live':
+          pos = '-L'
           break;
       }
       titles.push(v.name + pos)

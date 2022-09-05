@@ -42,7 +42,7 @@ const Explorer = () => {
             <div>MODULES</div>
             {modules.map(m => <ModuleItem key={m.name} mod={m} />)}
             <div  >
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+                <input className='rexa-input' value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
                 <Button onClick={addModule} >ADD</Button>
             </div>
         </div>

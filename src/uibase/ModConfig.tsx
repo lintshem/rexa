@@ -46,12 +46,16 @@ export const ModuleConfig = () => {
     const openCode = () => {
         sendMessage('workspace', { action: 'code', item: name })
     }
+    const openLive = () => {
+        sendMessage('workspace', { action: 'live', item: name })
+    }
     return (
         <div key={name} >
             <RenameField name={name} setName={setName} />
             <div className="btn-actions">
                 <Button onClick={openDesign}  >Design</Button>
                 <Button onClick={openCode}  >Code</Button>
+                <Button onClick={openLive}  >Live</Button>
             </div>
         </div>
 

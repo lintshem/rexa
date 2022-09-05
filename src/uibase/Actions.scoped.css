@@ -1,0 +1,14 @@
+.action-row{
+    display:flex;
+    flex-direction: column;
+    margin-bottom:5px;
+
+}
+.act-name{
+    background:var(--c-d-back);
+    width:100%;
+}
+.select-item{
+    background: var(--c-back);
+    margin:1px;
+}

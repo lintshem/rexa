@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react'
 import './Popover.scoped.css'
 
-interface IPopover { children: any, width?: number | string, top?: number | string, bottom?: number | string, open?: boolean, setOpen?: Function }
-const Popover = ({ children, width = 80, top = 10, bottom, open = false, setOpen }: IPopover) => {
+interface IPopover {
+  children: any, width?: number | string,
+  top?: number | string, bottom?: number | string,
+  open?: boolean, setOpen?: Function, clickClose?: boolean
+}
+const Popover = ({ children, width = 80, top = 10, bottom, open = false, setOpen, clickClose = true }: IPopover) => {
   useEffect(() => {
     const clickedOut = () => {
       if (setOpen)
@@ -14,6 +18,10 @@ const Popover = ({ children, width = 80, top = 10, bottom, open = false, setOpen
   }, [])
   const stopClick = (e: React.MouseEvent) => {
     e.stopPropagation()
+    if (clickClose && setOpen){
+      setOpen(false)
+    }
+
   }
   const keyUp = (e: React.KeyboardEvent) => {
     //TODO this is not being called 
@@ -24,7 +32,7 @@ const Popover = ({ children, width = 80, top = 10, bottom, open = false, setOpen
   }
   return (
     <div className='main'  >
-      {open && <div className='main-pop' style={{ width, top, bottom }} 
+      {open && <div className='main-pop' style={{ width, top, bottom }}
         onClick={stopClick} onKeyUp={keyUp} >
         {children}
       </div>}

@@ -1,3 +1,9 @@
 .wrap-resizing {
     border: 2px dotted var(--c-sec);
 }
+
+.rexa-input{
+    background: inherit;
+    border:1px solid var(--c-bord) ;
+color:inherit;
+}

@@ -1,23 +1,23 @@
-import _, { find, uniqueId } from "lodash"
+import _, { uniqueId } from "lodash"
 import React from "react"
 import { EditContainer } from "../library/Editables"
-import { propItems } from "../util/props"
+import { getAction, propItems } from "../util/props"
 
 
 
-export class DiedView {
-    comp: Comp
-    props: Object
-    constructor(comp: Comp) {
-        this.comp = comp
-        this.props = comp.props
-    }
-    drawDied() {
+// export class DiedView {
+//     comp: Comp
+//     props: Object
+//     constructor(comp: Comp) {
+//         this.comp = comp
+//         this.props = comp.props
+//     }
+//     drawDied() {
 
 
-    }
-}
-
+//     }
+// }
+export interface IAction { [key: string]: { func: string, args: string } }
 export interface CompType { type: string, name: string, vals: string[] }
 export type Child = (Comp | string | number | boolean)
 type ID = string
@@ -28,6 +28,8 @@ export class Comp {
     children: Child[] = []
     isText: boolean = true
     nonStyleProps: string[] = []
+    actions: IAction = {}
+    instance: any = ''
     constructor(elem: string, props: object, children: Child[]) {
         this.elem = elem
         this.setDefaultProps()
@@ -35,6 +37,7 @@ export class Comp {
         this.children = children
         this.genId()
         this.setNonStyleProps()
+        this.setDefaultActions()
     }
     genId() {
         this.setId(uniqueId())
@@ -50,6 +53,14 @@ export class Comp {
             return comp
         } else {
             return (comp as any).draw()
+        }
+    }
+    setDefaultActions() {
+        const action = getAction(this.elem)
+        if (action) {
+            action.forEach(a => {
+                this.actions[a.name] = { func: '', args: '' }
+            })
         }
     }
     getEdit(): EditContainer {
@@ -107,37 +118,76 @@ export class Comp {
     toString() {
         return `Comp(id:${this.id})`
     }
+    propSplit() {
+        const styles: any = {}
+        const other: any = {}
+        for (const [key, val] of Object.entries(this.props)) {
+            if (this.nonStyleProps.includes(key)) {
+                other[key] = val
+            } else {
+                styles[key] = val
+            }
+        }
+        return [styles, other]
+    }
+    getLive(mod: Module) {
+        const Elm = this.elem
+        const [styles, others] = this.propSplit()
+        const acts = mod.getActions(this.actions)
+        return (
+            <Elm
+                {...others}
+                style={styles}
+                {...acts}
+            >
+                {this.children.map(c => {
+                    if (c instanceof Comp) {
+                        return c.getLive(mod)
+                    } else {
+                        return c
+                    }
+
+                })}
+            </Elm>
+        )
+    }
 }
+
 const GETCODE = (name: string) => {
-    return `
+    const c =
+`
 class code{
-    a=12
+    a = 12
     constructor(state){
         //Assigns the helper method to class
-        Object.assign(this,state )
+        Object.assign(this, state)
     }
     getName(){
+        console.log("HaHa")
         return ''
     }
- draw(){
+    draw(){
 
- }
+    }
 }
-return code
+                return code
 //# sourceURL=${name.split(' ').join('')}.js
 `
+return c
 }
 export class Module {
     name: string = ''
     root: Comp | undefined
     tree: Comp[] = []
     code: string = ''
+    codeClass: any = ''
     constructor(name: string = '') {
         this.name = name;
         this.code = GETCODE(name)
     }
     getMethods(): string[] {
         try {
+            //eslint-disable-next-line
             const getCode = Function(this.code)
             const Code = getCode()
             const propertyNames = Object.getOwnPropertyNames(Code.prototype);
@@ -145,6 +195,32 @@ export class Module {
         } catch (e) {
             return []
         }
+    }
+    getCodeClass() {
+        try {
+            //eslint-disable-next-line
+            const getCode = Function(this.code)
+            const Code = getCode()
+            const code = new Code({})
+            if (typeof code !== 'object') {
+                throw new SyntaxError("Does not return a class ")
+            }
+            this.codeClass = code
+            return code;
+        } catch (e) {
+            console.warn(this.name, 'Code error, no class', e)
+            return false;
+        }
+    }
+    getActions(actions: IAction) {
+        const actionProps: { [key: string]: Function } = {}
+        for (const [key, val] of Object.entries(actions)) {
+            const action = this.codeClass[val.func]
+            if (action) {
+                actionProps[key] = ()=>this.codeClass[val.func]()
+            }
+        }
+        return actionProps
     }
 
     setRoot(root: Comp | string | number) {
@@ -214,8 +290,19 @@ export class Module {
         }
         return undefined
     }
+    flatTree(tree: Child[] = this.tree) {
+        const items: Child[] = []
+        items.push(...tree)
+        tree.forEach(element => {
+            if (element instanceof Comp) {
+                const innerItems = this.flatTree(element.children)
+                items.push(...innerItems)
+            }
+        });
+        return items as Comp[]
+    }
     getCompFromId(id: ID): Comp | undefined {
-        const comp = this.tree.find(c => c.id == id)
+        const comp = this.flatTree().find(c => c.id === id)
         return comp
     }
 }
