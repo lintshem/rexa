@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import "./Designer.scoped.css"
 import { Child, Comp, Module } from './Module'
-import { attribAtom, focusedCompAtom, isVoidElem, newTextAtom, prevChangeAtom } from '../store/main'
+import { attribAtom, focusedCompAtom, isVoidElem, newTextAtom, prevChangeAtom, prevSizeAtom } from '../store/main'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { receiveDrag } from '../util/utils'
 import { Resizable } from 're-resizable'
 import { ContextMenuTrigger } from '../library/ContextMenu'
+import { Resizable as WrapResize } from 're-resizable'
 
 interface IWrapper { comp: Comp, modId: string, module: Module }
 
@@ -142,15 +143,21 @@ interface IEditProps {
 
 const Designer = ({ module }: IEditProps) => {
     const [,] = useAtom(attribAtom)
+    const [size, setSize] = useAtom(prevSizeAtom('des' + module.name))
     const getWrappedTree = (module: Module) => {
         return module.tree.map(c => <Wrapper key={c.id} comp={c} modId={module.name} module={module} />)
+    }
+    const updateSize = (e: any, dir: any, a: any, d: any) => {
+        setSize({ width: size.width + d.width, height: size.height + d.height })
     }
     return (
         <div className='main'  >
             <ContextMenuTrigger id="design-context"  >
-                <div className='main-center'>
-                    {getWrappedTree(module)}
-                </div>
+                <WrapResize className='resize-area' defaultSize={size} onResizeStop={updateSize}  >
+                    <div className='main-center' >
+                        {getWrappedTree(module)}
+                    </div>
+                </WrapResize>
             </ContextMenuTrigger>
         </div>
     )

@@ -1,0 +1,22 @@
+.preview {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    position: relative;
+}
+
+.prev-center {
+    padding: 8px;
+    border: 4px solid var(--c-ter);
+    width: 100%;
+    height: 100%;
+}
+
+.info {
+    position: absolute;
+    left: 5px;
+    bottom: 0px;
+}

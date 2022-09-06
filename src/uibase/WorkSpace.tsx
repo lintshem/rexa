@@ -6,10 +6,12 @@ import { receiveMessage } from '../util/utils'
 import { toast } from 'react-toastify'
 import Coder from './Coder'
 import Preview from './Preview'
+import { useAtom } from 'jotai'
+import { activeWSAtom } from '../store/main'
 
 interface IWorkSpace { height?: number, id: any }
 const WorkSpace = ({ height, id }: IWorkSpace) => {
-
+  const [active, setActive] = useAtom(activeWSAtom)
   useEffect(() => {
     const cleanUp1 = receiveMessage('workspace', updateTabs)
     const cleanUp2 = receiveMessage('rename-module', renameTabs)
@@ -53,12 +55,10 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
     setViews(newViews)
   }
   const updateTabs = (data: { action: string, item: string }) => {
-    console.log(data)
     if (views.find(v => v.name === data.item && v.type === data.action)) {
       toast('Found item')
       return
     }
-    console.log('not found', data, views)
     const getComp = () => {
       if (data.action === 'design') {
         return <Drawer key={data.item} modName={data.item} />
@@ -70,8 +70,10 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
         return <div>Wrong Editor</div>
       }
     }
-    const newView = { comp: getComp(), name: data.item, type: data.action }
-    setViews([...views, newView])
+    if (active === id) {
+      const newView = { comp: getComp(), name: data.item, type: data.action }
+      setViews([...views, newView])
+    }
   }
   const splitTitleView = () => {
     const titles: string[] = []
@@ -99,9 +101,13 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
     newViews.splice(index, 1)
     setViews(newViews)
   }
+  const changeActive = (e: React.MouseEvent) => {
+    setActive(id)
+  }
   const [titles, bodies] = splitTitleView()
+  console.log(id)
   return (
-    <div className='main' >
+    <div className='main' onClick={changeActive} >
       <TabContainer id={id} titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}
         onAction={removeTab}  >
         {bodies}

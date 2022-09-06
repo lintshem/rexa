@@ -25,16 +25,16 @@ const comp1 = new Comp('div', { width: 120, height: 200, background: 'grey' }, [
 comp1.setId('frr')
 const comp3 = new Comp('div', { width: 120, height: 200, background: 'pink' }, ['Outer'])
 comp3.setId('vel')
-
 const comp2 = new Comp('div', { width: 200, height: 400, background: 'lavender' }, [comp3, 'Test div', comp1])
 comp2.setId('top')
 mod.addComp(comp2)
-
 export const modulesAtom = atom<Module[]>([mod])
-
 export const themeAtom = atomWithStorage('theme', 'dark')
 export const activeModAtom = atom('')
 export const modUpdateAtom = atom(1)
 export const codeStyleAtom = atomWithStorage('code-style', { fontSize: '16px', })
 export const codeScrollAtom = atomFamily(param => atom(0))
 export const prevChangeAtom = atomFamily(p => atom(0))
+export const defSize = atomWithStorage('def-size', { width: 350, height: 600 })
+export const prevSizeAtom = atomFamily(p => atom({ width: 350, height: 600 }))
+export const activeWSAtom = atom(0)
