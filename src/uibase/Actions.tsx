@@ -50,9 +50,9 @@ const Actions = ({ mod }: IAction) => {
                 <div className='act-name' >{act.name}</div>
                 <input className='rexa-input' value={value} onChange={(e) => setValue(e.target.value)}
                     onBlur={() => updateValue(value)} placeholder='action' />
-                <Popover width="80%" open={openHelp} clickClose={true} >
+                <Popover width="80%" open={openHelp} clickClose={true} setOpen={setOpenHelp} >
                     <div className='popover' >
-                        {methods.map(m => <SelectItem name={m} />)}
+                        {methods.map(m => <SelectItem key={m} name={m} />)}
                     </div>
                 </Popover>
                 <input className='rexa-input' value={args} onChange={(e) => setArgs(e.target.value)}

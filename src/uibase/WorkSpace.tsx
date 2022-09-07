@@ -105,7 +105,6 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
     setActive(id)
   }
   const [titles, bodies] = splitTitleView()
-  console.log(id)
   return (
     <div className='main' onClick={changeActive} >
       <TabContainer id={id} titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}

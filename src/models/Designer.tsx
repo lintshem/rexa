@@ -23,6 +23,7 @@ export const Wrapper = ({ comp, modId, module }: IWrapper) => {
         }
         const saveEdit = (e: React.FocusEvent<HTMLDivElement>) => {
             comp.children[index] = e.currentTarget.textContent || ''
+            prevUpdate(p => p % 100 + 1)
         }
         return (
             <div contentEditable suppressContentEditableWarning
@@ -87,7 +88,9 @@ export const Wrapper = ({ comp, modId, module }: IWrapper) => {
         //Prevent content editable getting data
         return true
     }
-
+    if (comp.isModule) {
+        return comp.getDead(comp.module!)
+    }
     const Component = comp.elem as any
     const [styleProps, baseProps] = getStyles()
     //  console.log(comp.id,baseProps,styleProps,comp.props,comp.nonStyleProps )
@@ -144,7 +147,7 @@ interface IEditProps {
 const Designer = ({ module }: IEditProps) => {
     const [,] = useAtom(attribAtom)
     const [size, setSize] = useAtom(prevSizeAtom('des' + module.name))
-    const getWrappedTree = (module: Module) => {
+    const getWrappedTree = (module: Module, active = true) => {
         return module.tree.map(c => <Wrapper key={c.id} comp={c} modId={module.name} module={module} />)
     }
     const updateSize = (e: any, dir: any, a: any, d: any) => {

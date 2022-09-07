@@ -19,7 +19,7 @@ import { getAction, propItems } from "../util/props"
 // }
 export interface IAction { [key: string]: { func: string, args: string } }
 export interface CompType { type: string, name: string, vals: string[] }
-export type Child = (Comp | string | number | boolean)
+export type Child = (Comp | Module | string | number | boolean)
 type ID = string
 export class Comp {
     id: ID = ''
@@ -30,6 +30,8 @@ export class Comp {
     nonStyleProps: string[] = []
     actions: IAction = {}
     instance: any = ''
+    isModule = false
+    module: Module | undefined
     constructor(elem: string, props: object, children: Child[]) {
         this.elem = elem
         this.setDefaultProps()
@@ -39,6 +41,9 @@ export class Comp {
         this.setNonStyleProps()
         this.setDefaultActions()
     }
+    setIsModule(val: boolean = true) {
+        this.isModule = val
+    }
     genId() {
         this.setId(uniqueId())
     }
@@ -46,7 +51,14 @@ export class Comp {
         this.id = id
     }
     draw(): any {
-        return React.createElement(this.elem, { key: this.id, ...this.props }, this.children.map(comp => Comp._drawItem(comp)))
+        return React.createElement(this.elem, { key: this.id, ...this.props }, this.children.map(comp => {
+            if (!this.isModule) {
+                return Comp._drawItem(comp)
+            } else {
+                console.log(this.isModule, this)
+                return this.module?.tree[0].getLive(this.module)
+            }
+        }))
     }
     static _drawItem(comp: Child) {
         if (['string', 'number', 'boolean'].includes(typeof comp)) {
@@ -76,6 +88,7 @@ export class Comp {
         return propTypes
     }
     setNonStyleProps() {
+        if (!this.elem) return
         const props = propItems[this.elem]
         for (const prop of props) {
             if (prop.notStyle) {
@@ -130,32 +143,62 @@ export class Comp {
         }
         return [styles, other]
     }
-    getLive(mod: Module) {
-        const Elm = this.elem
-        const [styles, others] = this.propSplit()
-        const acts = mod.getActions(this.actions)
-        return (
-            <Elm
-                {...others}
-                style={styles}
-                {...acts}
-            >
-                {this.children.map(c => {
-                    if (c instanceof Comp) {
-                        return c.getLive(mod)
-                    } else {
-                        return c
-                    }
+    getLive(mod: Module): any {
+        if (!this.isModule) {
+            const Elm = this.elem
+            const [styles, others] = this.propSplit()
+            const acts = mod.getActions(this.actions)
+            return (
+                <Elm
+                    key={this.id}
+                    {...others}
+                    style={styles}
+                    {...acts}
+                >
+                    {this.children.map(c => {
+                        if (c instanceof Comp) {
+                            return c.getLive(mod)
+                        } else {
+                            return c
+                        }
 
-                })}
-            </Elm>
-        )
+                    })}
+                </Elm>
+            )
+        } else {
+            return this.module?.tree[0].getLive(this.module)
+        }
+
+    }
+    getDead(mod: Module): any {
+        if (!this.isModule) {
+            const Elm = this.elem
+            const [styles, others] = this.propSplit()
+            return (
+                <Elm
+                    key={this.id}
+                    {...others}
+                    style={styles}
+                >
+                    {this.children.map(c => {
+                        if (c instanceof Comp) {
+                            return c.getLive(mod)
+                        } else {
+                            return c
+                        }
+                    })}
+                </Elm>
+            )
+        } else {
+            return this.module?.tree[0].getDead(this.module)
+        }
+
     }
 }
 
 const GETCODE = (name: string) => {
     const c =
-`
+        `
 class code{
     a = 12
     constructor(state){
@@ -163,17 +206,17 @@ class code{
         Object.assign(this, state)
     }
     getName(){
-        console.log("HaHa")
-        return ''
-    }
+        this.setProp('vel','background','green')
+        console.log("HaHa",this.state)
+     }
     draw(){
 
     }
 }
-                return code
+return code
 //# sourceURL=${name.split(' ').join('')}.js
 `
-return c
+    return c
 }
 export class Module {
     name: string = ''
@@ -181,6 +224,7 @@ export class Module {
     tree: Comp[] = []
     code: string = ''
     codeClass: any = ''
+    updater: Function | undefined
     constructor(name: string = '') {
         this.name = name;
         this.code = GETCODE(name)
@@ -196,12 +240,32 @@ export class Module {
             return []
         }
     }
+    getStateArg() {
+        const treeComps = this.flatTree()
+        const state: { [key: string]: any } = {}
+        for (const comp of treeComps) {
+            state[comp.id] = { ...comp.props }
+        }
+        const setProp = (id: string, prop: string, val: string) => {
+            const comp = treeComps.find(c => c.id === id)
+            if (!comp) {
+                console.warn("Comp not found", this.name, 'id', id, 'prop', prop)
+                return
+            }
+            if (!Object.keys(comp.props).find(k => k === prop)) {
+                console.warn("Prop not found", this.name, 'id', id, 'prop', prop)
+            }
+            comp.props[prop] = val;
+            if (this.updater) this.updater((p: number) => p % 100 + 1)
+        }
+        return { state, setProp }
+    }
     getCodeClass() {
         try {
             //eslint-disable-next-line
             const getCode = Function(this.code)
             const Code = getCode()
-            const code = new Code({})
+            const code = new Code(this.getStateArg())
             if (typeof code !== 'object') {
                 throw new SyntaxError("Does not return a class ")
             }
@@ -212,12 +276,18 @@ export class Module {
             return false;
         }
     }
-    getActions(actions: IAction) {
+    getActions(actions: IAction, update?: Function) {
         const actionProps: { [key: string]: Function } = {}
         for (const [key, val] of Object.entries(actions)) {
             const action = this.codeClass[val.func]
             if (action) {
-                actionProps[key] = ()=>this.codeClass[val.func]()
+                actionProps[key] = () => {
+                    try {
+                        return this.codeClass[val.func](...val.args.split(','))
+                    } catch (e) {
+                        console.log('Action error for ', this.name, key, e)
+                    }
+                }
             }
         }
         return actionProps
