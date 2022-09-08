@@ -1,0 +1,9 @@
+.set-main {
+    width: 300px;
+    max-height: calc(100% - 20px);
+    overflow: auto;
+}
+
+.title {
+    text-align: center;
+}

@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import { atomFamily, atomWithStorage } from 'jotai/utils'
+import { AppClass } from "../models/AppClass";
 import { Comp, Module } from "../models/Module";
 
 export const basicCompsAtom = atom([
@@ -32,13 +33,27 @@ const comprexa = new Comp('div', {}, [])
 comprexa.setIsModule(true)
 comprexa.module = mod2;
 
-const comp3 = new Comp('div', { width: 120, height: 200, background: 'pink' }, ['Outer',comprexa])
+const comp3 = new Comp('div', { width: 120, height: 200, background: 'pink' }, ['Outer', comprexa])
 comp3.setId('vel')
 const comp2 = new Comp('div', { width: 200, height: 400, background: 'lavender' }, [comp3, 'Test div', comp1])
 comp2.setId('top')
 mod.addComp(comp2)
 
-export const modulesAtom = atom<Module[]>([mod, mod2])
+const app = new AppClass('Starter', [mod, mod2])
+export const appAtom = atom(app)
+
+export const modulesAtom = atom(
+    (get) => {
+        return get(appAtom).getModules()
+    },
+    (get, set, newVal: Module[]) => {
+        const app = get(appAtom)
+        const newApp = AppClass.copy(app)
+        newApp.modules = newVal
+        set(appAtom, newApp)
+        console.info('wrote', get(appAtom))
+    }
+)
 export const themeAtom = atomWithStorage('theme', 'dark')
 export const activeModAtom = atom('')
 export const modUpdateAtom = atom(1)
@@ -48,3 +63,4 @@ export const prevChangeAtom = atomFamily(p => atom(0))
 export const defSize = atomWithStorage('def-size', { width: 350, height: 600 })
 export const prevSizeAtom = atomFamily(p => atom({ width: 350, height: 600 }))
 export const activeWSAtom = atom(0)
+export const savedAppAtom = atomWithStorage('saved-app', '')

@@ -1,0 +1,16 @@
+
+.rename-dirty {
+    color: var(--c-dirty);
+}
+
+.rf-main {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid var(--c-bord);
+}
+input {
+    background: var(--c-back);
+    color: inherit;
+    width: calc(100% - 20px);
+    border: 0px;
+}

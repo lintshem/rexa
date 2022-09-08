@@ -3,6 +3,7 @@ import React from 'react'
 import { themeAtom } from '../store/main'
 import "./Titlebar.scoped.css"
 import { FaMoon, FaSun } from 'react-icons/fa'
+import Settings from '../components/Settings'
 
 export const ThemeButton = () => {
   const [theme, setTheme] = useAtom(themeAtom)
@@ -23,6 +24,7 @@ const Titlebar = () => {
   return (
     <div className='main' >
       Titlebar
+      <Settings  />
       <ThemeButton />
     </div>
   )

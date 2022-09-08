@@ -49,8 +49,17 @@ export const useBetterDimensions = (dist = 10) => {
     const wd = Math.abs(size.w - width)
     const wh = Math.abs(size.h - height)
     if (wd > dist || wh > dist) {
-        setSize({ w: width, h: height})
+        setSize({ w: width, h: height })
     }
-    return { width: size.w, height: size.h, observe,entry}
+    return { width: size.w, height: size.h, observe, entry }
 }
-
+export const addShortcut = (key: string, callBack: Function, ctrl = false, shift = false) => {
+    const handler = (e: KeyboardEvent) => {
+        e.preventDefault()
+        if (e.ctrlKey == ctrl && e.shiftKey === shift && key === e.key) {
+            callBack()
+        }
+    }
+    window.document.addEventListener('keydown', handler)
+    return () => window.document.removeEventListener('keydown', handler)
+}

@@ -1,25 +1,12 @@
 import { useAtom, useAtomValue } from "jotai"
-import React, { useState } from "react"
+import React from "react"
 import { activeModAtom, modulesAtom, modUpdateAtom } from "../store/main"
 import "./ModConfig.scoped.css"
-import { MdSave } from 'react-icons/md'
 import Button from "../library/Button"
 import { sendMessage } from "../util/utils"
-import Files from "./Files"
+import Files from "../components/Files"
+import { RenameField } from "../library/RenameField"
 
-interface IRenameField { name: string, setName: (nam: string) => void }
-export const RenameField = ({ name, setName }: IRenameField) => {
-    const [value, setValue] = useState(name)
-    const isDirty = value !== name
-    const classes = `${isDirty ? 'rename-dirty' : ''}`
-    const updateName = () => setName(value)
-    return (
-        <div className="rf-main">
-            <input className={classes} value={value} onChange={(e) => setValue(e.target.value)} />
-            <div onClick={updateName} ><MdSave /></div>
-        </div>
-    )
-}
 
 export const ModuleConfig = () => {
     const modules = useAtomValue(modulesAtom)
