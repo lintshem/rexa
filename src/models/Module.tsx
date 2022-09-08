@@ -218,6 +218,7 @@ return code
 `
     return c
 }
+export interface IFile { name: string, size: number, data: string }
 export class Module {
     name: string = ''
     root: Comp | undefined
@@ -225,9 +226,13 @@ export class Module {
     code: string = ''
     codeClass: any = ''
     updater: Function | undefined
+    files: IFile[] = []
     constructor(name: string = '') {
         this.name = name;
         this.code = GETCODE(name)
+    }
+    getFiles() {
+        return this.files
     }
     getMethods(): string[] {
         try {
@@ -258,7 +263,30 @@ export class Module {
             comp.props[prop] = val;
             if (this.updater) this.updater((p: number) => p % 100 + 1)
         }
-        return { state, setProp }
+        const getData = (name: string) => {
+            return this.files.find(f => f.name === name)
+        }
+        function getFile(fileName: string) {
+            const dataFile = getData(fileName)
+            if (!dataFile) {
+                console.warn('Not a valid filename', fileName)
+                return null
+            }
+            const dataURI = dataFile.data
+            // convert base64 to raw binary data held in a string
+            // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+            var byteString = window.atob(dataURI.split(',')[1]);
+            // separate out the mime component
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            // write the bytes of the string to an ArrayBuffer
+            var ab = new ArrayBuffer(byteString.length);
+            var ia = new Uint8Array(ab);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+        return { state, setProp, getData, getFile, }
     }
     getCodeClass() {
         try {
@@ -281,9 +309,12 @@ export class Module {
         for (const [key, val] of Object.entries(actions)) {
             const action = this.codeClass[val.func]
             if (action) {
-                actionProps[key] = () => {
+                actionProps[key] = (...baseArgs: any[]) => {
                     try {
-                        return this.codeClass[val.func](...val.args.split(','))
+                        if (val.args) {
+                            baseArgs.unshift(...val.args.split(','))
+                        }
+                        return this.codeClass[val.func](...baseArgs)
                     } catch (e) {
                         console.log('Action error for ', this.name, key, e)
                     }
@@ -375,4 +406,18 @@ export class Module {
         const comp = this.flatTree().find(c => c.id === id)
         return comp
     }
+    async readDataURL(file: File) {
+        return new Promise<string>((res, rej) => {
+            const reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onerror = rej
+            reader.onload = (e) => res(reader.result as string)
+        })
+    }
+    async addFile(file: File) {
+        const data = await this.readDataURL(file)
+        const size = file.size, name = file.name;
+        this.files.unshift({ name, size, data })
+    }
+
 }

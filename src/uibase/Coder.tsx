@@ -25,7 +25,6 @@ const Coder = ({ modName }: ICoder) => {
     }
     const codeChange = (code: string, ...rest: any) => {
         mod.code = code
-        console.log(rest, rest[0])
         setCodeUpdate(c => c % 100 + 1)
     }
     return (

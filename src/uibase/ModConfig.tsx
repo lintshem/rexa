@@ -5,6 +5,7 @@ import "./ModConfig.scoped.css"
 import { MdSave } from 'react-icons/md'
 import Button from "../library/Button"
 import { sendMessage } from "../util/utils"
+import Files from "./Files"
 
 interface IRenameField { name: string, setName: (nam: string) => void }
 export const RenameField = ({ name, setName }: IRenameField) => {
@@ -50,13 +51,14 @@ export const ModuleConfig = () => {
         sendMessage('workspace', { action: 'live', item: name })
     }
     return (
-        <div key={name} >
+        <div key={name} className="main" >
             <RenameField name={name} setName={setName} />
             <div className="btn-actions">
                 <Button onClick={openDesign}  >Design</Button>
                 <Button onClick={openCode}  >Code</Button>
                 <Button onClick={openLive}  >Live</Button>
             </div>
+            <Files modName={name} />
         </div>
 
     )
