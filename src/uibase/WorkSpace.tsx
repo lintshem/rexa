@@ -8,6 +8,7 @@ import Coder from './Coder'
 import Preview from './Preview'
 import { useAtom } from 'jotai'
 import { activeWSAtom } from '../store/main'
+import Constraint from '../components/Constraint'
 
 interface IWorkSpace { height?: number, id: any }
 const WorkSpace = ({ height, id }: IWorkSpace) => {
@@ -23,6 +24,11 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
   interface IView { comp: any, name: string, type: string }
   const [views, setViews] = useState<IView[]>([
     {
+      comp: <Constraint />,
+      name: 'COnst',
+      type: 'const',
+    },
+    {
       comp: <Preview key="mdtest" modName='ModTest' />,
       name: 'ModTest',
       type: 'live',
@@ -31,13 +37,6 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
       comp: <Drawer key="mdtest" modName='ModTest' />,
       name: 'ModTest',
       type: 'design',
-    },
-    {
-      comp: <div key={"ws"} className='ws-main' >
-        one
-      </div>,
-      name: 'TabTest',
-      type: '',
     },
     {
       comp: <Coder key="modcod" modName='ModTest' />,
