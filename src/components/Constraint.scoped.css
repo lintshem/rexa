@@ -1,5 +1,18 @@
-.stage{
-    width:300px;
-    height:450px;
-    background: grey;;
+.stage {
+    width: 300px;
+    height: 450px;
+    background: grey;
+    position: relative;
+}
+
+.out {
+    background: pink;
+}
+
+.cont {
+    position: absolute;
+    background: orange;
+    box-shadow: 0px 0x 2px 2px blue;
+    margin: 2px;
+
 }
