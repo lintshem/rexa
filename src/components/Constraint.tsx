@@ -1,26 +1,27 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./Constraint.scoped.css"
 
 import { useBoundingclientrect } from 'rooks'
 import { Resizable } from 're-resizable'
 
-interface IBond { l: number, r: number, t: number, b: number }
+//interface IBond { l: number, r: number, t: number, b: number }
 interface IItemCont { items: IItemObj[], index: number, item: IItemObj, update: Function, par: DOMRect | null }
 const ItemCont = ({ item, items, update, par }: IItemCont) => {
     const ref = useRef(null)
     const rect = useBoundingclientrect(ref)
-    useLayoutEffect(() => {
-        if (rect && par) {
-            item.bb = { l: rect.left, r: rect.right, t: rect.top, b: rect.bottom }
-            item.bb.t -= par.top
-            item.bb.b = item.bb.b - par.top
-            item.bb.l -= par.left
-            item.bb.r = item.bb.r - par.left
-            update((a: number) => a % 100 + 1)
-            console.log('updating', item.bb)
-        }
+    useEffect(() => {
+        update((a: number) => a % 100 + 1)
         //eslint-disable-next-line
-    }, [rect])
+    }, [rect, par, update])
+    //  console.log('rendring', item.name)
+    if (rect && par) {
+        item.bb = { l: rect.left, r: rect.right, t: rect.top, b: rect.bottom }
+        item.bb.t -= par.top
+        item.bb.b = item.bb.b - par.top
+        item.bb.l -= par.left
+        item.bb.r = item.bb.r - par.left
+         //      console.log('updating', item.bb)
+    }
     const set = (a: number) => a !== -1
     const retBB = (index: number) => items[index].bb
     const getStyle = () => {
@@ -41,17 +42,29 @@ const ItemCont = ({ item, items, update, par }: IItemCont) => {
             const ds = d - item.r
             if (par) {
                 const dw = par.width - ds
-                console.log(item.name, d, ds, dw, retBB(cn.r))
+                //           console.log(item.name, d, ds, dw, retBB(cn.r))
                 styles['right'] = dw
             }
             //styles['right'] = retBB(cn.r).l + item.r
         }
-        console.log(item.name, styles)
+        if (set(cn.l)) {
+            const d = retBB(cn.l).r
+            const ds = d + item.l
+            if (par) {
+                const dw = ds// par.width - ds
+                console.log(item.name, d, ds, dw, retBB(cn.l))
+                styles['left'] = dw
+            }
+
+            //styles['right'] = retBB(cn.r).l + item.r
+        }
+        //    console.log(item.name, styles)
         return styles
+
     }
     return (
         <div className='cont' style={getStyle() as any} ref={ref} >
-            items {item.name}
+            IT {item.name}
         </div>
     )
 }
@@ -81,7 +94,6 @@ const getBB = () => {
 const getCN = () => {
     return { t: -1, b: -1, l: -1, r: -1 }
 }
-
 const items = [
     { w: 300, h: 400, t: -1, b: -1, l: -1, r: -1, name: 'oner', bb: getBB(), cn: getCN() },
     { w: 70, h: 130, t: 5, b: -1, l: -1, r: 10, name: 'oner', bb: getBB(), cn: getCN() },
@@ -89,9 +101,8 @@ const items = [
     { w: -1, h: 50, t: 30, b: 15, l: 10, r: 0, name: 'twos-hang', bb: getBB(), cn: { ...getCN(), t: 2, b: 4, r: 4 } },
     { w: 120, h: -1, t: 5, b: 10, l: -1, r: -10, name: 'fress', bb: getBB(), cn: { ...getCN(), r: 1, t: 3 } },
     { w: -1, h: 50, t: -1, b: 10, l: 15, r: 20, name: 'LeftBot', bb: getBB(), cn: { ...getCN(), r: 4 } },
-    { w: -1, h: -1, t: 1, b: 10, l: 10, r: 10, name: 'RightBot', bb: getBB(), cn: { ...getCN(), l: 3,t:1 } },
-    { w: -1, h: 50, t: -1, b: 10, l: 15, r: 20, name: 'LeftBot', bb: getBB(), cn: { ...getCN(), r: 4 } },
-    
+    { w: -1, h: -1, t: 10, b: 13, l: 20, r: 10, name: 'RightBot', bb: getBB(), cn: { ...getCN(), l: 2, t: 1, b: -1 } },
+    { w: -1, h: 50, t: 30, b: -1, l: 10, r: 7, name: 'hang-left', bb: getBB(), cn: { ...getCN(), b: 2, l: 3, t: 2 } },
 ] as IItemObj[]
 
 const Constraint = () => {
@@ -102,10 +113,13 @@ const Constraint = () => {
     const update = useState(1)[1]
 
     const items2 = [...items].slice(1)
-    console.log(items2)
+    //  console.log('rendring parent', items2)
+    const resize = () => {
+        update(a => a % 100 + 1)
+    }
     return (
         <div ref={ref2} className='out' >
-            <Resizable defaultSize={{ width: 300, height: 400 }}  >
+            <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
                 <div className='stage' ref={ref} >
                     <div style={{ marginLeft: 20 }} > One </div>
                     {items2.map((m, i) => <ItemCont key={m.name} item={m} index={i} items={items} update={update}
