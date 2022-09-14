@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react'
 import "./Constraint.scoped.css"
 
 import { useBoundingclientrect } from 'rooks'
+import { Resizable } from 're-resizable'
 
 interface IBond { l: number, r: number, t: number, b: number }
 interface IItemCont { items: IItemObj[], index: number, item: IItemObj, update: Function, par: IBond }
@@ -76,8 +77,9 @@ const items = [
     { w: 300, h: 400, t: -1, b: -1, l: -1, r: -1, name: 'oner', bb: getBB(), cn: getCN() },
     { w: 70, h: 130, t: 5, b: -1, l: -1, r: 10, name: 'oner', bb: getBB(), cn: getCN() },
     { w: 100, h: 120, t: 30, b: - 1, l: 15, r: -1, name: 'twos', bb: getBB(), cn: getCN() },
-    { w: -1, h: -1, t: 30, b: 15, l: 10, r: 10, name: 'twos-hang', bb: getBB(), cn: { ...getCN(), t: 2, b: 4, l: -1 } },
-    { w: 120, h: -1, t: 220, b: 10, l: -1, r: 30, name: 'fress', bb: getBB(), cn: { ...getCN(), r: 2 } },
+    { w: -1, h: 50, t: 30, b: 15, l: 10, r: 10, name: 'twos-hang', bb: getBB(), cn: { ...getCN(), t: 2, b: 4, l: -1 } },
+    { w: 120, h: -1, t: 30, b: 10, l: -1, r: 30, name: 'fress', bb: getBB(), cn: { ...getCN(), r: 2, t: 3 } },
+    { w: -1, h: 50, t: -1, b: 10, l: 15, r: 20, name: 'LeftBot', bb: getBB(), cn: { ...getCN(), r: 4 } },
 ] as IItemObj[]
 
 const Constraint = () => {
@@ -91,11 +93,13 @@ const Constraint = () => {
     console.log(items2)
     return (
         <div ref={ref2} className='out' >
-            <div className='stage' ref={ref} >
-                <div style={{ marginLeft: 20 }} > One </div>
-                {items2.map((m, i) => <ItemCont key={m.name} item={m} index={i} items={items} update={update}
-                    par={rect ? { r: rect.right, l: rect.left, t: rect.top, b: rect.bottom } : {} as any} />)}
-            </div>
+            <Resizable defaultSize={{ width: 300, height: 400 }}  >
+                <div className='stage' ref={ref} >
+                    <div style={{ marginLeft: 20 }} > One </div>
+                    {items2.map((m, i) => <ItemCont key={m.name} item={m} index={i} items={items} update={update}
+                        par={rect ? { r: rect.right, l: rect.left, t: rect.top, b: rect.bottom } : {} as any} />)}
+                </div>
+            </Resizable>
             <TestDrag />
         </div>
     )
