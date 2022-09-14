@@ -5,17 +5,17 @@ import { useBoundingclientrect } from 'rooks'
 import { Resizable } from 're-resizable'
 
 interface IBond { l: number, r: number, t: number, b: number }
-interface IItemCont { items: IItemObj[], index: number, item: IItemObj, update: Function, par: IBond }
+interface IItemCont { items: IItemObj[], index: number, item: IItemObj, update: Function, par: DOMRect | null }
 const ItemCont = ({ item, items, update, par }: IItemCont) => {
     const ref = useRef(null)
     const rect = useBoundingclientrect(ref)
     useLayoutEffect(() => {
-        if (rect) {
+        if (rect && par) {
             item.bb = { l: rect.left, r: rect.right, t: rect.top, b: rect.bottom }
-            item.bb.t -= par.t
-            item.bb.b = item.bb.b - par.t
-            item.bb.l -= par.l
-            item.bb.r = item.bb.r - par.l
+            item.bb.t -= par.top
+            item.bb.b = item.bb.b - par.top
+            item.bb.l -= par.left
+            item.bb.r = item.bb.r - par.left
             update((a: number) => a % 100 + 1)
             console.log('updating', item.bb)
         }
@@ -36,7 +36,16 @@ const ItemCont = ({ item, items, update, par }: IItemCont) => {
         if (set(cn.t)) styles['top'] = retBB(cn.t).b + item.t
         if (set(cn.b)) styles['bottom'] = retBB(cn.b).t + item.b
         if (set(cn.l)) styles['left'] = retBB(cn.l).r + item.l
-        if (set(cn.r)) styles['right'] = retBB(cn.r).l + item.r
+        if (set(cn.r)) {
+            const d = retBB(cn.r).l
+            const ds = d - item.r
+            if (par) {
+                const dw = par.width - ds
+                console.log(item.name, d, ds, dw, retBB(cn.r))
+                styles['right'] = dw
+            }
+            //styles['right'] = retBB(cn.r).l + item.r
+        }
         console.log(item.name, styles)
         return styles
     }
@@ -76,10 +85,13 @@ const getCN = () => {
 const items = [
     { w: 300, h: 400, t: -1, b: -1, l: -1, r: -1, name: 'oner', bb: getBB(), cn: getCN() },
     { w: 70, h: 130, t: 5, b: -1, l: -1, r: 10, name: 'oner', bb: getBB(), cn: getCN() },
-    { w: 100, h: 120, t: 30, b: - 1, l: 15, r: -1, name: 'twos', bb: getBB(), cn: getCN() },
-    { w: -1, h: 50, t: 30, b: 15, l: 10, r: 10, name: 'twos-hang', bb: getBB(), cn: { ...getCN(), t: 2, b: 4, l: -1 } },
-    { w: 120, h: -1, t: 30, b: 10, l: -1, r: 30, name: 'fress', bb: getBB(), cn: { ...getCN(), r: 2, t: 3 } },
+    { w: -1, h: 120, t: 30, b: - 1, l: 15, r: 5, name: 'twos', bb: getBB(), cn: { ...getCN(), r: 1 } },
+    { w: -1, h: 50, t: 30, b: 15, l: 10, r: 0, name: 'twos-hang', bb: getBB(), cn: { ...getCN(), t: 2, b: 4, r: 4 } },
+    { w: 120, h: -1, t: 5, b: 10, l: -1, r: -10, name: 'fress', bb: getBB(), cn: { ...getCN(), r: 1, t: 3 } },
     { w: -1, h: 50, t: -1, b: 10, l: 15, r: 20, name: 'LeftBot', bb: getBB(), cn: { ...getCN(), r: 4 } },
+    { w: -1, h: -1, t: 1, b: 10, l: 10, r: 10, name: 'RightBot', bb: getBB(), cn: { ...getCN(), l: 3,t:1 } },
+    { w: -1, h: 50, t: -1, b: 10, l: 15, r: 20, name: 'LeftBot', bb: getBB(), cn: { ...getCN(), r: 4 } },
+    
 ] as IItemObj[]
 
 const Constraint = () => {
@@ -97,7 +109,7 @@ const Constraint = () => {
                 <div className='stage' ref={ref} >
                     <div style={{ marginLeft: 20 }} > One </div>
                     {items2.map((m, i) => <ItemCont key={m.name} item={m} index={i} items={items} update={update}
-                        par={rect ? { r: rect.right, l: rect.left, t: rect.top, b: rect.bottom } : {} as any} />)}
+                        par={rect} />)}
                 </div>
             </Resizable>
             <TestDrag />
