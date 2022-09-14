@@ -8,20 +8,34 @@ import { Resizable } from 're-resizable'
 interface IItemCont { items: IItemObj[], index: number, item: IItemObj, update: Function, par: DOMRect | null }
 const ItemCont = ({ item, items, update, par }: IItemCont) => {
     const ref = useRef(null)
-    const rect = useBoundingclientrect(ref)
-    useEffect(() => {
-        update((a: number) => a % 100 + 1)
-        //eslint-disable-next-line
-    }, [rect, par, update])
-    //  console.log('rendring', item.name)
-    if (rect && par) {
-        item.bb = { l: rect.left, r: rect.right, t: rect.top, b: rect.bottom }
-        item.bb.t -= par.top
-        item.bb.b = item.bb.b - par.top
-        item.bb.l -= par.left
-        item.bb.r = item.bb.r - par.left
-         //      console.log('updating', item.bb)
+    const [oldRect, setOld] = useState({ w: 0, h: 0 })
+//    // const rect = useBoundingclientrect(ref)
+//     useEffect(() => {
+//         update((a: number) => a % 100 + 1)
+//         //eslint-disable-next-line
+//     }, [rect, par, update])
+//     //  console.log('rendring', item.name)
+
+    if ( par) {
+        if (ref.current && ref.current as HTMLDivElement) {
+            const rect = (ref.current as HTMLElement).getBoundingClientRect()
+            item.bb = { l: rect.left, r: rect.right, t: rect.top, b: rect.bottom }
+            item.bb.t -= par.top
+            item.bb.b = item.bb.b - par.top
+            item.bb.l -= par.left
+            item.bb.r = item.bb.r - par.left
+            if (oldRect.w !== rect.width || oldRect.h !== rect.height) {
+                console.log('updating', item.bb)
+                setOld({ w: rect.width, h: rect.height })
+                update((a: number) => a % 100 + 1)
+            } else {
+                console.log('skipping')
+            }
+        }
+    } else {
+        console.log('no rect')
     }
+    // console.log(item.name, rect)
     const set = (a: number) => a !== -1
     const retBB = (index: number) => items[index].bb
     const getStyle = () => {
@@ -52,7 +66,7 @@ const ItemCont = ({ item, items, update, par }: IItemCont) => {
             const ds = d + item.l
             if (par) {
                 const dw = ds// par.width - ds
-                console.log(item.name, d, ds, dw, retBB(cn.l))
+                //          console.log(item.name, d, ds, dw, retBB(cn.l))
                 styles['left'] = dw
             }
 
@@ -102,7 +116,7 @@ const items = [
     { w: 120, h: -1, t: 5, b: 10, l: -1, r: -10, name: 'fress', bb: getBB(), cn: { ...getCN(), r: 1, t: 3 } },
     { w: -1, h: 50, t: -1, b: 10, l: 15, r: 20, name: 'LeftBot', bb: getBB(), cn: { ...getCN(), r: 4 } },
     { w: -1, h: -1, t: 10, b: 13, l: 20, r: 10, name: 'RightBot', bb: getBB(), cn: { ...getCN(), l: 2, t: 1, b: -1 } },
-    { w: -1, h: 50, t: 30, b: -1, l: 10, r: 7, name: 'hang-left', bb: getBB(), cn: { ...getCN(), b: 2, l: 3, t: 2 } },
+    { w: -1, h: 50, t: 30, b: -1, l: 10, r: 7, name: 'hang-left', bb: getBB(), cn: { ...getCN(), b: 2, l: 3, t: 2,r:6 } },
 ] as IItemObj[]
 
 const Constraint = () => {
