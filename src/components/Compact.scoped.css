@@ -1,12 +1,14 @@
 .cattrib {
     border: 1px solid var(--c-bord);
     flex: 1;
+    overflow: hidden;
 }
 
 .center {
     border: 2px solid var(--c-bord);
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 
 .row {
@@ -19,8 +21,23 @@
 }
 
 input {
-    width: 80px;
     color: inherit;
     background: inherit;
     border: 1px solid var(--c-bord);
+}
+
+.node-input {
+    width: 80px;
+}
+
+.dims {
+    border: 2px solid var(--c-bord);
+    margin: 3px;
+
+}
+
+.dim-input {
+    width: 90px;
+    background-color: azure;
+
 }

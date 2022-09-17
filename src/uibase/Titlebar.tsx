@@ -1,9 +1,10 @@
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import React from 'react'
 import { themeAtom } from '../store/main'
 import "./Titlebar.scoped.css"
 import { FaMoon, FaSun } from 'react-icons/fa'
 import Settings from '../components/Settings'
+import { ToastContainer } from 'react-toastify'
 
 export const ThemeButton = () => {
   const [theme, setTheme] = useAtom(themeAtom)
@@ -21,11 +22,15 @@ export const ThemeButton = () => {
 }
 
 const Titlebar = () => {
+  const theme = useAtomValue(themeAtom)
   return (
     <div className='main' >
       Titlebar
       <Settings  />
       <ThemeButton />
+      <ToastContainer position='bottom-left' pauseOnHover
+        theme={theme === 'dark' ? theme : 'light'} autoClose={3000} newestOnTop
+      />
     </div>
   )
 }

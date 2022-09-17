@@ -1,18 +1,18 @@
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import React, { useEffect, useState } from 'react'
 import { MdSettings } from 'react-icons/md'
-import { toast } from 'react-toastify'
+import { toast} from 'react-toastify'
 import Button from '../library/Button'
 import Overlay from '../library/Overlay'
 import TabContainer from '../library/TabContainer'
 import { AppClass } from '../models/AppClass'
 import { Module } from '../models/Module'
-import { appAtom, savedAppAtom } from '../store/main'
+import { appAtom, savedAppAtom, themeAtom } from '../store/main'
 import { addShortcut, receiveMessage, sendMessage } from '../util/utils'
 import "./Settings.scoped.css"
 
 const AddShortCuts = () => {
-    const saver = () => {console.log('save');sendMessage('save', {})}
+    const saver = () => { console.log('save'); sendMessage('save', {}) }
     const opener = () => sendMessage('open', {})
     addShortcut('s', saver, true)
     addShortcut('o', opener, true)
@@ -46,9 +46,10 @@ const AppSet = () => {
         return () => {
             clean1()
             clean2()
-            console.log('celaning')
+            console.log('cleaning')
         }
-    },[])
+        //eslint-disable-next-line
+    }, [])
     return (
         <div >
             <Button onClick={saveApp} >Save</Button>
@@ -66,6 +67,12 @@ const ExportSet = () => {
 
 const Settings = () => {
     const [open, setOpen] = useState(true)
+    const theme = useAtomValue(themeAtom)
+    const updateTheme = () => {
+        const rootElement = document.documentElement;
+        rootElement.dataset.theme = theme;
+    }
+    updateTheme()
     if (!open) { }
     return (
         <Overlay open={open} setOpen={setOpen} top={4} left={4}
@@ -77,6 +84,7 @@ const Settings = () => {
                     <ExportSet />
                 </TabContainer>
             </div>
+         
         </Overlay>
     )
 }

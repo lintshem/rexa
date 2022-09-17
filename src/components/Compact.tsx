@@ -1,10 +1,8 @@
 import { useAtomValue } from 'jotai'
 import React, { useState } from 'react'
-import Select, { SelectWrap } from '../library/Select'
+import { SelectWrap } from '../library/Select'
 import { focusedConstAtom, focusedConstItems } from '../store/main'
 import "./Compact.scoped.css"
-import { ItemMod } from './Constraint'
-
 
 interface IConst { update: Function }
 const Compact = ({ update }: IConst) => {
@@ -20,7 +18,7 @@ const Compact = ({ update }: IConst) => {
     interface ICmpNode { pos: 'l' | 'r' | 'b' | 't' }
     const CmpNode = ({ pos }: ICmpNode) => {
         const [val, setVal] = useState('' + con[pos])
-        const anchorElem = con.cn[pos] == -1 ? 'root' : items[con.cn[pos]].name
+        const anchorElem = con.cn[pos] === -1 ? 'root' : items[con.cn[pos]].name
         const setOffset = (e: React.ChangeEvent<HTMLInputElement>) => {
             const value = e.target.value
             setVal(value)
@@ -39,12 +37,31 @@ const Compact = ({ update }: IConst) => {
         }
         return (
             <div className='node' >
-                <input type="number" onChange={setOffset} value={val} />
+                <input className='node-input' type="number" onChange={setOffset} value={val} />
                 <SelectWrap items={ids} defaultValue={anchorElem} onSelect={(i) => changeAnchor(i)} />
             </div>
         )
     }
-
+    interface ICmpDim { dim: "height" | "width" }
+    const CmpDim = ({ dim }: ICmpDim) => {
+        const dimName = dim === 'width' ? "w" : "h"
+        const [val, setVal] = useState('' + con[dimName])
+        const updateVal = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const value = e.target.value
+            setVal(value)
+            const valNo = Number(value)
+            if (value && valNo) {
+                con[dimName] = valNo
+            }
+            update((d: number) => d % 100 + 1)
+        }
+        return (
+            <div>
+                <div>{dim}</div>
+                <input className='dim-input' value={val} onChange={updateVal} />
+            </div>
+        )
+    }
     return (
         <div className='cattrib' >
             {con.name}
@@ -59,6 +76,14 @@ const Compact = ({ update }: IConst) => {
                 </div>
                 <div className='row r3' >
                     <CmpNode pos='b' />
+                </div>
+            </div>
+            <div className='dims'>
+                <div>
+                    <CmpDim dim="width" />
+                </div>
+                <div>
+                    <CmpDim dim="height" />
                 </div>
             </div>
         </div>

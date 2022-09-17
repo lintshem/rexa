@@ -3,7 +3,7 @@ import "./Constraint.scoped.css"
 import { useBoundingclientrect } from 'rooks'
 import { Resizable } from 're-resizable'
 import Compact from './Compact'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import {useAtomValue, useSetAtom } from 'jotai'
 import { focusedConstAtom, focusedConstItems } from '../store/main'
 
 interface IItemCont { items: ItemMod[], index: number, item: ItemMod, update: Function, par: DOMRect | null }
