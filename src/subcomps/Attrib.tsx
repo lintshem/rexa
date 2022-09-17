@@ -7,6 +7,7 @@ import { focusedCompAtom } from "../store/main"
 import { SketchPicker } from 'react-color'
 import Popover from "../library/Popover"
 import useDimensions from "react-cool-dimensions"
+import Select from "../library/Select"
 
 
 export interface IAttributes { mod: Module }
@@ -43,14 +44,8 @@ const Attributes = ({ mod }: IAttributes) => {
             const selectItem = (index: number) => {
                 updateValue(vals[index])
             }
-            interface ICombo { item: string, index: number }
-            const ComboItem = ({ item, index }: ICombo) => {
-                return <div className="combo-item" style={{ height: 20 }} onClick={() => selectItem(index)} >{item}</div>
-            }
             return (
-                <div className="combo" >
-                    {vals.map((v, i) => <ComboItem key={v} item={v} index={i} />)}
-                </div>
+                <Select items={vals} onSelect={selectItem} />
             )
         } else {
             console.log(types)

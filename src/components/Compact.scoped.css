@@ -1,0 +1,26 @@
+.cattrib {
+    border: 1px solid var(--c-bord);
+    flex: 1;
+}
+
+.center {
+    border: 2px solid var(--c-bord);
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    justify-content: space-around;
+}
+
+.node {
+    border: 1px solid var(--c-main);
+}
+
+input {
+    width: 80px;
+    color: inherit;
+    background: inherit;
+    border: 1px solid var(--c-bord);
+}

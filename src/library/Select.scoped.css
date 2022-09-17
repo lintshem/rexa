@@ -1,0 +1,17 @@
+.select-main {
+    position: relative;
+}
+
+.combo {
+    display: flex;
+    flex-direction: column;
+}
+
+.combo-item {
+    margin: 1px 2px;
+    background: var(--c-back);
+}
+
+.combo-item:hover {
+    background: var(--c-bord);
+}

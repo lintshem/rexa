@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import { atomFamily, atomWithStorage } from 'jotai/utils'
+import { ItemMod } from "../components/Constraint";
 import { AppClass } from "../models/AppClass";
 import { Comp, Module } from "../models/Module";
 
@@ -64,3 +65,18 @@ export const defSize = atomWithStorage('def-size', { width: 350, height: 600 })
 export const prevSizeAtom = atomFamily(p => atom({ width: 350, height: 600 }))
 export const activeWSAtom = atom(0)
 export const savedAppAtom = atomWithStorage('saved-app', '')
+
+export const focusedConstAtom = atomFamily(p => atom(''))
+const items = [
+    ItemMod.Create({ w: 300, h: 400, name: 'start' }),
+    ItemMod.Create({ w: 70, h: 130, t: 5, r: 10, name: 'oner' }),
+    ItemMod.Create({ h: 120, t: 30, l: 15, r: 5, name: 'twos' }).scn([['r', 1]]),
+    ItemMod.Create({ h: 50, t: 30, b: 15, l: 10, r: 0, name: 'twos-hang' }).scn([['t', 2], ['b', 4], ['r', 4]]),
+    ItemMod.Create({ w: 120, t: 5, b: 10, name: 'fress' }).scn([["r", 1], ['t', 3]]),
+    ItemMod.Create({ h: 50, b: 10, l: 15, r: 20, name: 'LeftBot' }).scn([['r', 4]]),
+    ItemMod.Create({ t: 10, b: 13, l: 20, r: 10, name: 'RightBot' }).scn([['l', 2], ['t', 1]]),
+    ItemMod.Create({ h: 50, t: 30, l: 10, r: 7, name: 'hang-left' }).scn([['b', 2], ['l', 3], ['t', 2], ['r', 6]]),
+] as ItemMod[]
+
+export const focusedConstItems = atomFamily(p => atom<ItemMod[]>([...items]))
+

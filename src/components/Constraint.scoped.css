@@ -6,7 +6,7 @@
 }
 
 .out {
-    background: pink;
+    display: flex;
 }
 
 .cont {

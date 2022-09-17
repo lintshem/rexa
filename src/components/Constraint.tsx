@@ -1,22 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import "./Constraint.scoped.css"
-
 import { useBoundingclientrect } from 'rooks'
 import { Resizable } from 're-resizable'
+import Compact from './Compact'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { focusedConstAtom, focusedConstItems } from '../store/main'
 
-//interface IBond { l: number, r: number, t: number, b: number }
-interface IItemCont { items: IItemObj[], index: number, item: IItemObj, update: Function, par: DOMRect | null }
+interface IItemCont { items: ItemMod[], index: number, item: ItemMod, update: Function, par: DOMRect | null }
 const ItemCont = ({ item, items, update, par }: IItemCont) => {
+    const setFocus = useSetAtom(focusedConstAtom('ss'))
     const ref = useRef(null)
     const [oldRect, setOld] = useState({ w: 0, h: 0 })
-//    // const rect = useBoundingclientrect(ref)
-//     useEffect(() => {
-//         update((a: number) => a % 100 + 1)
-//         //eslint-disable-next-line
-//     }, [rect, par, update])
-//     //  console.log('rendring', item.name)
-
-    if ( par) {
+    if (par) {
         if (ref.current && ref.current as HTMLDivElement) {
             const rect = (ref.current as HTMLElement).getBoundingClientRect()
             item.bb = { l: rect.left, r: rect.right, t: rect.top, b: rect.bottom }
@@ -25,22 +20,19 @@ const ItemCont = ({ item, items, update, par }: IItemCont) => {
             item.bb.l -= par.left
             item.bb.r = item.bb.r - par.left
             if (oldRect.w !== rect.width || oldRect.h !== rect.height) {
-                console.log('updating', item.bb)
                 setOld({ w: rect.width, h: rect.height })
                 update((a: number) => a % 100 + 1)
-            } else {
-                console.log('skipping')
             }
         }
-    } else {
-        console.log('no rect')
     }
-    // console.log(item.name, rect)
     const set = (a: number) => a !== -1
     const retBB = (index: number) => items[index].bb
+    const makeFocused = () => {
+        setFocus(item.name)
+    }
     const getStyle = () => {
         const styles: { [key: string]: number } = {}
-        //styles['background'] = /*'red' as any//*/makeRandColor() as any
+        //   styles['background'] = makeRandColor() as any
         if (set(item.b)) styles['bottom'] = item.b
         if (set(item.t)) styles['top'] = item.t
         if (set(item.l)) styles['left'] = item.l
@@ -56,78 +48,77 @@ const ItemCont = ({ item, items, update, par }: IItemCont) => {
             const ds = d - item.r
             if (par) {
                 const dw = par.width - ds
-                //           console.log(item.name, d, ds, dw, retBB(cn.r))
                 styles['right'] = dw
             }
-            //styles['right'] = retBB(cn.r).l + item.r
         }
         if (set(cn.l)) {
             const d = retBB(cn.l).r
             const ds = d + item.l
             if (par) {
-                const dw = ds// par.width - ds
-                //          console.log(item.name, d, ds, dw, retBB(cn.l))
+                const dw = ds
                 styles['left'] = dw
             }
-
-            //styles['right'] = retBB(cn.r).l + item.r
         }
-        //    console.log(item.name, styles)
         return styles
-
     }
+
     return (
-        <div className='cont' style={getStyle() as any} ref={ref} >
+        <div className='cont' style={getStyle() as any} ref={ref} onClick={makeFocused} >
             IT {item.name}
         </div>
     )
 }
-const TestDrag = () => {
-    const dragStart = (e: React.DragEvent) => {
-        e.dataTransfer.setData('text', 'div')
-
-    }
-    return (
-        <div draggable onDragStart={dragStart}   >
-            Div
-        </div>
-    )
-}
-
-interface IItemObj {
-    w: number, h: number, t: number, b: number, l: number, r: number, name: string,
-    bb: {
-        t: number, b: number, l: number, r: number,
-    }, cn: {
-        t: number, b: number, l: number, r: number,
-    }
-}
-const getBB = () => {
+interface IBond { t: number, b: number, l: number, r: number }
+const getBB = (): IBond => {
     return { t: 0, b: 0, l: 0, r: 0 }
 }
-const getCN = () => {
+const getCN = (): IBond => {
     return { t: -1, b: -1, l: -1, r: -1 }
 }
-const items = [
-    { w: 300, h: 400, t: -1, b: -1, l: -1, r: -1, name: 'oner', bb: getBB(), cn: getCN() },
-    { w: 70, h: 130, t: 5, b: -1, l: -1, r: 10, name: 'oner', bb: getBB(), cn: getCN() },
-    { w: -1, h: 120, t: 30, b: - 1, l: 15, r: 5, name: 'twos', bb: getBB(), cn: { ...getCN(), r: 1 } },
-    { w: -1, h: 50, t: 30, b: 15, l: 10, r: 0, name: 'twos-hang', bb: getBB(), cn: { ...getCN(), t: 2, b: 4, r: 4 } },
-    { w: 120, h: -1, t: 5, b: 10, l: -1, r: -10, name: 'fress', bb: getBB(), cn: { ...getCN(), r: 1, t: 3 } },
-    { w: -1, h: 50, t: -1, b: 10, l: 15, r: 20, name: 'LeftBot', bb: getBB(), cn: { ...getCN(), r: 4 } },
-    { w: -1, h: -1, t: 10, b: 13, l: 20, r: 10, name: 'RightBot', bb: getBB(), cn: { ...getCN(), l: 2, t: 1, b: -1 } },
-    { w: -1, h: 50, t: 30, b: -1, l: 10, r: 7, name: 'hang-left', bb: getBB(), cn: { ...getCN(), b: 2, l: 3, t: 2,r:6 } },
-] as IItemObj[]
+export class ItemMod {
+    name: string = ''
+    w: number = -1
+    h: number = -1
+    t: number = -1
+    b: number = -1
+    l: number = -1
+    r: number = -1
+    bb: IBond = getBB()
+    cn: IBond = getCN()
+    constructor(args: { [key: string]: any }) {
+        Object.assign(this, args)
+    }
+    scn(data: [key: keyof IBond, val: number][]) {
+        for (const d of data) {
+            this.cn[d[0]] = d[1]
+        }
+        return this
+    }
+    sbb(data: [key: keyof IBond, val: number][]) {
+        for (const d of data) {
+            this.bb[d[0]] = d[1]
+        }
+        return this
+    }
+    static Create(args: { [key: string]: any }) {
+        return new ItemMod(args)
+    }
+    updateCN(pos: keyof IBond, index: number) {
+        this.cn[pos] = index;
+    }
+    updateRect(pos: keyof IBond, index: number) {
+        this[pos] = index;
+    }
+
+}
 
 const Constraint = () => {
     const ref = useRef(null)
     const ref2 = useRef(null)
     const rect = useBoundingclientrect(ref)
-    //   const rect2 = useBoundingclientrect(ref2)
     const update = useState(1)[1]
-
+    const items = useAtomValue(focusedConstItems('ss'))
     const items2 = [...items].slice(1)
-    //  console.log('rendring parent', items2)
     const resize = () => {
         update(a => a % 100 + 1)
     }
@@ -140,7 +131,7 @@ const Constraint = () => {
                         par={rect} />)}
                 </div>
             </Resizable>
-            <TestDrag />
+            <Compact update={update} />
         </div>
     )
 }
