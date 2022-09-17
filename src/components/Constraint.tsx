@@ -3,10 +3,12 @@ import "./Constraint.scoped.css"
 import { useBoundingclientrect } from 'rooks'
 import { Resizable } from 're-resizable'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom } from '../store/main'
+import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom } from '../store/main'
+import XArrow from 'react-xarrows'
 
-interface IItemCont { items: ItemMod[], index: number, item: ItemMod, update: Function, par: DOMRect | null }
-const ItemCont = ({ item, items, update, par }: IItemCont) => {
+interface IItemCont { items: ItemMod[], index: number, item: ItemMod, update: Function, par: DOMRect | null, modName: string }
+const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
+    const showArrows = useAtomValue(showArrowsAtom)
     const setFocus = useSetAtom(focusedConstAtom('ss'))
     const ref = useRef(null)
     const [oldRect, setOld] = useState({ w: 0, h: 0 })
@@ -60,10 +62,32 @@ const ItemCont = ({ item, items, update, par }: IItemCont) => {
         }
         return styles
     }
+    const getArrows = () => {
+        const arrows: any[] = []
+        const positions = ['middle', 'left', 'right', 'top', 'bottom', 'auto']
+        for (const dir of (['t', 'b', 'l', 'r'])) {
+            if (set((item as any)[dir])) {
+                let cnName = modName + 'root'
+                if (set((item.cn as any)[dir])) {
+                    cnName = items[(item.cn as any)[dir]].name
+                    const startAnchor = positions.find(p => p.startsWith(dir)) as any
+                    arrows.push(<XArrow path='smooth' color="purple"
+                        start={modName + item.name}
+                        startAnchor={showArrows ? startAnchor : undefined}
+                        end={modName + cnName}
+                        strokeWidth={1}
+                    />)
+                }
+            }
+        }
+        return arrows
+    }
 
+    const id = modName + item.name
     return (
-        <div className='cont' style={getStyle() as any} ref={ref} onClick={makeFocused} >
+        <div className='cont' id={id} style={getStyle() as any} ref={ref} onClick={makeFocused} >
             IT {item.name}
+            {getArrows()}
         </div>
     )
 }
@@ -116,28 +140,28 @@ export class ItemMod {
 }
 
 const Constraint = () => {
-    const name = "ss"
+    const modName = "ss"
     const ref = useRef(null)
     const ref2 = useRef(null)
     const rect = useBoundingclientrect(ref)
     const update = useState(1)[1]
     const [updater, setUpdater] = useAtom(constraintUpdateAtom)
-    const items = useAtomValue(constraintItemsAtom(name))
+    const items = useAtomValue(constraintItemsAtom(modName))
     const resize = () => {
         update(a => a % 100 + 1)
     }
     const changeUpdate = () => {
-        if (updater.name !== name) {
-            setUpdater({ update: update, name })
+        if (updater.name !== modName) {
+            setUpdater({ update: update, name: modName })
         }
     }
     return (
         <div ref={ref2} className='out' onClick={changeUpdate} >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
-                <div className='stage' ref={ref} >
+                <div className='stage' ref={ref} id={modName + 'root'} >
                     <div style={{ marginLeft: 20 }} > One </div>
-                    {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} items={items} update={update}
-                        par={rect} />)}
+                    {items.map((m, i) => <ItemCont key={m.name} item={m} index={i}
+                        items={items} update={update} par={rect} modName={modName} />)}
                 </div>
             </Resizable>
 
@@ -146,3 +170,4 @@ const Constraint = () => {
 }
 
 export default Constraint
+
