@@ -78,5 +78,6 @@ const items = [
     ItemMod.Create({ h: 50, t: 30, l: 10, r: 7, name: 'hang-left' }).scn([['b', 2], ['l', 3], ['t', 2], ['r', 6]]),
 ] as ItemMod[]
 
-export const focusedConstItems = atomFamily(p => atom<ItemMod[]>([...items]))
+export const constraintItemsAtom = atomFamily(p => atom<ItemMod[]>([...items]))
+export const constraintUpdateAtom = atom<{ update: Function, name: string }>({ update: () => console.log('update not set'), name: '' })
 

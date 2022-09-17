@@ -1,13 +1,14 @@
 import { useAtomValue } from 'jotai'
 import React, { useState } from 'react'
 import { SelectWrap } from '../library/Select'
-import { focusedConstAtom, focusedConstItems } from '../store/main'
+import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom } from '../store/main'
 import "./Compact.scoped.css"
 
-interface IConst { update: Function }
-const Compact = ({ update }: IConst) => {
+interface IConst {}
+const Compact = ({} : IConst) => {
     const focused = useAtomValue(focusedConstAtom('ss'))
-    const items = useAtomValue(focusedConstItems('ss'))
+    const items = useAtomValue(constraintItemsAtom('ss'))
+    const updater = useAtomValue(constraintUpdateAtom)
     const con = items.find(t => t.name === focused)
     if (!con) {
         return (
@@ -25,7 +26,7 @@ const Compact = ({ update }: IConst) => {
             const v = parseFloat(value)
             if (v) {
                 con.updateRect(pos, v)
-                update((p: number) => p % 100 + 1)
+                updater.update((p: number) => p % 100 + 1)
             }
         }
         const changeAnchor = (index: number) => {
@@ -33,7 +34,7 @@ const Compact = ({ update }: IConst) => {
                 index = NaN
             }
             con.updateCN(pos, index)
-            update((d: number) => d % 100 + 1)
+            updater.update((d: number) => d % 100 + 1)
         }
         return (
             <div className='node' >
@@ -53,12 +54,12 @@ const Compact = ({ update }: IConst) => {
             if (value && valNo) {
                 con[dimName] = valNo
             }
-            update((d: number) => d % 100 + 1)
+            updater.update((d: number) => d % 100 + 1)
         }
         return (
             <div>
                 <div>{dim}</div>
-                <input className='dim-input' value={val} onChange={updateVal} />
+                <input className='dim-input' type="number" value={val} onChange={updateVal} />
             </div>
         )
     }

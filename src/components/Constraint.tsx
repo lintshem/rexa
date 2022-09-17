@@ -2,9 +2,8 @@ import React, { useRef, useState } from 'react'
 import "./Constraint.scoped.css"
 import { useBoundingclientrect } from 'rooks'
 import { Resizable } from 're-resizable'
-import Compact from './Compact'
-import {useAtomValue, useSetAtom } from 'jotai'
-import { focusedConstAtom, focusedConstItems } from '../store/main'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom } from '../store/main'
 
 interface IItemCont { items: ItemMod[], index: number, item: ItemMod, update: Function, par: DOMRect | null }
 const ItemCont = ({ item, items, update, par }: IItemCont) => {
@@ -113,17 +112,24 @@ export class ItemMod {
 }
 
 const Constraint = () => {
+    const name="ss"
     const ref = useRef(null)
     const ref2 = useRef(null)
     const rect = useBoundingclientrect(ref)
     const update = useState(1)[1]
-    const items = useAtomValue(focusedConstItems('ss'))
+    const [updater, setUpdater] = useAtom(constraintUpdateAtom)
+    const items = useAtomValue(constraintItemsAtom(name))
     const items2 = [...items].slice(1)
     const resize = () => {
         update(a => a % 100 + 1)
     }
+    const changeUpdate = () => {
+        if (updater.name !== name) {
+            setUpdater({ update: update ,name})
+        }
+    }
     return (
-        <div ref={ref2} className='out' >
+        <div ref={ref2} className='out' onClick={changeUpdate} >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
                 <div className='stage' ref={ref} >
                     <div style={{ marginLeft: 20 }} > One </div>
@@ -131,7 +137,7 @@ const Constraint = () => {
                         par={rect} />)}
                 </div>
             </Resizable>
-            <Compact update={update} />
+          
         </div>
     )
 }

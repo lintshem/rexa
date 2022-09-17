@@ -3,6 +3,8 @@ import { useAtom } from 'jotai'
 import { basicCompsAtom } from '../store/main'
 import { sendDrag } from '../util/utils'
 import "./Rightpane.scoped.css"
+import Compact from '../components/Compact'
+import Resizable from '../library/Resizable'
 
 
 export const Widgets = () => {
@@ -27,10 +29,10 @@ export const Widgets = () => {
 
 const Rightpane = () => {
     return (
-        <div>
-            Rightpane
+        <Resizable defRatio={[1, 1]} align='ver' >
             <Widgets />
-        </div>
+            <Compact />
+        </Resizable>
     )
 }
 

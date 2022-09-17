@@ -18,6 +18,7 @@
 
 .node {
     border: 1px solid var(--c-main);
+    margin:2px;
 }
 
 input {
@@ -33,11 +34,10 @@ input {
 .dims {
     border: 2px solid var(--c-bord);
     margin: 3px;
-
+text-align: center;
 }
 
 .dim-input {
-    width: 90px;
-    background-color: azure;
-
+    width: 90%;
+   
 }
