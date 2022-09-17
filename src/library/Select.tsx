@@ -10,7 +10,7 @@ const Select = ({ items, onSelect }: ISelect) => {
     }
     return (
         <div className='combo' onClick={(e) => e.stopPropagation()} >
-            {items.map((t, i) => <ComboItem item={t} index={i} />)}
+            {items.map((t, i) => <ComboItem key={t} item={t} index={i} />)}
         </div>
     )
 }

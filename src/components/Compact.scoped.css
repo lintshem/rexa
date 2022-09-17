@@ -8,8 +8,7 @@
     border: 2px solid var(--c-bord);
     display: flex;
     flex-direction: column;
-    overflow: auto;
-}
+  }
 
 .row {
     display: flex;
@@ -18,7 +17,7 @@
 
 .node {
     border: 1px solid var(--c-main);
-    margin:2px;
+    margin: 2px;
 }
 
 input {
@@ -34,10 +33,10 @@ input {
 .dims {
     border: 2px solid var(--c-bord);
     margin: 3px;
-text-align: center;
+    text-align: center;
 }
 
 .dim-input {
     width: 90%;
-   
+
 }

@@ -4,8 +4,7 @@ import { SelectWrap } from '../library/Select'
 import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom } from '../store/main'
 import "./Compact.scoped.css"
 
-interface IConst {}
-const Compact = ({} : IConst) => {
+const Compact = () => {
     const focused = useAtomValue(focusedConstAtom('ss'))
     const items = useAtomValue(constraintItemsAtom('ss'))
     const updater = useAtomValue(constraintUpdateAtom)
@@ -15,7 +14,7 @@ const Compact = ({} : IConst) => {
             <div>No Constraint selected</div>
         )
     }
-    const ids = ['root', ...items.map(t => t.name)]
+    const ids = ['root', ...items.map(t => t.name)].filter(id => id !== con.name)
     interface ICmpNode { pos: 'l' | 'r' | 'b' | 't' }
     const CmpNode = ({ pos }: ICmpNode) => {
         const [val, setVal] = useState('' + con[pos])
@@ -30,9 +29,6 @@ const Compact = ({} : IConst) => {
             }
         }
         const changeAnchor = (index: number) => {
-            if (index === 0) {
-                index = NaN
-            }
             con.updateCN(pos, index)
             updater.update((d: number) => d % 100 + 1)
         }

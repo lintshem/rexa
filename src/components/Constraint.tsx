@@ -39,10 +39,10 @@ const ItemCont = ({ item, items, update, par }: IItemCont) => {
         if (set(item.w)) styles['width'] = item.w
         if (set(item.h)) styles['height'] = item.h
         const cn = item.cn
-        if (set(cn.t)) styles['top'] = retBB(cn.t).b + item.t
-        if (set(cn.b)) styles['bottom'] = retBB(cn.b).t + item.b
-        if (set(cn.l)) styles['left'] = retBB(cn.l).r + item.l
-        if (set(cn.r)) {
+        if (set(cn.t) && set(item.t)) styles['top'] = retBB(cn.t).b + item.t
+        if (set(cn.b) && set(item.b)) styles['bottom'] = retBB(cn.b).t + item.b
+        if (set(cn.l) && set(item.l)) styles['left'] = retBB(cn.l).r + item.l
+        if (set(cn.r) && set(item.r)) {
             const d = retBB(cn.r).l
             const ds = d - item.r
             if (par) {
@@ -103,7 +103,11 @@ export class ItemMod {
         return new ItemMod(args)
     }
     updateCN(pos: keyof IBond, index: number) {
-        this.cn[pos] = index;
+        if (index === 0) {
+            this.cn[pos] = -1
+        } else {
+            this.cn[pos] = index;
+        }
     }
     updateRect(pos: keyof IBond, index: number) {
         this[pos] = index;
@@ -112,20 +116,19 @@ export class ItemMod {
 }
 
 const Constraint = () => {
-    const name="ss"
+    const name = "ss"
     const ref = useRef(null)
     const ref2 = useRef(null)
     const rect = useBoundingclientrect(ref)
     const update = useState(1)[1]
     const [updater, setUpdater] = useAtom(constraintUpdateAtom)
     const items = useAtomValue(constraintItemsAtom(name))
-    const items2 = [...items].slice(1)
     const resize = () => {
         update(a => a % 100 + 1)
     }
     const changeUpdate = () => {
         if (updater.name !== name) {
-            setUpdater({ update: update ,name})
+            setUpdater({ update: update, name })
         }
     }
     return (
@@ -133,11 +136,11 @@ const Constraint = () => {
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
                 <div className='stage' ref={ref} >
                     <div style={{ marginLeft: 20 }} > One </div>
-                    {items2.map((m, i) => <ItemCont key={m.name} item={m} index={i} items={items} update={update}
+                    {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} items={items} update={update}
                         par={rect} />)}
                 </div>
             </Resizable>
-          
+
         </div>
     )
 }

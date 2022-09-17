@@ -66,7 +66,7 @@ const ExportSet = () => {
 }
 
 const Settings = () => {
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(false)
     const theme = useAtomValue(themeAtom)
     const updateTheme = () => {
         const rootElement = document.documentElement;
