@@ -24,7 +24,7 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
   interface IView { comp: any, name: string, type: string }
   const [views, setViews] = useState<IView[]>([
     {
-      comp: <Constraint />,
+      comp: <Constraint props={{}} />,
       name: 'COnst',
       type: 'const',
     },

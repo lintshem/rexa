@@ -7,10 +7,11 @@ import { receiveDrag } from '../util/utils'
 import { Resizable } from 're-resizable'
 import { ContextMenuTrigger } from '../library/ContextMenu'
 import { Resizable as WrapResize } from 're-resizable'
+import Constraint from '../components/Constraint'
 
-interface IWrapper { comp: Comp, modId: string, module: Module }
+interface IWrapper { comp: Comp, modId: string, module: Module, clickStop?: boolean }
 
-export const Wrapper = ({ comp, modId, module }: IWrapper) => {
+export const Wrapper = ({ comp, modId, module, clickStop = true }: IWrapper) => {
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const [NEW_TEXT] = useAtomValue(newTextAtom)
     const randomUpdate = useState(12)[1]
@@ -39,13 +40,13 @@ export const Wrapper = ({ comp, modId, module }: IWrapper) => {
                 return <EditableText key={child} child={child} index={i} />
             } else {
                 child = child as Comp
-                return <Wrapper key={child.id} comp={child} modId={modId} module={module} />
+                return <Wrapper key={child.id} comp={child} modId={modId} module={module} clickStop={false} />
             }
         })
     }
     const clicked = (e: React.MouseEvent) => {
         setFocused(comp.id)
-        e.stopPropagation()
+        if (!clickStop) e.stopPropagation()
     }
     const classes = `wrap-main ${isFocused ? 'wrap-focused' : ''} ${resizing ? 'wrap-resize' : ''} `
     const getStyles = () => {
@@ -90,6 +91,13 @@ export const Wrapper = ({ comp, modId, module }: IWrapper) => {
     }
     if (comp.isModule) {
         return comp.getDead(comp.module!)
+    }
+    if (comp.elem === 'const') {
+        return (
+        <Constraint comp={comp} update={randomUpdate}  >
+            {getChildren(comp).map(c=>({child:c,comp}))}
+        </Constraint>
+        )
     }
     const Component = comp.elem as any
     const [styleProps, baseProps] = getStyles()

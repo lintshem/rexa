@@ -1,8 +1,9 @@
 .stage {
     width: 100%;
     height: 100%;
-    background: grey;
     position: relative;
+    border: 1px solid red;
+    background: grey;
 }
 
 .out {

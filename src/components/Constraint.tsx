@@ -1,10 +1,13 @@
 import React, { useRef, useState } from 'react'
 import "./Constraint.scoped.css"
-import { useBoundingclientrect } from 'rooks'
+import { useBoundingclientrect, useDidMount } from 'rooks'
 import { Resizable } from 're-resizable'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom } from '../store/main'
+import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom } from '../store/main'
 import XArrow from 'react-xarrows'
+import _ from 'lodash'
+import { receiveDrag } from '../util/utils'
+import { Comp } from '../models/Module'
 
 interface IItemCont { items: ItemMod[], index: number, item: ItemMod, update: Function, par: DOMRect | null, modName: string }
 const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
@@ -87,6 +90,7 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     return (
         <div className='cont' id={id} style={getStyle() as any} ref={ref} onClick={makeFocused} >
             IT {item.name}
+            {item.child}
             {getArrows()}
         </div>
     )
@@ -108,6 +112,8 @@ export class ItemMod {
     r: number = -1
     bb: IBond = getBB()
     cn: IBond = getCN()
+    child: any = null
+    comp: Comp | undefined
     constructor(args: { [key: string]: any }) {
         Object.assign(this, args)
     }
@@ -132,21 +138,26 @@ export class ItemMod {
         } else {
             this.cn[pos] = index;
         }
+        this.comp!.constraintInfo = { ...this }
     }
     updateRect(pos: keyof IBond, index: number) {
         this[pos] = index;
+        this.comp!.constraintInfo = { ...this }
     }
 
 }
 
-const Constraint = () => {
+interface IContraint { children?: any, comp?: Comp, modId?: string, props?: { [key: string]: any }, update?: Function }
+const Constraint = ({ children, comp, modId, props, update: randomUpdate }: IContraint) => {
     const modName = "ss"
+    const [focused, setFocused] = useAtom(focusedCompAtom(modId || ''))
+    const [NEW_TEXT] = useAtomValue(newTextAtom)
     const ref = useRef(null)
     const ref2 = useRef(null)
     const rect = useBoundingclientrect(ref)
     const update = useState(1)[1]
     const [updater, setUpdater] = useAtom(constraintUpdateAtom)
-    const items = useAtomValue(constraintItemsAtom(modName))
+    const [items, setItems] = useAtom(constraintItemsAtom(modName))
     const resize = () => {
         update(a => a % 100 + 1)
     }
@@ -155,13 +166,54 @@ const Constraint = () => {
             setUpdater({ update: update, name: modName })
         }
     }
+    if (!children || !_.isArray(children)) {
+        children = []
+    }
+    const items2 = children.map((c: { comp: Comp, child: any }) => {
+        const mod = new ItemMod({ name: c.comp.id, ...(comp?.constraintInfo || {}) })
+        mod.child = c.child;
+        mod.comp = comp
+        return mod
+    }) as ItemMod[]
+    useDidMount(() => {
+        setItems(items)
+    })
+    const drop = (e: React.DragEvent) => {
+        const dragData = receiveDrag(e)
+        e.preventDefault()
+        e.stopPropagation()
+        if (dragData.action === 'widget' && comp) {
+            let newChild
+            if (dragData.data === 'text') {
+                newChild = NEW_TEXT + Math.random().toFixed(2)
+            } else {
+                newChild = new Comp(dragData.data, {}, [])
+            }
+            comp.addChild(newChild)
+            if (newChild instanceof Comp) {
+                setFocused(newChild.id)
+            } else {
+                //  update(p => p % 100 + 1)
+            }
+            if (randomUpdate) randomUpdate((p: number) => p % 100 + 1)
+
+            console.log('dropped')
+        }
+        console.log('dropped-1', !!comp, dragData.action)
+        //Prevent content editable getting data
+        return true
+    }
+    console.log('updating', items)
     return (
         <div ref={ref2} className='out' onClick={changeUpdate} >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
-                <div className='stage' ref={ref} id={modName + 'root'} >
-                    <div style={{ marginLeft: 20 }} > One </div>
+                <div className='stage' ref={ref} id={modName + 'root'} {...props}
+                    onDrop={drop} onDragOver={e => e.preventDefault()} >
                     {items.map((m, i) => <ItemCont key={m.name} item={m} index={i}
                         items={items} update={update} par={rect} modName={modName} />)}
+                    {items2.map((m, i) => <ItemCont key={m.name} item={m} index={i}
+                        items={items} update={update} par={rect} modName={modName} />)}
+
                 </div>
             </Resizable>
 

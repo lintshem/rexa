@@ -1,5 +1,6 @@
 import _, { uniqueId } from "lodash"
 import React from "react"
+import { ItemMod } from "../components/Constraint"
 import { EditContainer } from "../library/Editables"
 import { getAction, propItems } from "../util/props"
 
@@ -17,6 +18,7 @@ export class Comp {
     instance: any = ''
     isModule = false
     module: Module | undefined
+    constraintInfo: ItemMod | undefined
     constructor(elem: string, props: object, children: Child[]) {
         this.elem = elem
         this.setDefaultProps()
@@ -182,7 +184,7 @@ export class Comp {
     static copy(comp: Comp) {
         const c = new Comp(comp.elem, comp.props, [])
         const children = comp.children.map(c => {
-            if (typeof c==='object' ) {
+            if (typeof c === 'object') {
                 return Comp.copy(c as Comp)
             } else {
                 return c
