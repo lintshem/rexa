@@ -18,7 +18,7 @@ export class Comp {
     instance: any = ''
     isModule = false
     module: Module | undefined
-    constraintInfo: ItemMod | undefined
+    constraintInfo: ItemMod = {} as any
     constructor(elem: string, props: object, children: Child[]) {
         this.elem = elem
         this.setDefaultProps()

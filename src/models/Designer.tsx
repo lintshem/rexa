@@ -94,9 +94,7 @@ export const Wrapper = ({ comp, modId, module, clickStop = true }: IWrapper) => 
     }
     if (comp.elem === 'const') {
         return (
-        <Constraint comp={comp} update={randomUpdate}  >
-            {getChildren(comp).map(c=>({child:c,comp}))}
-        </Constraint>
+        <Constraint comp={comp} update={randomUpdate} getChildren={getChildren} />
         )
     }
     const Component = comp.elem as any

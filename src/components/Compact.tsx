@@ -10,6 +10,7 @@ const Compact = () => {
     const updater = useAtomValue(constraintUpdateAtom)
     const con = items.find(t => t.name === focused)
     if (!con) {
+        console.log(items,focused)
         return (
             <div>No Constraint selected</div>
         )

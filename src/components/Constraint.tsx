@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./Constraint.scoped.css"
-import { useBoundingclientrect, useDidMount } from 'rooks'
+import { useBoundingclientrect, useDidMount, useDidUpdate } from 'rooks'
 import { Resizable } from 're-resizable'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom } from '../store/main'
@@ -32,6 +32,7 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     const set = (a: number) => a !== -1
     const retBB = (index: number) => items[index].bb
     const makeFocused = () => {
+        console.log('setting focuse', item)
         setFocus(item.name)
     }
     const getStyle = () => {
@@ -147,8 +148,8 @@ export class ItemMod {
 
 }
 
-interface IContraint { children?: any, comp?: Comp, modId?: string, props?: { [key: string]: any }, update?: Function }
-const Constraint = ({ children, comp, modId, props, update: randomUpdate }: IContraint) => {
+interface IContraint { getChildren?: any, comp?: Comp, modId?: string, props?: { [key: string]: any }, update?: Function }
+const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate }: IContraint) => {
     const modName = "ss"
     const [focused, setFocused] = useAtom(focusedCompAtom(modId || ''))
     const [NEW_TEXT] = useAtomValue(newTextAtom)
@@ -157,27 +158,51 @@ const Constraint = ({ children, comp, modId, props, update: randomUpdate }: ICon
     const rect = useBoundingclientrect(ref)
     const update = useState(1)[1]
     const [updater, setUpdater] = useAtom(constraintUpdateAtom)
-    const [items, setItems] = useAtom(constraintItemsAtom(modName))
+    const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modName))
     const resize = () => {
         update(a => a % 100 + 1)
     }
+    useEffect(() => {
+        // const updates = () => update((r: number) => r += 1)
+        // const timer = setInterval(updates, 1000)
+        // return () => clearInterval(timer)
+    }, [])
     const changeUpdate = () => {
         if (updater.name !== modName) {
-            setUpdater({ update: update, name: modName })
+            setUpdater({
+                update: (r: number) => {
+                    console.log('updater', r)
+                    update(r)
+                },
+                name: modName
+            })
         }
+        setItems(getItems())
     }
-    if (!children || !_.isArray(children)) {
-        children = []
+    const getItems = () => {
+        console.log(comp)
+
+        let items: ItemMod[] = []
+        if (getChildren && comp) {
+            items = getChildren(comp).map((c: any, i: number) => {
+                const child = comp.children[i]
+                console.log(child)
+                const newChild = new Comp('p', {}, [child]); newChild.setId('nop');
+                const curComp = (child instanceof Comp) ? child : newChild
+                const constr = curComp.constraintInfo
+                const mod = new ItemMod({
+                    ...constr,
+                    name: curComp.id,
+                })
+                mod.child = c.child;
+                mod.comp = curComp
+                return mod
+            })
+        }
+        return items
     }
-    const items2 = children.map((c: { comp: Comp, child: any }) => {
-        const mod = new ItemMod({ name: c.comp.id, ...(comp?.constraintInfo || {}) })
-        mod.child = c.child;
-        mod.comp = comp
-        return mod
-    }) as ItemMod[]
-    useDidMount(() => {
-        setItems(items)
-    })
+    const [items, setItems] = useState(getItems)
+
     const drop = (e: React.DragEvent) => {
         const dragData = receiveDrag(e)
         e.preventDefault()
@@ -191,15 +216,23 @@ const Constraint = ({ children, comp, modId, props, update: randomUpdate }: ICon
             }
             comp.addChild(newChild)
             if (newChild instanceof Comp) {
+                const x = e.clientX - ((rect && rect?.left) || e.clientX);
+                const y = e.clientY - ((rect && rect?.top) || e.clientY);
+                console.log(x, y, e)
+                newChild.constraintInfo.l = x;
+                newChild.constraintInfo.t = y;
                 setFocused(newChild.id)
             } else {
                 //  update(p => p % 100 + 1)
             }
             if (randomUpdate) randomUpdate((p: number) => p % 100 + 1)
 
-            console.log('dropped')
+            console.log('dropped', dragData, newChild)
+            const newItems = getItems()
+            setItems(newItems)
+            setSavedItems(newItems)
         }
-        console.log('dropped-1', !!comp, dragData.action)
+        //  console.log('dropped-1', !!comp, dragData.action)
         //Prevent content editable getting data
         return true
     }
@@ -211,9 +244,6 @@ const Constraint = ({ children, comp, modId, props, update: randomUpdate }: ICon
                     onDrop={drop} onDragOver={e => e.preventDefault()} >
                     {items.map((m, i) => <ItemCont key={m.name} item={m} index={i}
                         items={items} update={update} par={rect} modName={modName} />)}
-                    {items2.map((m, i) => <ItemCont key={m.name} item={m} index={i}
-                        items={items} update={update} par={rect} modName={modName} />)}
-
                 </div>
             </Resizable>
 
