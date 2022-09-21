@@ -3,7 +3,6 @@ import TitleBar from './uibase/Titlebar';
 import StatusBar from './uibase/Statusbar';
 import LeftPane from './uibase/Leftpane';
 import RightPane from './uibase/Rightpane';
-import WorkSpace from './uibase/WorkSpace';
 import './App.css';
 import './util/global.css';
 import "react-toastify/dist/ReactToastify.css"
@@ -18,7 +17,7 @@ const App = () => {
         <TitleBar />
         <Resizable defRatio={[1, 6, 1]} style={{}}  >
           <LeftPane />
-          <WorkArea defWs={[<WorkSpace id={-1} />]} />
+          <WorkArea isRoot />
           <RightPane />
         </Resizable>
         <StatusBar />

@@ -3,6 +3,7 @@ import { atomFamily, atomWithStorage } from 'jotai/utils'
 import { ItemMod } from "../components/Constraint";
 import { AppClass } from "../models/AppClass";
 import { Comp, Module } from "../models/Module";
+import WorkSpace from "../uibase/WorkSpace";
 
 export const basicCompsAtom = atom([
     'div', 'p', 'button', 'text', 'input', 'img'
@@ -70,7 +71,7 @@ export const savedAppAtom = atomWithStorage('saved-app', '')
 
 export const focusedConstAtom = atomFamily(p => atom(''))
 const items = [
-  //  ItemMod.Create({ w: 70, h: 130, t: 5, r: 10, name: 'oner' }),
+    //  ItemMod.Create({ w: 70, h: 130, t: 5, r: 10, name: 'oner' }),
     // ItemMod.Create({ h: 120, t: 30, l: 15, r: 5, name: 'twos' }).scn([['r', 0]]),
     // ItemMod.Create({ h: 50, t: 30, b: 15, l: 10, r: 0, name: 'twos-hang' }).scn([['t', 1], ['b', 3], ['r', 3]]),
     // ItemMod.Create({ w: 120, t: 5, b: 10, r: 10, name: 'fress' }).scn([["r", 0], ['t', 2]]),
@@ -82,3 +83,4 @@ const items = [
 export const constraintItemsAtom = atomFamily(p => atom<ItemMod[]>([...items]))
 export const constraintUpdateAtom = atom<{ update: Function, name: string }>({ update: () => console.log('update not set'), name: '' })
 export const showArrowsAtom = atomWithStorage('arrow', true)
+export const rootSpacesAtom = atom([{ comp: <WorkSpace id={-1} />, type: 'workspace' }])

@@ -1,13 +1,15 @@
 import { useAtom, useAtomValue } from 'jotai'
 import React, { useEffect, useState } from 'react'
 import { MdSettings } from 'react-icons/md'
-import { toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 import Button from '../library/Button'
 import Overlay from '../library/Overlay'
 import TabContainer from '../library/TabContainer'
 import { AppClass } from '../models/AppClass'
 import { Module } from '../models/Module'
-import { appAtom, savedAppAtom, themeAtom } from '../store/main'
+import { appAtom, rootSpacesAtom, savedAppAtom, themeAtom } from '../store/main'
+import WorkArea from '../uibase/WorkArea'
+import WorkSpace from '../uibase/WorkSpace'
 import { addShortcut, receiveMessage, sendMessage } from '../util/utils'
 import "./Settings.scoped.css"
 
@@ -22,20 +24,35 @@ AddShortCuts()
 const AppSet = () => {
     const [app, setApp] = useAtom(appAtom)
     const [update, saveUpdate] = useAtom(savedAppAtom)
+    const [spaces, setSpace] = useAtom(rootSpacesAtom)
     const saveApp = () => {
-        const appStr = JSON.stringify(app)
+        const newApp = { ...app } as any
+        newApp.spaces = spaces;
+        const appStr = JSON.stringify(newApp)
         console.log(JSON.parse(JSON.stringify(app)))
+        console.log(spaces)
+
         saveUpdate(appStr)
         toast(`${app.name} saved`)
     }
     const openApp = () => {
         try {
-            const newApp = AppClass.copy(JSON.parse(update) as AppClass)
+            const newAppData = JSON.parse(update)
+            const newApp = AppClass.copy(newAppData as AppClass)
             const modules = newApp.modules.map(m => Module.copy(m))
             newApp.modules = modules
+            const spaces = (newAppData.spaces as { type: String }[]).map(s => {
+                if (s.type === 'workspace') {
+                    return { type: 'workspace', comp: <WorkSpace id={12} /> }
+                } else {
+                    return { type: 'workarea', comp: <WorkArea /> }
+                }
+            })
+            setSpace(spaces)
             console.log(newApp)
             setApp(newApp)
             toast(`${newApp.name} opened!`)
+            sendMessage("settings", { app: newApp })
         } catch (e) {
             toast('Could not open')
         }
@@ -46,7 +63,6 @@ const AppSet = () => {
         return () => {
             clean1()
             clean2()
-            console.log('cleaning')
         }
         //eslint-disable-next-line
     }, [])
@@ -54,7 +70,6 @@ const AppSet = () => {
         <div >
             <Button onClick={saveApp} >Save</Button>
             <Button onClick={openApp} >Open</Button>
-
         </div>
     )
 }
@@ -84,7 +99,7 @@ const Settings = () => {
                     <ExportSet />
                 </TabContainer>
             </div>
-         
+
         </Overlay>
     )
 }
