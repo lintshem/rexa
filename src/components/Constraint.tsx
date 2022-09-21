@@ -3,7 +3,7 @@ import "./Constraint.scoped.css"
 import { useBoundingclientrect, useDidMount, useDidUpdate } from 'rooks'
 import { Resizable } from 're-resizable'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom } from '../store/main'
+import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom, attribAtom } from '../store/main'
 import XArrow from 'react-xarrows'
 import _ from 'lodash'
 import { receiveDrag } from '../util/utils'
@@ -86,7 +86,7 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
         }
         return arrows
     }
-
+console.log(item.child)
     const id = modName + item.name
     return (
         <div className='cont' id={id} style={getStyle() as any} ref={ref} onClick={makeFocused} >
@@ -148,8 +148,9 @@ export class ItemMod {
 
 }
 
-interface IContraint { getChildren?: any, comp?: Comp, modId?: string, props?: { [key: string]: any }, update?: Function }
-const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate }: IContraint) => {
+interface IContraint { getChildren?: any, comp?: Comp, modId?: string, props?: { [key: string]: any }, trigger?: any, update?: Function }
+const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate, trigger }: IContraint) => {
+    const [,] = useAtom(attribAtom)
     const modName = "ss"
     const [focused, setFocused] = useAtom(focusedCompAtom(modId || ''))
     const [NEW_TEXT] = useAtomValue(newTextAtom)
@@ -167,12 +168,14 @@ const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate }: I
         // const timer = setInterval(updates, 1000)
         // return () => clearInterval(timer)
     }, [])
-    const changeUpdate = () => {
-        if (updater.name !== modName) {
+    const changeUpdate = (forceIt: boolean = false) => {
+        if (updater.name !== modName || forceIt) {
             setUpdater({
                 update: (r: number) => {
-                    console.log('updater', r)
+                    console.log('updater', modName, r)
+                    //  if (randomUpdate) randomUpdate((p: number) => p % 100 + 1)
                     update(r)
+                    changeUpdate(true)
                 },
                 name: modName
             })
@@ -194,7 +197,7 @@ const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate }: I
                     ...constr,
                     name: curComp.id,
                 })
-                mod.child = c.child;
+                mod.child = c;
                 mod.comp = curComp
                 return mod
             })
@@ -219,8 +222,8 @@ const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate }: I
                 const x = e.clientX - ((rect && rect?.left) || e.clientX);
                 const y = e.clientY - ((rect && rect?.top) || e.clientY);
                 console.log(x, y, e)
-                newChild.constraintInfo.l = x;
-                newChild.constraintInfo.t = y;
+                newChild.constraintInfo.l = Math.round(x);
+                newChild.constraintInfo.t = Math.round(y);
                 setFocused(newChild.id)
             } else {
                 //  update(p => p % 100 + 1)
@@ -238,7 +241,7 @@ const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate }: I
     }
     console.log('updating', items)
     return (
-        <div ref={ref2} className='out' onClick={changeUpdate} >
+        <div ref={ref2} className='out' onClick={()=>changeUpdate()} >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
                 <div className='stage' ref={ref} id={modName + 'root'} {...props}
                     onDrop={drop} onDragOver={e => e.preventDefault()} >

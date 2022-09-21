@@ -18,7 +18,7 @@ export const isVoidElem = (elem: string) => {
 
 export const newTextAtom = atomWithStorage('newText', 'lorem ipsum')
 const mod2 = new Module('Rexa')
-const compr1 = new Comp('div', { width: 100, height: 30, color: 'white', background: 'blue' }, ['Click Me'])
+const compr1 = new Comp('div', { width: 100, height: 50, color: 'white', background: 'blue' }, ['Kate the beaautiful'])
 compr1.setId('root')
 mod2.addComp(compr1)
 

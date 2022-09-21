@@ -94,7 +94,7 @@ export const Wrapper = ({ comp, modId, module, clickStop = true }: IWrapper) => 
     }
     if (comp.elem === 'const') {
         return (
-        <Constraint comp={comp} update={randomUpdate} getChildren={getChildren} />
+        <Constraint comp={comp} update={randomUpdate} getChildren={getChildren}  />
         )
     }
     const Component = comp.elem as any
@@ -159,6 +159,7 @@ const Designer = ({ module }: IEditProps) => {
     const updateSize = (e: any, dir: any, a: any, d: any) => {
         setSize({ width: size.width + d.width, height: size.height + d.height })
     }
+    console.log('redrawing')
     return (
         <div className='main'  >
             <ContextMenuTrigger id="design-context"  >

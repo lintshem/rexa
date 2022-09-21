@@ -1,7 +1,7 @@
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import React, { useState } from 'react'
 import { SelectWrap } from '../library/Select'
-import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom } from '../store/main'
+import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, attribAtom } from '../store/main'
 import "./Compact.scoped.css"
 
 const Compact = () => {
@@ -10,7 +10,7 @@ const Compact = () => {
     const updater = useAtomValue(constraintUpdateAtom)
     const con = items.find(t => t.name === focused)
     if (!con) {
-        console.log(items,focused)
+        console.log(items, focused)
         return (
             <div>No Constraint selected</div>
         )
@@ -18,6 +18,7 @@ const Compact = () => {
     const ids = ['root', ...items.map(t => t.name)].filter(id => id !== con.name)
     interface ICmpNode { pos: 'l' | 'r' | 'b' | 't' }
     const CmpNode = ({ pos }: ICmpNode) => {
+        const setAttribUpdate = useSetAtom(attribAtom)
         const [val, setVal] = useState('' + con[pos])
         const anchorElem = con.cn[pos] === -1 ? 'root' : items[con.cn[pos]].name
         const setOffset = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +27,8 @@ const Compact = () => {
             const v = parseFloat(value)
             if (v) {
                 con.updateRect(pos, v)
-                updater.update((p: number) => p % 100 + 1)
+                updater.update(Math.random() + Math.random())
+                setAttribUpdate(p => p % 100 + 1)
             }
         }
         const changeAnchor = (index: number) => {
@@ -42,6 +44,7 @@ const Compact = () => {
     }
     interface ICmpDim { dim: "height" | "width" }
     const CmpDim = ({ dim }: ICmpDim) => {
+        const setAttribUpdate = useSetAtom(attribAtom)
         const dimName = dim === 'width' ? "w" : "h"
         const [val, setVal] = useState('' + con[dimName])
         const updateVal = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +55,7 @@ const Compact = () => {
                 con[dimName] = valNo
             }
             updater.update((d: number) => d % 100 + 1)
+            setAttribUpdate(p => p % 100 + 1)
         }
         return (
             <div>
