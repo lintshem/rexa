@@ -86,7 +86,7 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
         }
         return arrows
     }
-console.log(item.child)
+    // console.log(item.child)
     const id = modName + item.name
     return (
         <div className='cont' id={id} style={getStyle() as any} ref={ref} onClick={makeFocused} >
@@ -163,11 +163,6 @@ const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate, tri
     const resize = () => {
         update(a => a % 100 + 1)
     }
-    useEffect(() => {
-        // const updates = () => update((r: number) => r += 1)
-        // const timer = setInterval(updates, 1000)
-        // return () => clearInterval(timer)
-    }, [])
     const changeUpdate = (forceIt: boolean = false) => {
         if (updater.name !== modName || forceIt) {
             setUpdater({
@@ -239,9 +234,9 @@ const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate, tri
         //Prevent content editable getting data
         return true
     }
-    console.log('updating', items)
+    // console.log('updating', items)
     return (
-        <div ref={ref2} className='out' onClick={()=>changeUpdate()} >
+        <div ref={ref2} className='out' onClick={() => changeUpdate()} >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
                 <div className='stage' ref={ref} id={modName + 'root'} {...props}
                     onDrop={drop} onDragOver={e => e.preventDefault()} >

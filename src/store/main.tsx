@@ -84,3 +84,8 @@ export const constraintItemsAtom = atomFamily(p => atom<ItemMod[]>([...items]))
 export const constraintUpdateAtom = atom<{ update: Function, name: string }>({ update: () => console.log('update not set'), name: '' })
 export const showArrowsAtom = atomWithStorage('arrow', true)
 export const rootSpacesAtom = atom([{ comp: <WorkSpace id={-1} />, type: 'workspace' }])
+
+// sidebar states
+export const sbRightAtom = atomWithStorage('sb-right', true)
+export const sbLeftAtom = atomWithStorage('sb-left', true)
+

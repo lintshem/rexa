@@ -1,5 +1,5 @@
 import React from 'react'
-import Resizable from '../library/Resizable'
+import Splitter from '../library/Resizable'
 import Explorer from './Explorer'
 import './Leftpane.scoped.css'
 import ModConfig from './ModConfig'
@@ -8,10 +8,10 @@ import ModConfig from './ModConfig'
 const Leftpane = () => {
   return (
     <div className='main'  >
-      <Resizable align='ver' defRatio={[1,1]} >
+      <Splitter align='ver' defRatio={[1,1]} >
         <Explorer />
         <ModConfig />
-      </Resizable>
+      </Splitter>
     </div>
   )
 }

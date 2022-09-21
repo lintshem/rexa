@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Resizable from '../library/Resizable'
+import Splitter from '../library/Resizable'
 import './WorkArea.scoped.css'
 import WorkSpace from './WorkSpace'
 import { MdClose, MdAdd, MdCode, MdToggleOn } from 'react-icons/md'
@@ -65,12 +65,11 @@ const WorkArea = ({ removeArea, defWs = [], isRoot = false }: IWorkArea) => {
         </div>
     }
     const toggleAlign = () => setHor(h => !h)
-    console.log(spaces)
     return (
         <div className='main' style={{ flexDirection: hor ? 'row' : 'column' }} >
-            <Resizable key={spaces.length} style={{ flex: 1 }} align={hor ? 'hor' : 'ver'} resizeDelta={50} >
+            <Splitter key={spaces.length} style={{ flex: 1 }} align={hor ? 'hor' : 'ver'} resizeDelta={50} >
                 {spaces.map((s, i) => <SpaceWrap key={s.comp.props} index={i} >{s.comp}</SpaceWrap>)}
-            </Resizable>
+            </Splitter>
         </div>
     )
 }

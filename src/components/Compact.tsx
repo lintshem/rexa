@@ -10,7 +10,6 @@ const Compact = () => {
     const updater = useAtomValue(constraintUpdateAtom)
     const con = items.find(t => t.name === focused)
     if (!con) {
-        console.log(items, focused)
         return (
             <div>No Constraint selected</div>
         )
@@ -27,13 +26,13 @@ const Compact = () => {
             const v = parseFloat(value)
             if (v) {
                 con.updateRect(pos, v)
-                updater.update(Math.random() + Math.random())
+                //   updater.update(Math.random() + Math.random())
                 setAttribUpdate(p => p % 100 + 1)
             }
         }
         const changeAnchor = (index: number) => {
             con.updateCN(pos, index)
-            updater.update((d: number) => d % 100 + 1)
+            //  updater.update((d: number) => d % 100 + 1)
         }
         return (
             <div className='node' >

@@ -2,19 +2,34 @@ import _ from 'lodash';
 import React, { useState } from 'react'
 import { useBetterDimensions } from '../util/utils';
 import "./Resizable.scoped.css"
-
+import Split from 'react-split'
 
 export interface IResizable {
-    children: any,
+    children: JSX.Element[],
     defRatio?: number[],
     align?: 'hor' | 'ver',
     minLength?: number,
     style?: any,
     className?: string,
-    resizeDelta?:number,
+    resizeDelta?: number,
 }
 
-const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', resizeDelta}: IResizable) => {
+const Splitter = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', resizeDelta }: IResizable) => {
+
+    return (
+        <Split sizes={defRatio}
+            direction={align === 'hor' ? 'horizontal' : 'vertical'}
+            minSize={minLength}
+            style={style}
+            className={className}
+
+        >
+            {children}
+        </Split>
+    )
+}
+
+const SplitterOld = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', resizeDelta }: IResizable) => {
     if (!defRatio) {
         // use a ratio of 1s as default
         defRatio = [...Array(children.length)].map(e => 1)
@@ -131,7 +146,7 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
         <div className={`resizable ${className}`} ref={observe} style={{ ...style, ...getStyles() } as any} onDragOver={dragOver} onDrop={drop} >
             {children.map((c, i) => {
                 return [
-                    <div key={c} className='resizable-item' style={getMeasure(i)} >
+                    <div  className='resizable-item' style={getMeasure(i)} >
                         {c}
                     </div>,
                     getDivider(i)
@@ -141,4 +156,4 @@ const Resizable = ({ children, defRatio, align = 'hor', minLength = 30, style = 
     )
 }
 
-export default Resizable
+export default Splitter

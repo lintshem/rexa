@@ -1,12 +1,30 @@
-.main{
-    display:flex;
+.main {
+    display: flex;
     position: relative;
+    padding-left:20px;
 }
-.theme{
+
+.theme {
     justify-self: flex-end;
     position: absolute;
-    right:5px;
-    background:var(--c-sec);
-    padding:0px 2px;
-    
+    right: 25px;
+    background: var(--c-sec);
+    padding: 0px 2px;
+
+}
+
+.sb-right {
+    position: absolute;
+    right: 5px;
+    background: var(--c-sec);
+    padding: 0px 2px;
+    height: 20px;
+}
+
+.sb-left {
+    position: absolute;
+    left: 5px;
+    background: var(--c-sec);
+    padding: 0px 2px;
+    height: 20px;
 }

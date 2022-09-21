@@ -4,7 +4,7 @@ import { basicCompsAtom } from '../store/main'
 import { sendDrag } from '../util/utils'
 import "./Rightpane.scoped.css"
 import Compact from '../components/Compact'
-import Resizable from '../library/Resizable'
+import Splitter from '../library/Resizable'
 
 
 export const Widgets = () => {
@@ -29,10 +29,10 @@ export const Widgets = () => {
 
 const Rightpane = () => {
     return (
-        <Resizable defRatio={[1, 1]} align='ver' >
+        <Splitter defRatio={[1, 1]} align='ver' >
             <Widgets />
             <Compact />
-        </Resizable>
+        </Splitter>
     )
 }
 

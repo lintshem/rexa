@@ -1,7 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai'
 import React from 'react'
 import { EditContainer } from '../library/Editables'
-import Resizable from '../library/Resizable'
+import Splitter from '../library/Resizable'
 import TabContainer from '../library/TabContainer'
 import Designer from '../models/Designer'
 import { Comp } from '../models/Module'
@@ -73,18 +73,18 @@ const Drawer = ({ modName }: IDrawer) => {
     }
     const editable = mod.tree[0].getEdit()
     return (
-        <Resizable defRatio={[6, 2]}   >
+        <Splitter defRatio={[6, 2]}   >
             <Designer module={mod} />
             <div className='wrapper' >
-                <Resizable align='ver' defRatio={[1, 1]}  >
+                <Splitter align='ver' defRatio={[1, 1]}  >
                     <CompTree editable={editable} focused={focused} setFocused={setFocused} />
                     <TabContainer id={`act-${mod.name}`} titles={['Act', 'Att']}>
                         <Actions mod={mod} />
                         <Attributes mod={mod} />
                     </TabContainer>
-                </Resizable>
+                </Splitter>
             </div>
-        </Resizable>
+        </Splitter>
     )
 }
 
