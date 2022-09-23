@@ -14,4 +14,6 @@
     position: absolute;
     background: orange;
     border: 1px solid blue;
+    min-width: 20px;
+    min-height: 30px;
 }

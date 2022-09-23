@@ -6,11 +6,18 @@
     background: inherit;
     border: 1px solid var(--c-bord);
     color: inherit;
+    width: 100%;
 }
 
 .split {
     display: flex;
     flex-direction: row;
+    background: var(--c-back);
+
+}
+
+.split>* {
+    overflow: auto;
 }
 
 .gutter {

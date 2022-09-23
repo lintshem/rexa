@@ -14,16 +14,7 @@ interface IWorkArea {
 }
 const WorkArea = ({ removeArea, defWs = [], isRoot = false }: IWorkArea) => {
     const [hor, setHor] = useState(true)
-    const [rootSpaces, setRootSpaces] = useAtom(rootSpacesAtom)
-    const [_spaces, _setSpaces] = useState(defWs)
-    const setSpaces = (newSpaces: any[]) => {
-        if (isRoot) {
-            setRootSpaces(newSpaces)
-        } else {
-            _setSpaces(newSpaces)
-        }
-    }
-    const spaces = isRoot ? rootSpaces : _spaces
+    const [spaces, setSpaces] = useState(defWs)
     useEffect(() => {
         if (isRoot) {
             const cleanup = receiveMessage("settings", (data) => {

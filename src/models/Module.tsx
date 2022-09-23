@@ -1,8 +1,9 @@
 import _, { uniqueId } from "lodash"
 import React from "react"
-import { ItemMod } from "../components/Constraint"
-import { EditContainer } from "../library/Editables"
+import Constraint, { ItemMod } from "../components/Constraint"
+import { EditableText, EditContainer } from "../library/Editables"
 import { getAction, propItems } from "../util/props"
+import { Wrapper } from "./Designer"
 
 export interface IAction { [key: string]: { func: string, args: string } }
 export interface CompType { type: string, name: string, vals: string[] }
@@ -130,28 +131,58 @@ export class Comp {
         }
         return [styles, other]
     }
+    getLiveChildren(mod: Module) {
+        const children = this.children.map(c => {
+            if (c instanceof Comp) {
+                return c.getLive(mod)
+            } else {
+                return c
+            }
+
+        })
+        return children
+    }
+    getDeadChildren(mod: Module) {
+        const children = this.children.map(c => {
+            if (c instanceof Comp) {
+                return c.getLive(mod)
+            } else {
+                return c
+            }
+
+        })
+        return children
+    }
     getLive(mod: Module): any {
         if (!this.isModule) {
-            const Elm = this.elem
-            const [styles, others] = this.propSplit()
-            const acts = mod.getActions(this.actions)
-            return (
-                <Elm
-                    key={this.id}
-                    {...others}
-                    style={styles}
-                    {...acts}
-                >
-                    {this.children.map(c => {
-                        if (c instanceof Comp) {
-                            return c.getLive(mod)
-                        } else {
-                            return c
-                        }
-
-                    })}
-                </Elm>
-            )
+            if (this.elem !== 'const') {
+                const Elm = this.elem
+                const [styles, others] = this.propSplit()
+                const acts = mod.getActions(this.actions)
+                return (
+                    <Elm
+                        key={this.id}
+                        {...others}
+                        style={styles}
+                        {...acts}
+                    >
+                        {this.getLiveChildren(mod)}
+                    </Elm>
+                )
+            } else {
+                const [styles, others] = this.propSplit()
+                const acts = mod.getActions(this.actions)
+                return (
+                    <Constraint
+                        key={this.id}
+                        {...others}
+                        comp={this}
+                        childs={this.getLiveChildren(mod)}
+                        style={styles}
+                        {...acts}
+                    />
+                )
+            }
         } else {
             return this.module?.tree[0].getLive(this.module)
         }
@@ -159,28 +190,42 @@ export class Comp {
     }
     getDead(mod: Module): any {
         if (!this.isModule) {
-            const Elm = this.elem
-            const [styles, others] = this.propSplit()
-            return (
-                <Elm
-                    key={this.id}
-                    {...others}
-                    style={styles}
-                >
-                    {this.children.map(c => {
-                        if (c instanceof Comp) {
-                            return c.getLive(mod)
-                        } else {
-                            return c
-                        }
-                    })}
-                </Elm>
-            )
+            if (this.elem !== 'const') {
+                const Elm = this.elem
+                const [styles, others] = this.propSplit()
+                return (
+                    <Elm
+                        key={this.id}
+                        {...others}
+                        style={styles}
+                    >
+                        {this.children.map(c => {
+                            if (c instanceof Comp) {
+                                return c.getLive(mod)
+                            } else {
+                                return c
+                            }
+                        })}
+                    </Elm>
+                )
+            } else {
+                const [styles, others] = this.propSplit()
+                return (
+                    <Constraint
+                        key={this.id}
+                        {...others}
+                        comp={this}
+                        childs={this.getLiveChildren(mod)}
+                        style={styles}
+                    />
+                )
+            }
         } else {
             return this.module?.tree[0].getDead(this.module)
         }
 
     }
+
     static copy(comp: Comp) {
         const c = new Comp(comp.elem, comp.props, [])
         const children = comp.children.map(c => {

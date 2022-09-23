@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React, { useState } from 'react'
 import { useBetterDimensions } from '../util/utils';
 import "./Resizable.scoped.css"
+//@ts-ignore
 import { ReactSplitViews} from 'react-split-views'
 
 const Split = ReactSplitViews
@@ -26,16 +27,16 @@ const Splitter = ({ children, defRatio, align = 'hor', minLength = 30, style = {
     return (
         <Split sizes={defValues()}
             direction={direction}
-            minSize={minLength}
+            minSize={20}
             style={style}
-            className={'split '}
+            className={'split resizable'}
         >
             {children}
         </Split>
     )
 }
 
-const SplitterOld = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', resizeDelta }: IResizable) => {
+export const SplitterOld = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', resizeDelta }: IResizable) => {
     if (!defRatio) {
         // use a ratio of 1s as default
         defRatio = [...Array(children.length)].map(e => 1)

@@ -30,7 +30,7 @@ const Titlebar = () => {
   const toggleLSB = () => setLSB((e: boolean) => !e)
   return (
     <div className='main' >
-      <BsLayoutSidebarReverse className='sb-left' onClick={toggleLSB} />
+      <BsLayoutSidebar className='sb-left' onClick={toggleLSB} />
       <div>Titlebar</div>
       <Settings />
       <ThemeButton />

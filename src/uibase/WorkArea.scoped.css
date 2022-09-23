@@ -5,7 +5,6 @@
     position: relative;
     background-color: var(--c-d-back);
     overflow: scroll;
-    margin:5px;
 }
 
 .ws-wrap {

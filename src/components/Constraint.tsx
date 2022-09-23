@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import "./Constraint.scoped.css"
-import { useBoundingclientrect, useDidMount, useDidUpdate } from 'rooks'
+import { useBoundingclientrect } from 'rooks'
 import { Resizable } from 're-resizable'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom, attribAtom } from '../store/main'
 import XArrow from 'react-xarrows'
-import _ from 'lodash'
 import { receiveDrag } from '../util/utils'
 import { Comp } from '../models/Module'
 
@@ -32,7 +31,7 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     const set = (a: number) => a !== -1
     const retBB = (index: number) => items[index].bb
     const makeFocused = () => {
-        console.log('setting focuse', item)
+        console.log('setting focused ', item)
         setFocus(item.name)
     }
     const getStyle = () => {
@@ -90,7 +89,6 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     const id = modName + item.name
     return (
         <div className='cont' id={id} style={getStyle() as any} ref={ref} onClick={makeFocused} >
-            IT {item.name}
             {item.child}
             {getArrows()}
         </div>
@@ -148,8 +146,8 @@ export class ItemMod {
 
 }
 
-interface IContraint { getChildren?: any, comp?: Comp, modId?: string, props?: { [key: string]: any }, trigger?: any, update?: Function }
-const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate, trigger }: IContraint) => {
+interface IContraint { childs?: any[], comp?: Comp, modId?: string, props?: { [key: string]: any }, trigger?: any, update?: Function }
+const Constraint = ({ childs, comp, modId, props, update: randomUpdate, trigger }: IContraint) => {
     const [,] = useAtom(attribAtom)
     const modName = "ss"
     const [focused, setFocused] = useAtom(focusedCompAtom(modId || ''))
@@ -178,13 +176,12 @@ const Constraint = ({ getChildren, comp, modId, props, update: randomUpdate, tri
         setItems(getItems())
     }
     const getItems = () => {
-        console.log(comp)
-
+        //  console.log(comp)
         let items: ItemMod[] = []
-        if (getChildren && comp) {
-            items = getChildren(comp).map((c: any, i: number) => {
+        if (childs && comp) {
+            items = childs.map((c: any, i: number) => {
                 const child = comp.children[i]
-                console.log(child)
+                //  console.log(child)
                 const newChild = new Comp('p', {}, [child]); newChild.setId('nop');
                 const curComp = (child instanceof Comp) ? child : newChild
                 const constr = curComp.constraintInfo
