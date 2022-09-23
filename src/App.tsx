@@ -22,6 +22,16 @@ const App = () => {
     defRatio.forEach(n => key += n)
     return key
   }
+  if(false) {
+    return (
+      <div>
+        <Split className='split' direction='vertical' >
+          <div>oner1</div>
+          <div>oner2</div>
+        </Split>
+      </div>
+    )
+  }
   console.log(getSum())
   console.log(defRatio)
   const WSELEMENT = <WorkArea isRoot />
@@ -36,12 +46,6 @@ const App = () => {
         </Splitter>}
         {!(leftSB || rightSB) && WSELEMENT}
         <StatusBar />
-        <DesignMenu />
-        <Split style={{ width: '100%', height: 100 }} >
-          <h1>so good</h1>
-          <div>Come back Here</div>
-        </Split>
-
       </div>
     </Provider>
   )

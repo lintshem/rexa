@@ -2,8 +2,9 @@ import _ from 'lodash';
 import React, { useState } from 'react'
 import { useBetterDimensions } from '../util/utils';
 import "./Resizable.scoped.css"
-import Split from 'react-split'
+import { ReactSplitViews} from 'react-split-views'
 
+const Split = ReactSplitViews
 export interface IResizable {
     children: JSX.Element[],
     defRatio?: number[],
@@ -15,14 +16,19 @@ export interface IResizable {
 }
 
 const Splitter = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', resizeDelta }: IResizable) => {
-
+    const defValues = () => {
+        let total = 0
+        defRatio?.forEach(r => total += r)
+        return (defRatio || []).map(m => (m / total) * 100)
+    }
+    const direction = (align === 'hor') ? 'horizontal' : 'vertical'
+    console.warn('Direction', direction)
     return (
-        <Split sizes={defRatio}
-            direction={align === 'hor' ? 'horizontal' : 'vertical'}
+        <Split sizes={defValues()}
+            direction={direction}
             minSize={minLength}
             style={style}
-            className={className}
-
+            className={'split '}
         >
             {children}
         </Split>
@@ -146,7 +152,7 @@ const SplitterOld = ({ children, defRatio, align = 'hor', minLength = 30, style 
         <div className={`resizable ${className}`} ref={observe} style={{ ...style, ...getStyles() } as any} onDragOver={dragOver} onDrop={drop} >
             {children.map((c, i) => {
                 return [
-                    <div  className='resizable-item' style={getMeasure(i)} >
+                    <div className='resizable-item' style={getMeasure(i)} >
                         {c}
                     </div>,
                     getDivider(i)

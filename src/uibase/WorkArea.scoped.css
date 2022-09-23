@@ -4,6 +4,8 @@
     width: 100%;
     position: relative;
     background-color: var(--c-d-back);
+    overflow: scroll;
+    margin:5px;
 }
 
 .ws-wrap {
@@ -22,7 +24,7 @@
     background: var(--c-main);
     font-size: 15px;
     width: min(200, 100%);
-    display:flex;
+    display: flex;
     justify-content: space-around;
 }
 
