@@ -29,6 +29,7 @@ const Compact = () => {
                 //   updater.update(Math.random() + Math.random())
                 setAttribUpdate(p => p % 100 + 1)
             }
+            
         }
         const changeAnchor = (index: number) => {
             con.updateCN(pos, index)

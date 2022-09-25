@@ -38,7 +38,7 @@ const Explorer = () => {
         setModules([...modules, mod])
     }
     return (
-        <div  >
+        <div className='exp-main'  >
             <div>MODULES</div>
             {modules.map(m => <ModuleItem key={m.name} mod={m} />)}
             <div  >

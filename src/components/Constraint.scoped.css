@@ -17,3 +17,20 @@
     min-width: 20px;
     min-height: 30px;
 }
+
+.dragger {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: red;
+}
+
+.dragger1 {
+    top: -10;
+    left: -10;
+}
+
+.dragger2 {
+    bottom: -10;
+    right: -10;
+}

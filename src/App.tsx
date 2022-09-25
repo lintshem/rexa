@@ -6,7 +6,6 @@ import RightPane from './uibase/Rightpane';
 import './App.css';
 import './util/global.css';
 import "react-toastify/dist/ReactToastify.css"
-import { Provider } from 'react-keep-alive'
 import WorkArea from './uibase/WorkArea';
 import { useAtomValue } from 'jotai';
 import { sbLeftAtom, sbRightAtom } from './store/main';
@@ -23,7 +22,6 @@ const App = () => {
   }
   const WSELEMENT = <WorkArea isRoot defWs={[{ comp: <WorkSpace id={-1}   />, type: 'workspace' }]} />
   return (
-    <Provider>
       <div className='app-main' >
         <TitleBar />
         <Splitter defRatio={defRatio} style={{}} key={getSum()}  >
@@ -33,8 +31,7 @@ const App = () => {
         </Splitter>
         <StatusBar />
       </div>
-    </Provider>
-  )
+   )
 }
 
 export default App

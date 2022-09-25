@@ -5,7 +5,7 @@ import { Resizable } from 're-resizable'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom, attribAtom } from '../store/main'
 import XArrow from 'react-xarrows'
-import { receiveDrag } from '../util/utils'
+import { receiveDrag, sendDrag } from '../util/utils'
 import { Comp } from '../models/Module'
 
 interface IItemCont { items: ItemMod[], index: number, item: ItemMod, update: Function, par: DOMRect | null, modName: string }
@@ -85,12 +85,26 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
         }
         return arrows
     }
+    const dragStart = (e: React.DragEvent) => {
+        sendDrag(e, 'dragconst', id)
+    }
+    const Dragger = ({ cn }: { cn: string }) => {
+        return (
+            <div className={`dragger ${cn}`} draggable  >
+            </div>)
+    }
     // console.log(item.child)
     const id = modName + item.name
     return (
-        <div className='cont' id={id} style={getStyle() as any} ref={ref} onClick={makeFocused} >
+        <div draggable className='cont' id={id}
+            style={getStyle() as any} ref={ref}
+            onClick={makeFocused}
+            onDragStart={dragStart}
+        >
             {item.child}
             {getArrows()}
+            {/* <Dragger cn='dragger1' />
+            <Dragger cn='dragger2' /> */}
         </div>
     )
 }
@@ -227,13 +241,26 @@ const Constraint = ({ childs, comp, modId, props, update: randomUpdate, trigger 
             setItems(newItems)
             setSavedItems(newItems)
         }
+        if (dragData.action === 'dragconst' && ref.current && comp) {
+            const rect = (ref.current as HTMLElement).getBoundingClientRect()
+            const rect2 = (e.target as HTMLElement).getBoundingClientRect()
+            const child = comp.children.find(c => modId + (c as Comp).id === dragData.data)!
+            const item = items.find(t => modName + t.name === dragData.data)!
+            const top = rect.top - rect2.top
+            const left = rect.left - rect2.left
+            item.t = top
+            item.l = left
+            console.log(top, left)
+            update(p => p % 100 + 1)
+            console.log('const dragged', dragData, e, child, item)
+        }
         //  console.log('dropped-1', !!comp, dragData.action)
         //Prevent content editable getting data
         return true
     }
     // console.log('updating', items)
     return (
-        <div ref={ref2} className='out' onClick={() => changeUpdate()} >
+        <div ref={ref2} className='out' onClick={() => changeUpdate()}  >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
                 <div className='stage' ref={ref} id={modName + 'root'} {...props}
                     onDrop={drop} onDragOver={e => e.preventDefault()} >
@@ -241,7 +268,6 @@ const Constraint = ({ childs, comp, modId, props, update: randomUpdate, trigger 
                         items={items} update={update} par={rect} modName={modName} />)}
                 </div>
             </Resizable>
-
         </div>
     )
 }
