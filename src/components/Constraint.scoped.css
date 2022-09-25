@@ -1,6 +1,6 @@
 .stage {
     width: 100%;
-    height: 100%;
+    height: 200px;
     position: relative;
     border: 1px solid red;
     background: grey;
@@ -16,6 +16,10 @@
     border: 1px solid blue;
     min-width: 20px;
     min-height: 30px;
+}
+
+.cont-focused {
+    border: 2px solid var(--c-ter)
 }
 
 .dragger {

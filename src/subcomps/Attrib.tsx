@@ -125,6 +125,7 @@ const Attributes = ({ mod }: IAttributes) => {
     }
     return (
         <div className="attrib-main" >
+            <div>{comp.elem}</div>
             {types.map(type => <AttItem key={type.name} type={type} />)}
         </div>
     )

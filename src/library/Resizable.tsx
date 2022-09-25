@@ -23,7 +23,6 @@ const Splitter = ({ children, defRatio, align = 'hor', minLength = 30, style = {
         return (defRatio || []).map(m => (m / total) * 100)
     }
     const direction = (align === 'hor') ? 'horizontal' : 'vertical'
-    console.warn('Direction', direction)
     return (
         <Split sizes={defValues()}
             direction={direction}

@@ -7,7 +7,7 @@ import Overlay from '../library/Overlay'
 import TabContainer from '../library/TabContainer'
 import { AppClass } from '../models/AppClass'
 import { Module } from '../models/Module'
-import { appAtom, rootSpacesAtom, savedAppAtom, themeAtom } from '../store/main'
+import { appAtom, /*rootSpacesAtom,*/ savedAppAtom, themeAtom } from '../store/main'
 import WorkArea from '../uibase/WorkArea'
 import WorkSpace from '../uibase/WorkSpace'
 import { addShortcut, receiveMessage, sendMessage } from '../util/utils'
@@ -24,14 +24,10 @@ AddShortCuts()
 const AppSet = () => {
     const [app, setApp] = useAtom(appAtom)
     const [update, saveUpdate] = useAtom(savedAppAtom)
-    const [spaces, setSpace] = useAtom(rootSpacesAtom)
     const saveApp = () => {
         const newApp = { ...app } as any
-        newApp.spaces = spaces;
         const appStr = JSON.stringify(newApp)
         console.log(JSON.parse(JSON.stringify(app)))
-        console.log(spaces)
-
         saveUpdate(appStr)
         toast(`${app.name} saved`)
     }
@@ -48,7 +44,6 @@ const AppSet = () => {
                     return { type: 'workarea', comp: <WorkArea /> }
                 }
             })
-            setSpace(spaces)
             console.log(newApp)
             setApp(newApp)
             toast(`${newApp.name} opened!`)

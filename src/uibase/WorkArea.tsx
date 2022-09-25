@@ -5,7 +5,7 @@ import WorkSpace from './WorkSpace'
 import { MdClose, MdAdd, MdCode, MdToggleOn } from 'react-icons/md'
 import { receiveMessage } from '../util/utils'
 import { useAtom } from 'jotai'
-import { rootSpacesAtom } from '../store/main'
+// import { rootSpacesAtom } from '../store/main'
 import { toast } from 'react-toastify'
 
 let WSID = 0
@@ -62,7 +62,7 @@ const WorkArea = ({ removeArea, defWs = [], isRoot = false }: IWorkArea) => {
     }
     const toggleAlign = () => setHor(h => !h)
     return (
-        <div className='main' style={{ flexDirection: hor ? 'row' : 'column' }} >
+        <div className='wa-main' style={{ flexDirection: hor ? 'row' : 'column' }} >
             <Splitter key={spaces.length} style={{ flex: 1 }} align={hor ? 'hor' : 'ver'} resizeDelta={50} >
                 {spaces.map((s, i) => <SpaceWrap key={s.comp.props} index={i} >{s.comp}</SpaceWrap>)}
             </Splitter>

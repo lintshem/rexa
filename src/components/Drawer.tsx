@@ -79,8 +79,8 @@ const Drawer = ({ modName }: IDrawer) => {
                 <Splitter align='ver' defRatio={[1, 1]}  >
                     <CompTree editable={editable} focused={focused} setFocused={setFocused} />
                     <TabContainer id={`act-${mod.name}`} titles={['Act', 'Att']}>
-                        <Actions mod={mod} />
                         <Attributes mod={mod} />
+                        <Actions mod={mod} />
                     </TabContainer>
                 </Splitter>
             </div>

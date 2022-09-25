@@ -13,6 +13,9 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     const showArrows = useAtomValue(showArrowsAtom)
     const setFocus = useSetAtom(focusedConstAtom('ss'))
     const ref = useRef(null)
+    const [focused, setFocused] = useAtom(focusedCompAtom(modName))
+    const isFocused = focused === item.name
+    const setItems = useSetAtom(constraintItemsAtom('ss'))
     const [oldRect, setOld] = useState({ w: 0, h: 0 })
     if (par) {
         if (ref.current && ref.current as HTMLDivElement) {
@@ -30,8 +33,12 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     }
     const set = (a: number) => a !== -1
     const retBB = (index: number) => items[index].bb
-    const makeFocused = () => {
-        console.log('setting focused ', item)
+    const makeFocused = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        console.log('setting focused ', item.name, items.length)
+        setFocused(item.name)
+        setItems([...items])
+        setFocus(item.name)
         setFocus(item.name)
     }
     const getStyle = () => {
@@ -95,8 +102,9 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     }
     // console.log(item.child)
     const id = modName + item.name
+    const classes = `cont ${isFocused ? 'cont-focused' : ''}`
     return (
-        <div draggable className='cont' id={id}
+        <div draggable className={classes} id={id}
             style={getStyle() as any} ref={ref}
             onClick={makeFocused}
             onDragStart={dragStart}
@@ -160,11 +168,10 @@ export class ItemMod {
 
 }
 
-interface IContraint { childs?: any[], comp?: Comp, modId?: string, props?: { [key: string]: any }, trigger?: any, update?: Function }
-const Constraint = ({ childs, comp, modId, props, update: randomUpdate, trigger }: IContraint) => {
+interface IContraint { childs: any[], comp: Comp, modId: string, update?: Function }
+const Constraint = ({ childs, comp, modId, update: randomUpdate }: IContraint) => {
     const [,] = useAtom(attribAtom)
     const modName = "ss"
-    const [focused, setFocused] = useAtom(focusedCompAtom(modId || ''))
     const [NEW_TEXT] = useAtomValue(newTextAtom)
     const ref = useRef(null)
     const ref2 = useRef(null)
@@ -172,6 +179,8 @@ const Constraint = ({ childs, comp, modId, props, update: randomUpdate, trigger 
     const update = useState(1)[1]
     const [updater, setUpdater] = useAtom(constraintUpdateAtom)
     const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modName))
+    const [focused, setFocused] = useAtom(focusedCompAtom(modId))
+    const props = comp.props
     const resize = () => {
         update(a => a % 100 + 1)
     }
@@ -190,12 +199,10 @@ const Constraint = ({ childs, comp, modId, props, update: randomUpdate, trigger 
         setItems(getItems())
     }
     const getItems = () => {
-        //  console.log(comp)
         let items: ItemMod[] = []
         if (childs && comp) {
             items = childs.map((c: any, i: number) => {
                 const child = comp.children[i]
-                //  console.log(child)
                 const newChild = new Comp('p', {}, [child]); newChild.setId('nop');
                 const curComp = (child instanceof Comp) ? child : newChild
                 const constr = curComp.constraintInfo
@@ -218,6 +225,7 @@ const Constraint = ({ childs, comp, modId, props, update: randomUpdate, trigger 
         e.stopPropagation()
         if (dragData.action === 'widget' && comp) {
             let newChild
+            //  console.log('create',dragData)
             if (dragData.data === 'text') {
                 newChild = NEW_TEXT + Math.random().toFixed(2)
             } else {
@@ -258,14 +266,20 @@ const Constraint = ({ childs, comp, modId, props, update: randomUpdate, trigger 
         //Prevent content editable getting data
         return true
     }
+    const setActiveConst = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setFocused(comp?.id)
+        console.log(focused, 'set', comp.id)
+    }
     // console.log('updating', items)
     return (
         <div ref={ref2} className='out' onClick={() => changeUpdate()}  >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
                 <div className='stage' ref={ref} id={modName + 'root'} {...props}
+                    onClick={setActiveConst}
                     onDrop={drop} onDragOver={e => e.preventDefault()} >
                     {items.map((m, i) => <ItemCont key={m.name} item={m} index={i}
-                        items={items} update={update} par={rect} modName={modName} />)}
+                        items={items} update={update} par={rect} modName={modId || ''} />)}
                 </div>
             </Resizable>
         </div>

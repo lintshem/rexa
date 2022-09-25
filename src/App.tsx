@@ -20,18 +20,21 @@ const App = () => {
     defRatio.forEach(n => key += n)
     return key
   }
-  const WSELEMENT = <WorkArea isRoot defWs={[{ comp: <WorkSpace id={-1}   />, type: 'workspace' }]} />
+  const WSELEMENT = <WorkArea isRoot defWs={[{ comp: <WorkSpace id={-1} />, type: 'workspace' }]} />
+  if (!true) {
+    return WSELEMENT
+  }
   return (
-      <div className='app-main' >
-        <TitleBar />
-        <Splitter defRatio={defRatio} style={{}} key={getSum()}  >
-          {leftSB && <LeftPane />}
-          {WSELEMENT}
-          {rightSB && <RightPane />}
-        </Splitter>
-        <StatusBar />
-      </div>
-   )
+    <div className='app-main' >
+      <TitleBar />
+      <Splitter defRatio={defRatio} style={{}} key={getSum()}  >
+        {leftSB && <LeftPane />}
+        {WSELEMENT}
+        {rightSB && <RightPane />}
+      </Splitter>
+      <StatusBar />
+    </div>
+  )
 }
 
 export default App

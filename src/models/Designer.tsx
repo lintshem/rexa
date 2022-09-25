@@ -9,9 +9,9 @@ import { ContextMenuTrigger } from '../library/ContextMenu'
 import { Resizable as WrapResize } from 're-resizable'
 import Constraint from '../components/Constraint'
 
-interface IWrapper { comp: Comp, modId: string, module: Module, clickStop?: boolean }
+interface IWrapper { comp: Comp, modId: string, module: Module, clickStop?: boolean, isConstChild?: boolean }
 
-export const Wrapper = ({ comp, modId, module, clickStop = true }: IWrapper) => {
+export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = false }: IWrapper) => {
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const [NEW_TEXT] = useAtomValue(newTextAtom)
     const randomUpdate = useState(12)[1]
@@ -34,21 +34,21 @@ export const Wrapper = ({ comp, modId, module, clickStop = true }: IWrapper) => 
             </div>
         )
     }
-    const getChildren = (comp: Comp) => {
+    const getChildren = (comp: Comp, isConstChild = false) => {
         return comp.children.map((child, i) => {
             if (typeof child == 'string') {
                 return <EditableText key={child} child={child} index={i} />
             } else {
                 child = child as Comp
-                return <Wrapper key={child.id} comp={child} modId={modId} module={module} clickStop={false} />
+                return <Wrapper isConstChild={isConstChild} key={child.id} comp={child} modId={modId} module={module} clickStop={false} />
             }
         })
     }
     const clicked = (e: React.MouseEvent) => {
         setFocused(comp.id)
-        if (!clickStop) e.stopPropagation()
+        if (!isConstChild) e.stopPropagation()
     }
-    const classes = `wrap-main ${isFocused ? 'wrap-focused' : ''} ${resizing ? 'wrap-resize' : ''} `
+    const classes = `wrap-main ${(isFocused && !isConstChild) ? 'wrap-focused' : ''} ${resizing ? 'wrap-resize' : ''} `
     const getStyles = () => {
         const allProps = { ...comp.props.style || {}, ...comp.props }
         //TODO remove delete after correcting the app
@@ -94,7 +94,7 @@ export const Wrapper = ({ comp, modId, module, clickStop = true }: IWrapper) => 
     }
     if (comp.elem === 'const') {
         return (
-            <Constraint comp={comp} update={randomUpdate} childs={getChildren(comp)} />
+            <Constraint comp={comp} update={randomUpdate} childs={getChildren(comp, true)} modId={modId} />
         )
     }
     const Component = comp.elem as any
@@ -133,7 +133,7 @@ export const Wrapper = ({ comp, modId, module, clickStop = true }: IWrapper) => 
         randomUpdate(r => (r + 1) % 1000)
         prevUpdate(p => p % 100 + 1)
     }
-    if (isFocused && componentParent != null) {
+    if (isFocused && !isConstChild) {
         return (
             <Resizable size={getSize()} onResizeStop={resized} className={`${resizing ? 'wrap-resizing' : ''}`}
                 onResizeStart={() => setResizing(true)} >

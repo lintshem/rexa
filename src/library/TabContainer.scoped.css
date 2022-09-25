@@ -1,3 +1,12 @@
+.tabcont-main {
+    display: flex;
+    height: 100%;
+}
+
+.tab-item {
+    height: calc(100% - 20px);
+}
+
 .th-main {
     display: flex;
     overflow: auto;
@@ -23,7 +32,7 @@
     width: 17px;
     height: 17px;
     border: 1px solid var(--c-bord);
-   background-color: var(--c-back);
+    background-color: var(--c-back);
     opacity: 0.4;
 }
 
@@ -41,10 +50,3 @@
     cursor: pointer;
     border: 1px solid var(--d-tab)
 }
-
-.main {
-    display: flex;
-    height: 100%;
-    overflow: hidden;
-}
-

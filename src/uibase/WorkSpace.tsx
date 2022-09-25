@@ -23,11 +23,11 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
   })
   interface IView { comp: any, name: string, type: string }
   const [views, setViews] = useState<IView[]>([
-    {
-      comp: <Constraint props={{}} />,
-      name: 'Const',
-      type: 'const',
-    },
+    // {
+    //   comp: <Constraint props={{}} />,
+    //   name: 'Const',
+    //   type: 'const',
+    // },
     {
       comp: <Preview key="mdtest" modName='ModTest' />,
       name: 'ModTest',
@@ -105,7 +105,7 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
   }
   const [titles, bodies] = splitTitleView()
   return (
-    <div className='main' onClick={changeActive} >
+    <div className='workspace-main' onClick={changeActive} >
       <TabContainer id={id} titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}
         onAction={removeTab}  >
         {bodies}
