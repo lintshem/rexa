@@ -180,6 +180,7 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate }: IContraint) =
     const [updater, setUpdater] = useAtom(constraintUpdateAtom)
     const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modName))
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
+    const isFocused = focused === comp.id
     const props = comp.props
     const resize = () => {
         update(a => a % 100 + 1)
@@ -245,22 +246,30 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate }: IContraint) =
             if (randomUpdate) randomUpdate((p: number) => p % 100 + 1)
 
             console.log('dropped', dragData, newChild)
-            const newItems = getItems()
+            const newItems = [...items] // getItems()
             setItems(newItems)
             setSavedItems(newItems)
         }
         if (dragData.action === 'dragconst' && ref.current && comp) {
-            const rect = (ref.current as HTMLElement).getBoundingClientRect()
-            const rect2 = (e.target as HTMLElement).getBoundingClientRect()
-            const child = comp.children.find(c => modId + (c as Comp).id === dragData.data)!
-            const item = items.find(t => modName + t.name === dragData.data)!
-            const top = rect.top - rect2.top
-            const left = rect.left - rect2.left
-            item.t = top
-            item.l = left
-            console.log(top, left)
+            //  const cRec = (ref.current as HTMLElement).getBoundingClientRect() as Comp)
+            const pRec = (e.target as HTMLElement).getBoundingClientRect()
+            const cRec = (comp.children.find(c => modId + (c as Comp).id === dragData.data)! as Comp).constraintInfo!
+            const item = items.find(t => modId + t.name === dragData.data)
+            if (!item) {
+                console.warn('item error', items, item, dragData.data)
+                return
+            }
+            // let ct = cRec.top, cb = cRec.bottom, cl = cRec.left, cr = cRec.right;
+            let ct = cRec.t, cb = cRec.b, cl = cRec.l, cr = cRec.r;
+            let pt = pRec.top, pb = pRec.bottom, pl = pRec.left, pr = pRec.right;
+
+            const top = pt - ct
+            const left = pl - cl
+            // item.updateRect('t', top)
+            // item.updateRect('l', left)
+            console.log(top, left, ct, pt, e.target, ref.current)
             update(p => p % 100 + 1)
-            console.log('const dragged', dragData, e, child, item)
+            //     console.log('const dragged', dragData, e, child, item)
         }
         //  console.log('dropped-1', !!comp, dragData.action)
         //Prevent content editable getting data
@@ -271,11 +280,12 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate }: IContraint) =
         setFocused(comp?.id)
         console.log(focused, 'set', comp.id)
     }
-    // console.log('updating', items)
+    const classes = `stage ${isFocused ? 'stage-active' : ''}`
+    //  console.log('updating', items, focused)
     return (
         <div ref={ref2} className='out' onClick={() => changeUpdate()}  >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
-                <div className='stage' ref={ref} id={modName + 'root'} {...props}
+                <div className={classes} ref={ref} id={modName + 'root'} {...props}
                     onClick={setActiveConst}
                     onDrop={drop} onDragOver={e => e.preventDefault()} >
                     {items.map((m, i) => <ItemCont key={m.name} item={m} index={i}

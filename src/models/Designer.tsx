@@ -159,7 +159,7 @@ const Designer = ({ module }: IEditProps) => {
     const updateSize = (e: any, dir: any, a: any, d: any) => {
         setSize({ width: size.width + d.width, height: size.height + d.height })
     }
-    console.log('redrawing')
+   // console.log('redrawing')
     return (
         <div className='main'  >
             <ContextMenuTrigger id="design-context"  >
