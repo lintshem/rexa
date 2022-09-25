@@ -36,7 +36,6 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.2",
     "react-icons": "^4.4.0",
-    "react-keep-alive": "^2.5.2",
     "react-rnd": "^10.3.7",
     "react-scripts": "5.0.1",
     "react-split": "^2.0.14",
