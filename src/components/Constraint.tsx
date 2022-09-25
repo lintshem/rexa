@@ -8,8 +8,8 @@ import XArrow from 'react-xarrows'
 import { receiveDrag, sendDrag } from '../util/utils'
 import { Comp } from '../models/Module'
 
-interface IItemCont { items: ItemMod[], index: number, item: ItemMod, update: Function, par: DOMRect | null, modName: string, parRef: React.Ref<HTMLDivElement> }
-const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
+interface IItemCont { items: ItemMod[], index: number, item: ItemMod, isLive?: boolean, update: Function, par: DOMRect | null, modName: string, parRef: React.Ref<HTMLDivElement> }
+const ItemCont = ({ item, items, update, par, modName, isLive = false }: IItemCont) => {
     const showArrows = useAtomValue(showArrowsAtom)
     const setFocus = useSetAtom(focusedConstAtom('ss'))
     const ref = useRef(null)
@@ -36,7 +36,6 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     const retBB = (index: number) => items[index].bb
     const makeFocused = (e: React.MouseEvent) => {
         e.stopPropagation()
-        console.log('setting focused ', item.name, items.length)
         setFocused(item.name)
         setItems([...items])
         setFocus(item.name)
@@ -63,7 +62,7 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
                 styles['right'] = dw
             }
         }
-        if (set(cn.l)) {
+        if (set(cn.l) && set(item.l)) {
             const d = retBB(cn.l).r
             const ds = d + item.l
             if (par) {
@@ -101,7 +100,7 @@ const ItemCont = ({ item, items, update, par, modName }: IItemCont) => {
     }
     // console.log(item.child)
     const id = modName + item.name
-    const classes = `cont ${isFocused ? 'cont-focused' : ''}`
+    const classes = `cont ${!isLive ? 'cont-extra' : ''} ${(isFocused && !isLive) ? 'cont-focused' : ''}`
     return (
         <div draggable className={classes} id={id}
             style={getStyle() as any} ref={ref}
@@ -168,8 +167,8 @@ export class ItemMod {
 
 }
 
-interface IContraint { childs: any[], comp: Comp, modId: string, update?: Function }
-const Constraint = ({ childs, comp, modId, update: randomUpdate }: IContraint) => {
+interface IContraint { childs: any[], comp: Comp, modId: string, update?: Function, stylingProps: any[], isLive?: boolean }
+const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, isLive = false }: IContraint) => {
     const [,] = useAtom(attribAtom)
     const modName = "ss"
     const [NEW_TEXT] = useAtomValue(newTextAtom)
@@ -183,7 +182,7 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate }: IContraint) =
     const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modName))
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const isFocused = focused === comp.id
-    const props = comp.props
+    // const props = comp.props
     const resize = () => {
         update(a => a % 100 + 1)
     }
@@ -237,13 +236,11 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate }: IContraint) =
             if (newChild instanceof Comp) {
                 const x = e.clientX - ((rect && rect?.left) || e.clientX);
                 const y = e.clientY - ((rect && rect?.top) || e.clientY);
-                console.log(x, y, e)
                 newChild.constraintInfo.l = Math.round(x);
                 newChild.constraintInfo.t = Math.round(y);
                 setFocused(newChild.id)
             }
             if (randomUpdate) randomUpdate((p: number) => p % 100 + 1)
-            console.log('dropped', dragData, newChild)
             const newItems = [...items] // getItems()
             setItems(newItems)
             setSavedItems(newItems)
@@ -277,14 +274,19 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate }: IContraint) =
     const setActiveConst = (e: React.MouseEvent) => {
         e.stopPropagation()
         setFocused(comp?.id)
-        console.log(focused, 'set', comp.id)
     }
-    const classes = `stage ${isFocused ? 'stage-active' : ''}`
-    //  console.log('updating', items, focused)
+    const classes = `stage stage-extra ${isFocused ? 'stage-active' : ''}`
+    const [styleProps, baseProps] = stylingProps || []
+    if (isLive) {
+        return (<div className='stage' {...baseProps} style={styleProps} >
+            {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} parRef={ref.current}
+                items={items} update={update} par={rect} modName={modId || ''} isLive={isLive} />)}
+        </div>)
+    }
     return (
         <div ref={ref2} className='out' onClick={() => changeUpdate()}  >
             <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
-                <div className={classes} ref={ref} id={modName + 'root'} {...props}
+                <div className={classes} ref={ref} id={modName + 'root'} {...baseProps} style={styleProps}
                     onClick={setActiveConst}
                     onDrop={drop} onDragOver={e => e.preventDefault()} >
                     {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} parRef={ref.current}

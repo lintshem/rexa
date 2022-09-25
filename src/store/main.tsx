@@ -5,7 +5,7 @@ import { AppClass } from "../models/AppClass";
 import { Comp, Module } from "../models/Module";
 
 export const basicCompsAtom = atom([
-    'div', 'p', 'button', 'text', 'input', 'img'
+    'const', 'div', 'p', 'button', 'text', 'input', 'img'
 ])
 
 export const attribAtom = atom(0)

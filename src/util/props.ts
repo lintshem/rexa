@@ -34,6 +34,8 @@ export const propItems = {
         { name: 'boxShadow', def: '', type: 't' },
         { name: 'border', def: '', type: 't' },
         { name: 'borderRadius', def: '', type: 't,n' },
+        { name: 'margin', def: '', type: 't,n' },
+        { name: 'padding', def: '', type: 't,n' },
     ],
     const: [
         { name: 'width', def: '', type: 't,n' },

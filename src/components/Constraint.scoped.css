@@ -1,10 +1,9 @@
 .stage {
-    width: 100%;
-    height: 200px;
     position: relative;
-    background: grey;
 }
-
+.stage-extra{
+    border: 1px solid blue;
+}
 .stage-active {
     border: 2px solid var(--c-sec);
     box-shadow: 0px 0px 1px 1px grey
@@ -12,14 +11,18 @@
 
 .out {
     display: flex;
+    position: relative;
 }
 
 .cont {
     position: absolute;
     background: var(--c-d-back);
-    border: 1px solid blue;
     min-width: 20px;
     min-height: 30px;
+}
+
+.cont-extra {
+    border: 1px solid blue;
 }
 
 .cont-focused {

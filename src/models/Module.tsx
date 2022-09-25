@@ -179,6 +179,7 @@ export class Comp {
                         childs={this.getLiveChildren(mod)}
                         style={styles}
                         {...acts}
+                        isLive={true}
                     />
                 )
             }
@@ -216,6 +217,7 @@ export class Comp {
                         comp={this}
                         childs={this.getLiveChildren(mod)}
                         style={styles}
+                        isLive={true}
                     />
                 )
             }
