@@ -8,7 +8,6 @@ import Coder from './Coder'
 import Preview from './Preview'
 import { useAtom } from 'jotai'
 import { activeWSAtom } from '../store/main'
-import Constraint from '../components/Constraint'
 
 interface IWorkSpace { height?: number, id: any }
 const WorkSpace = ({ height, id }: IWorkSpace) => {

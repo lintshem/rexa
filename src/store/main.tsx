@@ -3,7 +3,6 @@ import { atomFamily, atomWithStorage } from 'jotai/utils'
 import { ItemMod } from "../components/Constraint";
 import { AppClass } from "../models/AppClass";
 import { Comp, Module } from "../models/Module";
-import WorkSpace from "../uibase/WorkSpace";
 
 export const basicCompsAtom = atom([
     'div', 'p', 'button', 'text', 'input', 'img'

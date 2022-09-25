@@ -1,9 +1,8 @@
 import _, { uniqueId } from "lodash"
 import React from "react"
 import Constraint, { ItemMod } from "../components/Constraint"
-import { EditableText, EditContainer } from "../library/Editables"
+import { EditContainer } from "../library/Editables"
 import { getAction, propItems } from "../util/props"
-import { Wrapper } from "./Designer"
 
 export interface IAction { [key: string]: { func: string, args: string } }
 export interface CompType { type: string, name: string, vals: string[] }

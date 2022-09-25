@@ -8,8 +8,6 @@ import TabContainer from '../library/TabContainer'
 import { AppClass } from '../models/AppClass'
 import { Module } from '../models/Module'
 import { appAtom, /*rootSpacesAtom,*/ savedAppAtom, themeAtom } from '../store/main'
-import WorkArea from '../uibase/WorkArea'
-import WorkSpace from '../uibase/WorkSpace'
 import { addShortcut, receiveMessage, sendMessage } from '../util/utils'
 import "./Settings.scoped.css"
 
@@ -37,13 +35,6 @@ const AppSet = () => {
             const newApp = AppClass.copy(newAppData as AppClass)
             const modules = newApp.modules.map(m => Module.copy(m))
             newApp.modules = modules
-            const spaces = (newAppData.spaces as { type: String }[]).map(s => {
-                if (s.type === 'workspace') {
-                    return { type: 'workspace', comp: <WorkSpace id={12} /> }
-                } else {
-                    return { type: 'workarea', comp: <WorkArea /> }
-                }
-            })
             console.log(newApp)
             setApp(newApp)
             toast(`${newApp.name} opened!`)

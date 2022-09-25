@@ -16,7 +16,7 @@
 
 .cont {
     position: absolute;
-    background: orange;
+    background: var(--c-d-back);
     border: 1px solid blue;
     min-width: 20px;
     min-height: 30px;

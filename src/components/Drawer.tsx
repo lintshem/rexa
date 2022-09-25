@@ -78,7 +78,7 @@ const Drawer = ({ modName }: IDrawer) => {
             <div className='wrapper' >
                 <Splitter align='ver' defRatio={[1, 1]}  >
                     <CompTree editable={editable} focused={focused} setFocused={setFocused} />
-                    <TabContainer id={`act-${mod.name}`} titles={['Act', 'Att']}>
+                    <TabContainer id={`act-${mod.name}`} titles={['Att', 'Act']}>
                         <Attributes mod={mod} />
                         <Actions mod={mod} />
                     </TabContainer>

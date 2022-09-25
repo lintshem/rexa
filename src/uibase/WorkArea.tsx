@@ -4,7 +4,6 @@ import './WorkArea.scoped.css'
 import WorkSpace from './WorkSpace'
 import { MdClose, MdAdd, MdCode, MdToggleOn } from 'react-icons/md'
 import { receiveMessage } from '../util/utils'
-import { useAtom } from 'jotai'
 // import { rootSpacesAtom } from '../store/main'
 import { toast } from 'react-toastify'
 
@@ -25,7 +24,7 @@ const WorkArea = ({ removeArea, defWs = [], isRoot = false }: IWorkArea) => {
         }
     }, [isRoot])
     const removeAt = (index: number) => {
-        if(isRoot&& spaces.length==1){
+        if (isRoot && spaces.length === 1) {
             toast("Only one workspace left🙂")
             return
         }
