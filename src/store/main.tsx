@@ -65,7 +65,7 @@ export const codeScrollAtom = atomFamily(param => atom(0))
 export const prevChangeAtom = atomFamily(p => atom(0))
 export const defSize = atomWithStorage('def-size', { width: 300, height: 400 })
 export const prevSizeAtom = atomFamily(p => atom({ width: 300, height: 400 }))
-export const activeWSAtom = atom(0)
+export const activeWSAtom = atom('')
 export const savedAppAtom = atomWithStorage('saved-app', '')
 
 export const focusedConstAtom = atomFamily(p => atom(''))
@@ -88,3 +88,12 @@ export const showArrowsAtom = atomWithStorage('arrow', true)
 export const sbRightAtom = atomWithStorage('sb-right', true)
 export const sbLeftAtom = atomWithStorage('sb-left', true)
 
+// work-areas spaces 
+export const waSpacesAtom = atom([
+    { id: 'seda', parent: 'root', orient: 'h' },
+    { id: 'messa', parent: 'root', orient: 'v' },
+    { id: 'desa', parent: 'messa', orient: 'h' },
+    { id: 'grey', parent: 'messa', orient: 'h' },
+] as { id: string, parent: string, orient: 'h' | 'v' }[])
+
+export const wsRootOrint = atom('h' as 'h' | 'v')

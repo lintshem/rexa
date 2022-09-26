@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react'
 import "./Constraint.scoped.css"
 import { useBoundingclientrect } from 'rooks'
-import { Resizable } from 're-resizable'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom, attribAtom } from '../store/main'
 import XArrow from 'react-xarrows'
@@ -183,9 +182,7 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const isFocused = focused === comp.id
     // const props = comp.props
-    const resize = () => {
-        update(a => a % 100 + 1)
-    }
+
     const changeUpdate = (forceIt: boolean = false) => {
         if (updater.name !== modName || forceIt) {
             setUpdater({
@@ -285,17 +282,16 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
     }
     return (
         <div ref={ref2} className='out' onClick={() => changeUpdate()}  >
-            <Resizable defaultSize={{ width: 300, height: 400 }} onResize={resize} >
-                <div className={classes} ref={ref} id={modName + 'root'} {...baseProps} style={styleProps}
-                    onClick={setActiveConst}
-                    onDrop={drop} onDragOver={e => e.preventDefault()} >
-                    {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} parRef={ref.current}
-                        items={items} update={update} par={rect} modName={modId || ''} />)}
-                </div>
-            </Resizable>
+            <div className={classes} ref={ref} id={modName + 'root'} {...baseProps} style={styleProps}
+                onClick={setActiveConst}
+                onDrop={drop} onDragOver={e => e.preventDefault()} >
+                {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} parRef={ref.current}
+                    items={items} update={update} par={rect} modName={modId || ''} />)}
+            </div>
         </div>
     )
 }
 
 export default Constraint
 
+// 

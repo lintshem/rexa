@@ -6,15 +6,15 @@ import { MdClose, MdAdd, MdCode, MdToggleOn } from 'react-icons/md'
 import { receiveMessage } from '../util/utils'
 // import { rootSpacesAtom } from '../store/main'
 import { toast } from 'react-toastify'
+import { waSpacesAtom, wsRootOrint } from '../store/main'
+import { useAtom } from 'jotai'
 
 let WSID = 0
-interface IWorkArea {
-    no?: number, removeArea?: Function,
-    defWs?: { comp: JSX.Element, type: string }[], isRoot?: boolean
-}
-const WorkArea = ({ removeArea, defWs = [], isRoot = false }: IWorkArea) => {
-    const [hor, setHor] = useState(true)
-    const [spaces, setSpaces] = useState(defWs)
+interface IWorkArea { id: string, isRoot?: boolean }
+const existingWS: { [id: string]: JSX.Element } = {}
+const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
+    const [paces, setPaces] = useAtom(waSpacesAtom)
+    const [rootOrient, setRootOrint] = useAtom(wsRootOrint)
     useEffect(() => {
         if (isRoot) {
             const cleanup = receiveMessage("settings", (data) => {
@@ -23,48 +23,66 @@ const WorkArea = ({ removeArea, defWs = [], isRoot = false }: IWorkArea) => {
             return cleanup
         }
     }, [isRoot])
-    const removeAt = (index: number) => {
-        if (isRoot && spaces.length === 1) {
-            toast("Only one workspace left🙂")
-            return
+    const getWorkAreas = () => {
+        const waPanes = []
+        for (const pane of paces) {
+            if (pane.parent === id) {
+                waPanes.push(pane)
+            }
         }
-        const newSpaces = [...spaces]
-        newSpaces.splice(index, 1)
-        setSpaces(newSpaces)
+        let waSpace: JSX.Element | JSX.Element[] | null = null;
+        if (waPanes.length === 0) {
+            if (existingWS[id]) {
+                waSpace = existingWS[id]
+            } else {
+                const space = <WorkSpace id={id} />
+                existingWS[id] = space
+                waSpace = space
+            }
+        } else if (waPanes.length === 1) {
+            waSpace = <WorkSpace id={waPanes[0].id} />
+        } else if (waPanes.length > 1) {
+            const inner = waPanes.map(p => {
+                return <WorkArea id={p.id} key={p.id} />
+            })
+            const paneOrient = paces.find(p => p.id === id)?.orient || 'h'
+            const orient = id === 'root' ? rootOrient : paneOrient
+            waSpace = (
+                <div className='wa-box' style={{ flexDirection: orient === 'h' ? 'row' : 'column' }} >
+                    <WAConfig />
+                    <Splitter align={orient === 'h' ? 'hor' : 'ver'} >
+                        {inner}
+                    </Splitter>
+                </div>)
+        }
+        return waSpace
     }
-    const addAreaAt = (index: number) => {
-        const ws = spaces[index]
-        const newArea = { comp: <WorkArea defWs={[ws]} />, type: 'workarea' }
-        const newSpaces = [...spaces]
-        newSpaces.splice(index, 1)
-        newSpaces.splice(index, 0, newArea)
-        setSpaces(newSpaces)
+    const toggleAlign = () => {
+        if (id === 'root') {
+            setRootOrint(rootOrient === 'h' ? 'v' : 'h')
+        } else {
+            const newPaces = [...paces]
+            const pace = newPaces.find(p => p.id === id)!
+            if (pace.orient === 'h') pace.orient = 'v'
+            else pace.orient = 'h'
+            setPaces(newPaces)
+            console.log(pace, id, newPaces)
+            setPaces(newPaces)
+        }
     }
-    const addWsAt = (index: number) => {
-        const newWs = { comp: <WorkSpace id={WSID++} />, type: 'workspace' }
-        const newSpaces = [...spaces]
-        newSpaces.splice(index + 1, 0, newWs)
-        setSpaces(newSpaces)
-    }
-
-    interface ISpaceWrap { children: any, index: number }
-    const SpaceWrap = ({ children, index }: ISpaceWrap) => {
-        return <div className='ws-wrap' >
-            {children}
-            <div className='wrap-close' >
-                <MdClose onClick={() => removeAt(index)} />
-                <MdAdd onClick={() => addAreaAt(index)} />
-                <MdCode onClick={() => addWsAt(index)} />
-                <MdToggleOn onClick={toggleAlign} />
-            </div>
+    const WAConfig = () => {
+        return (<div className='wa-config' >
+            <MdClose onClick={() => { }} />
+            <MdAdd onClick={() => { }} />
+            <MdCode onClick={() => { }} />
+            <MdToggleOn onClick={toggleAlign} />
         </div>
+        )
     }
-    const toggleAlign = () => setHor(h => !h)
+    const paneData = getWorkAreas()
     return (
-        <div className='wa-main' style={{ flexDirection: hor ? 'row' : 'column' }} >
-            <Splitter key={spaces.length} style={{ flex: 1 }} align={hor ? 'hor' : 'ver'} resizeDelta={50} >
-                {spaces.map((s, i) => <SpaceWrap key={s.comp.props} index={i} >{s.comp}</SpaceWrap>)}
-            </Splitter>
+        <div className='wa-main' >
+            {paneData}
         </div>
     )
 }

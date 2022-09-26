@@ -9,8 +9,8 @@ import Preview from './Preview'
 import { useAtom } from 'jotai'
 import { activeWSAtom } from '../store/main'
 
-interface IWorkSpace { height?: number, id: any }
-const WorkSpace = ({ height, id }: IWorkSpace) => {
+interface IWorkSpace { id: string }
+const WorkSpace = ({ id }: IWorkSpace) => {
   const [active, setActive] = useAtom(activeWSAtom)
   useEffect(() => {
     const cleanUp1 = receiveMessage('workspace', updateTabs)
@@ -22,11 +22,6 @@ const WorkSpace = ({ height, id }: IWorkSpace) => {
   })
   interface IView { comp: any, name: string, type: string }
   const [views, setViews] = useState<IView[]>([
-    // {
-    //   comp: <Constraint props={{}} />,
-    //   name: 'Const',
-    //   type: 'const',
-    // },
     {
       comp: <Preview key="mdtest" modName='ModTest' />,
       name: 'ModTest',

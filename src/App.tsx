@@ -20,7 +20,7 @@ const App = () => {
     defRatio.forEach(n => key += n)
     return key
   }
-  const WSELEMENT = <WorkArea isRoot defWs={[{ comp: <WorkSpace id={-1} />, type: 'workspace' }]} />
+  const WSELEMENT = <WorkArea id='root' />
   if (!true) {
     return WSELEMENT
   }
