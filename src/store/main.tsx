@@ -28,8 +28,6 @@ comp6.setId('buts')
 comp6.actions['onClick'].func = 'getName'
 const comp0 = new Comp('div', { width: 110, height: 130, background: '' }, ['Firntes', comp6])
 comp0.setId('lsd')
-const comp1 = new Comp('div', { width: 120, height: 200, background: 'grey' }, [comp0, 'blues'])
-comp1.setId('frr')
 const comprexa = new Comp('div', {}, [])
 comprexa.setIsModule(true)
 comprexa.module = mod2;
@@ -38,9 +36,7 @@ const comp4 = new Comp('const', { width: 120, height: 200 }, ['ok'])
 comp4.setId('desa')
 const comp3 = new Comp('div', { width: 120, height: 200, background: 'pink' }, ['Outer', comprexa, comp4])
 comp3.setId('vel')
-const comp2 = new Comp('div', { width: 200, height: 400, background: 'lavender' }, [comp3, 'Test div', comp1])
-comp2.setId('top')
-mod.addComp(comp2)
+mod.addComp(comp3)
 
 const app = new AppClass('Starter', [mod, mod2])
 export const appAtom = atom(app)
@@ -89,11 +85,45 @@ export const sbRightAtom = atomWithStorage('sb-right', true)
 export const sbLeftAtom = atomWithStorage('sb-left', true)
 
 // work-areas spaces 
-export const waSpacesAtom = atom([
+export interface IPace{ id: string, parent: string, orient: 'h' | 'v' }
+const defWS = [
+    {
+        "id": "seda",
+        "parent": "root",
+        "orient": "h"
+    },
+    {
+        "id": "messa",
+        "parent": "root",
+        "orient": "v"
+    },
+    {
+        "id": "desa",
+        "parent": "messa",
+        "orient": "h"
+    },
+    {
+        "id": "grey",
+        "parent": "messa",
+        "orient": "h"
+    },
+    {
+        "id": "14",
+        "parent": "desa",
+        "orient": "h"
+    },
+    {
+        "id": "15",
+        "parent": "desa",
+        "orient": "h"
+    }
+] as IPace[]
+export const oldWS = [
     { id: 'seda', parent: 'root', orient: 'h' },
     { id: 'messa', parent: 'root', orient: 'v' },
     { id: 'desa', parent: 'messa', orient: 'h' },
     { id: 'grey', parent: 'messa', orient: 'h' },
-] as { id: string, parent: string, orient: 'h' | 'v' }[])
+] as IPace[]
+export const waSpacesAtom = atom(defWS)
 
 export const wsRootOrint = atom('h' as 'h' | 'v')

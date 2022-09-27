@@ -1,5 +1,5 @@
 import { atom, useAtom } from 'jotai'
-import React  from 'react'
+import React from 'react'
 import { atomFamily } from 'jotai/utils'
 import "./TabContainer.scoped.css"
 
@@ -13,8 +13,9 @@ interface ITabHeader {
     index: number
     fullWidth: boolean
     onAction?: Function
+    actions?: JSX.Element
 }
-const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth, onAction }: ITabHeader) => {
+const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth, onAction, actions }: ITabHeader) => {
     const getThStyles = () => {
         if (align === 'hor') {
             return {
@@ -63,6 +64,7 @@ const TabHeader = ({ titles, align, width = 20, setIndex, index = 0, fullWidth, 
         {titles.map((title, i) => {
             return <TitleElement key={title} title={title} index={i} selected={index === i} strictWidth={!fullWidth} />
         })}
+        <div>{actions}</div>
     </div>)
 }
 export interface ITabContainer {
@@ -77,9 +79,10 @@ export interface ITabContainer {
     fullWidth?: boolean,
     onAction?: Function,
     id: any,
+    actions?: JSX.Element,
 }
 const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', position = 'start', tab = 0,
-    className, style, fullWidth = false, onAction, id }: ITabContainer) => {
+    className, style, fullWidth = false, onAction, id, actions }: ITabContainer) => {
     const [index, setIndex] = useAtom(tabsFamilyAtoms(id))
     if (titles.length !== children.length) {
         console.warn("Got wrong no titles", titles)
@@ -98,7 +101,7 @@ const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', posit
     const getHeader = (pos: string) => {
         if (pos === position) {
             return <TabHeader width={headerWidth} titles={titles} align={align} setIndex={setIndex} index={index} fullWidth={fullWidth}
-                onAction={onAction} />
+                onAction={onAction} actions={actions} />
         }
         return null
     }

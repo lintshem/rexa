@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css"
 import WorkArea from './uibase/WorkArea';
 import { useAtomValue } from 'jotai';
 import { sbLeftAtom, sbRightAtom } from './store/main';
-import WorkSpace from './uibase/WorkSpace';
 
 const App = () => {
   const rightSB = useAtomValue(sbRightAtom) as any

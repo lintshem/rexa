@@ -5,17 +5,20 @@
     position: relative;
     background-color: var(--c-d-back);
     overflow: hidden;
-    
-}
-.wa-box{
-    display:flex;
-    height: 100%;
-    width: 100%;
 
 }
-.wa-config{
-    height:15px;
+
+.wa-box {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    /* background: var(--c-bord); */
 }
+
+.wa-config {
+    height: 15px;
+}
+
 .ws-wrap {
     width: 100%;
     height: 100%;
@@ -42,3 +45,4 @@
     top: 0px;
     background: var(--c-main);
 }
+

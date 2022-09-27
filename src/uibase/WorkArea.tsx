@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Splitter from '../library/Resizable'
 import './WorkArea.scoped.css'
 import WorkSpace from './WorkSpace'
-import { MdClose, MdAdd, MdCode, MdToggleOn } from 'react-icons/md'
+import { MdClose, MdAdd, MdToggleOn } from 'react-icons/md'
 import { receiveMessage } from '../util/utils'
-// import { rootSpacesAtom } from '../store/main'
 import { toast } from 'react-toastify'
-import { waSpacesAtom, wsRootOrint } from '../store/main'
-import { useAtom } from 'jotai'
+import { activeWSAtom, waSpacesAtom, wsRootOrint } from '../store/main'
+import { useAtom, useAtomValue } from 'jotai'
+import { uniqueId } from 'lodash'
 
-let WSID = 0
 interface IWorkArea { id: string, isRoot?: boolean }
 const existingWS: { [id: string]: JSX.Element } = {}
 const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
     const [paces, setPaces] = useAtom(waSpacesAtom)
     const [rootOrient, setRootOrint] = useAtom(wsRootOrint)
+    const focusedWs = useAtomValue(activeWSAtom)
     useEffect(() => {
         if (isRoot) {
             const cleanup = receiveMessage("settings", (data) => {
@@ -24,38 +24,29 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
         }
     }, [isRoot])
     const getWorkAreas = () => {
-        const waPanes = []
-        for (const pane of paces) {
-            if (pane.parent === id) {
-                waPanes.push(pane)
-            }
-        }
-        let waSpace: JSX.Element | JSX.Element[] | null = null;
-        if (waPanes.length === 0) {
-            if (existingWS[id]) {
-                waSpace = existingWS[id]
+        const getPanes = (pane_id: string) => paces.filter(p => p.parent === pane_id)
+        const waPanes = getPanes(id)
+        const works = waPanes.map(p => {
+            const isWA = getPanes(p.id).length > 0
+            if (isWA) {
+                return <WorkArea id={p.id} />
             } else {
-                const space = <WorkSpace id={id} />
-                existingWS[id] = space
-                waSpace = space
+                if (existingWS[p.id]) {
+                    return existingWS[p.id]
+                } else {
+                    const ws = <WorkSpace id={p.id} />
+                    existingWS[p.id] = ws
+                    return ws;
+                }
             }
-        } else if (waPanes.length === 1) {
-            waSpace = <WorkSpace id={waPanes[0].id} />
-        } else if (waPanes.length > 1) {
-            const inner = waPanes.map(p => {
-                return <WorkArea id={p.id} key={p.id} />
-            })
-            const paneOrient = paces.find(p => p.id === id)?.orient || 'h'
-            const orient = id === 'root' ? rootOrient : paneOrient
-            waSpace = (
-                <div className='wa-box' style={{ flexDirection: orient === 'h' ? 'row' : 'column' }} >
-                    <WAConfig />
-                    <Splitter align={orient === 'h' ? 'hor' : 'ver'} >
-                        {inner}
-                    </Splitter>
-                </div>)
-        }
-        return waSpace
+        })
+        const orient = paces.find(p => p.id === id)?.orient || (id === 'root' ? rootOrient : 'h')
+        return <div className='wa-box' style={{ flexDirection: orient === 'h' ? 'row' : 'column' }} >
+            <WAConfig />
+            <Splitter align={orient === 'h' ? 'hor' : 'ver'} >
+                {works}
+            </Splitter>
+        </div>
     }
     const toggleAlign = () => {
         if (id === 'root') {
@@ -66,18 +57,41 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
             if (pace.orient === 'h') pace.orient = 'v'
             else pace.orient = 'h'
             setPaces(newPaces)
-            console.log(pace, id, newPaces)
             setPaces(newPaces)
         }
     }
     const WAConfig = () => {
+        const getIndex = () => {
+            let child = paces.filter(p => p.parent == id)
+            const foundIndex = child.findIndex(p => p.id === focusedWs)
+            return foundIndex
+        }
+        const addWS = () => {
+            const index = getIndex()
+            if (index !== -1) {
+                const newPaces = [...paces]
+                const newPace = { id: uniqueId('ws-'), parent: id, orient: 'h' as 'h' | 'v' }
+                newPaces.splice(index, 0, newPace)
+                setPaces(newPaces)
+            } else {
+                toast('🚫 Select WS to use')
+            }
+        }
+        const removeWS = () => {
+            const index = paces.findIndex(p => p.id === id)
+            if (index !== -1) {
+                const newPaces = [...paces]
+                newPaces.splice(index, 1)
+                setPaces(newPaces)
+            } else {
+                toast('🚫 Select WS to use')
+            }
+        }
         return (<div className='wa-config' >
-            <MdClose onClick={() => { }} />
-            <MdAdd onClick={() => { }} />
-            <MdCode onClick={() => { }} />
+            <MdClose onClick={() => removeWS()} />
+            <MdAdd onClick={() => addWS()} />
             <MdToggleOn onClick={toggleAlign} />
-        </div>
-        )
+        </div>)
     }
     const paneData = getWorkAreas()
     return (

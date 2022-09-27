@@ -7,7 +7,8 @@ import { toast } from 'react-toastify'
 import Coder from './Coder'
 import Preview from './Preview'
 import { useAtom } from 'jotai'
-import { activeWSAtom } from '../store/main'
+import { activeWSAtom, waSpacesAtom } from '../store/main'
+import { uniqueId } from 'lodash'
 
 interface IWorkSpace { id: string }
 const WorkSpace = ({ id }: IWorkSpace) => {
@@ -97,14 +98,35 @@ const WorkSpace = ({ id }: IWorkSpace) => {
   const changeActive = (e: React.MouseEvent) => {
     setActive(id)
   }
+  const Actions = () => {
+    const [paces, setPaces] = useAtom(waSpacesAtom)
+    const splitWS = () => {
+      const newPaces = [...paces]
+      const newPace = { id: uniqueId(), parent: id, orient: 'h' as 'h' | 'v' }
+      newPaces.push(newPace)
+      setPaces(newPaces)
+    }
+    const closeWS = () => {
+      const newPaces = [...paces]
+      const index = paces.findIndex(p => p.id === id)
+      newPaces.splice(index, 1)
+      setPaces(newPaces)
+    }
+
+    return (<div className='ws-actions' >
+      <div onClick={splitWS} >+</div>
+      <div onClick={closeWS} >x</div>
+    </div >
+    )
+  }
   const [titles, bodies] = splitTitleView()
   return (
     <div className='workspace-main' onClick={changeActive} >
       <TabContainer id={id} titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}
-        onAction={removeTab}  >
+        onAction={removeTab} actions={<Actions />}  >
         {bodies}
-      </TabContainer>
-    </div>
+      </TabContainer >
+    </div >
   )
 }
 
