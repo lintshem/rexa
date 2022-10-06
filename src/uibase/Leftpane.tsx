@@ -5,10 +5,10 @@ import './Leftpane.scoped.css'
 import ModConfig from './ModConfig'
 
 
-const Leftpane = () => {
+const LeftPane = () => {
   return (
-    <div className='lp-main'  >
-      <Splitter align='ver' defRatio={[1,1]} >
+    <div className='lpp-main'  >
+      <Splitter align='ver' defRatio={[50, 50]}  >
         <Explorer />
         <ModConfig />
       </Splitter>
@@ -16,4 +16,4 @@ const Leftpane = () => {
   )
 }
 
-export default Leftpane
+export default LeftPane

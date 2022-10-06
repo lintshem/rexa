@@ -38,7 +38,7 @@ export const ModuleConfig = () => {
         sendMessage('workspace', { action: 'live', item: name })
     }
     return (
-        <div key={name} className="mc-main" >
+        <div key={name} className="mcc-main" >
             <RenameField name={name} setName={setName} />
             <div className="btn-actions">
                 <Button onClick={openDesign}  >Design</Button>

@@ -2,12 +2,20 @@ import React, { useEffect } from 'react'
 import Splitter from '../library/Resizable'
 import './WorkArea.scoped.css'
 import WorkSpace from './WorkSpace'
-import { MdClose, MdAdd, MdToggleOn } from 'react-icons/md'
+import { MdClose, MdAdd, MdToggleOn, MdCloseFullscreen } from 'react-icons/md'
 import { receiveMessage } from '../util/utils'
 import { toast } from 'react-toastify'
 import { activeWSAtom, waSpacesAtom, wsRootOrint } from '../store/main'
 import { useAtom, useAtomValue } from 'jotai'
 import { uniqueId } from 'lodash'
+
+const EmptyArea = () => {
+    return (
+        <div className='wa-empty' >
+            <h2 className='wa-empty-text' >No Workspaces Here yet</h2>
+        </div>
+    )
+}
 
 interface IWorkArea { id: string, isRoot?: boolean }
 const existingWS: { [id: string]: JSX.Element } = {}
@@ -40,14 +48,15 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
                 }
             }
         })
-        console.log('works', works)
         const orient = paces.find(p => p.id === id)?.orient || (id === 'root' ? rootOrient : 'h')
-        return <div className='wa-box' style={{ flexDirection: orient === 'h' ? 'row' : 'column' }} >
-            <WAConfig />
-            <Splitter align={orient === 'h' ? 'hor' : 'ver'}  >
+        const isEmpty = works.length === 0
+        return [<div className='wa-box' style={{ flexDirection: orient === 'h' ? 'row' : 'column' }} >
+            <WAConfig orient={orient} />
+            {!isEmpty && <Splitter align={orient === 'h' ? 'hor' : 'ver'}  >
                 {works.map(w => <div>{w}</div>)}
-            </Splitter>
-        </div>
+            </Splitter>}
+            {isEmpty && <EmptyArea />}
+        </div>, isEmpty, works.length]
     }
     const toggleAlign = () => {
         if (id === 'root') {
@@ -61,14 +70,15 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
             setPaces(newPaces)
         }
     }
-    const WAConfig = () => {
+    const WAConfig = ({ orient }: { orient: 'h' | 'v' }) => {
         const getIndex = () => {
-            let child = paces.filter(p => p.parent == id)
+            let child = paces.filter(p => p.parent === id)
             const foundIndex = child.findIndex(p => p.id === focusedWs)
             return foundIndex
         }
         const addWS = () => {
-            const index = getIndex()
+            let index = getIndex()
+            if (isEmpty) index = 0;
             if (index !== -1) {
                 const newPaces = [...paces]
                 const newPace = { id: uniqueId('ws-'), parent: id, orient: 'h' as 'h' | 'v' }
@@ -76,6 +86,7 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
                 setPaces(newPaces)
             } else {
                 toast('🚫 Select WS to use')
+
             }
         }
         const removeWS = () => {
@@ -88,13 +99,33 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
                 toast('🚫 Select WS to use')
             }
         }
-        return (<div className='wa-config' >
+        const collapse = () => {
+            if (length !== 1) {
+                toast('😡 Has more than one children')
+                return
+            }
+            // const parent = ''
+            const paneIndex = paces.findIndex(p => p.id === id)!
+            const newPanes = [...paces]
+            paces.forEach((p, i) => {
+                if (p.id === paces[paneIndex].parent) {
+                    console.log(p)
+                    newPanes[i].id = id
+                }
+            })
+            newPanes.splice(paneIndex, 1)
+            console.log(newPanes, paces)
+            // setPaces(newPanes)
+        }
+        return (<div className='wa-config' style={{ flexDirection: orient === 'h' ? 'column' : 'row' }} >
             <MdClose onClick={() => removeWS()} />
             <MdAdd onClick={() => addWS()} />
+            <MdCloseFullscreen onClick={() => collapse()} color={length === 1 ? 'grey' : ''} />
             <MdToggleOn onClick={toggleAlign} />
         </div>)
     }
-    const paneData = getWorkAreas()
+    const [paneData, isEmpty, length] = getWorkAreas()
+
     return (
         <div className='wa-main' >
             {paneData}

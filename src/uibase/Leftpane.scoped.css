@@ -1,3 +1,5 @@
-.lp-main {
-    height: 100%;
+.lpp-main {
+    /* height: 100%; */
+    background-color: bisque;
+    border: 2px solid pink;
 }

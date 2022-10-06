@@ -1,4 +1,4 @@
-import { useAtom,useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import Button from '../library/Button'
@@ -7,17 +7,22 @@ import { activeModAtom, modulesAtom, modUpdateAtom } from '../store/main'
 import './Explorer.scoped.css'
 interface IModItem { mod: Module }
 const ModuleItem = ({ mod }: IModItem) => {
+    const name = mod.name
     const [activeMod, setActiveMod] = useAtom(activeModAtom)
-    const isFocused = activeMod === mod.name
+    const isFocused = activeMod === name
     const classes = `${isFocused ? 'mi-focused' : ''}`
+    const clicked = () => {
+        setActiveMod(name)
+    }
     return (
-        <div onClick={() => setActiveMod(mod.name)} className={classes} >
-            {mod.name}
+        <div className={classes} onClick={clicked} >
+            {name}
         </div>
     )
 }
 const Explorer = () => {
     const [modules, setModules] = useAtom(modulesAtom)
+    const [activeMod, setActiveMod] = useAtom(activeModAtom)
     //This line causes rerender due to module rename
     // eslint-disable-next-line
     const modAttr = useAtomValue(modUpdateAtom)
@@ -37,6 +42,11 @@ const Explorer = () => {
         setName('')
         setModules([...modules, mod])
     }
+    if (false) {
+        return <div>Ok bros
+            <button onClick={() => setActiveMod('ModTest')} >Maonss click me</button>
+        </div>
+    }
     return (
         <div className='exp-main'  >
             <div>MODULES</div>
@@ -50,11 +60,3 @@ const Explorer = () => {
 }
 
 export default Explorer
-
-export const ModuleConfig = () => {
-    return (
-        <div>
-            ModuleConfig
-        </div>
-    )
-}

@@ -6,10 +6,16 @@ import "./Resizable.scoped.css"
 import { ReactSplitViews } from 'react-split-views'
 
 const Split = ReactSplitViews
+/**
+ * @
+ */
 export interface IResizable {
     children: JSX.Element[],
+    /** Ration of each child */
     defRatio?: number[],
+    /** Direction to align children */
     align?: 'hor' | 'ver',
+    /**Miniman size of a child */
     minLength?: number,
     style?: any,
     className?: string,
@@ -27,13 +33,14 @@ const Splitter = ({ children, defRatio, align = 'hor', minLength = 30, style = {
         return (defRatio || []).map(m => (m / total) * 100)
     }
     const direction = (align === 'hor') ? 'horizontal' : 'vertical'
-    console.log('valsd', defValues())
     return (
         <Split sizes={defValues()}
             direction={direction}
             minSize={minLength}
             style={style}
             className={'split resizable'}
+            /**Remount on child count change */
+            key={children.length}
         >
             {children}
         </Split>
