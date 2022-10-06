@@ -7,7 +7,7 @@ import ModConfig from './ModConfig'
 
 const Leftpane = () => {
   return (
-    <div className='main'  >
+    <div className='lp-main'  >
       <Splitter align='ver' defRatio={[1,1]} >
         <Explorer />
         <ModConfig />

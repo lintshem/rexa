@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useBetterDimensions } from '../util/utils';
 import "./Resizable.scoped.css"
 //@ts-ignore
-import { ReactSplitViews} from 'react-split-views'
+import { ReactSplitViews } from 'react-split-views'
 
 const Split = ReactSplitViews
 export interface IResizable {
@@ -17,16 +17,21 @@ export interface IResizable {
 }
 
 const Splitter = ({ children, defRatio, align = 'hor', minLength = 30, style = {}, className = '', resizeDelta }: IResizable) => {
+    if (!defRatio) {
+        // use a ratio of 1s as default
+        defRatio = [...Array(children.length)].map(e => 1)
+    }
     const defValues = () => {
         let total = 0
         defRatio?.forEach(r => total += r)
         return (defRatio || []).map(m => (m / total) * 100)
     }
     const direction = (align === 'hor') ? 'horizontal' : 'vertical'
+    console.log('valsd', defValues())
     return (
         <Split sizes={defValues()}
             direction={direction}
-            minSize={20}
+            minSize={minLength}
             style={style}
             className={'split resizable'}
         >

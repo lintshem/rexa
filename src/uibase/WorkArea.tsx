@@ -40,11 +40,12 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
                 }
             }
         })
+        console.log('works', works)
         const orient = paces.find(p => p.id === id)?.orient || (id === 'root' ? rootOrient : 'h')
         return <div className='wa-box' style={{ flexDirection: orient === 'h' ? 'row' : 'column' }} >
             <WAConfig />
-            <Splitter align={orient === 'h' ? 'hor' : 'ver'} >
-                {works}
+            <Splitter align={orient === 'h' ? 'hor' : 'ver'}  >
+                {works.map(w => <div>{w}</div>)}
             </Splitter>
         </div>
     }
