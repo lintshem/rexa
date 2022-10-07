@@ -12,13 +12,13 @@ export const makeRandColor = () => {
 
 export const useDimensions = useCoolDimensions
 
-export const sendDrag = (e: React.DragEvent, action: string, data: string) => {
+export const sendDrag = (e: React.DragEvent, action: string, data: any) => {
     e.dataTransfer.setData('text', JSON.stringify({ data, action }))
 }
 export const receiveDrag = (e: React.DragEvent) => {
     let str_data = e.dataTransfer.getData('text')
     try {
-        const data = JSON.parse(str_data) as { data: string, action: string }
+        const data = JSON.parse(str_data) as { data: any, action: string }
         if (data.action && data.data) {
             return data
         } else {
@@ -61,4 +61,8 @@ export const addShortcut = (key: string, callBack: Function, ctrl = false, shift
     }
     window.document.addEventListener('keydown', handler)
     return () => window.document.removeEventListener('keydown', handler)
+}
+
+export const cancelDrag = (e: React.DragEvent) => {
+    e.preventDefault()
 }

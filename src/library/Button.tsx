@@ -1,7 +1,8 @@
-import React, { HtmlHTMLAttributes } from 'react'
+import React from 'react'
 import "./Button.scoped.css"
 
-interface IButton { children?: any, style?: HtmlHTMLAttributes<HTMLButtonElement>, onClick?: React.MouseEventHandler }
+interface IButton { children?: any, style?:  React.CSSProperties , onClick?: React.MouseEventHandler }
+
 const Button = ({ children, style, onClick }: IButton) => {
     return (
         <button style={style} className="main" onClick={onClick} >
@@ -10,4 +11,8 @@ const Button = ({ children, style, onClick }: IButton) => {
     )
 }
 
+
 export default Button
+
+
+// and my GF is Kate

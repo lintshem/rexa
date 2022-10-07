@@ -7,3 +7,23 @@
 .title {
     text-align: center;
 }
+.set-but{
+    margin:2px;
+}
+.set-buts{
+    display: flex;
+}
+.set-lay{
+    display: flex;
+    justify-content: space-between;
+}
+.set-add{
+    display: flex;
+}
+.set-l-header{
+    text-align: center;
+}
+.set-l-main{
+    border:1px solid var(--c-bord);
+    padding: 3px;
+}

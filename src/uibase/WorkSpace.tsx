@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Drawer from '../components/Drawer'
 import TabContainer from '../library/TabContainer'
 import './WorkSpace.scoped.css'
-import { receiveMessage } from '../util/utils'
+import { cancelDrag, receiveDrag, receiveMessage } from '../util/utils'
 import { toast } from 'react-toastify'
 import Coder from './Coder'
 import Preview from './Preview'
@@ -48,7 +48,7 @@ const WorkSpace = ({ id }: IWorkSpace) => {
     })
     setViews(newViews)
   }
-  const updateTabs = (data: { action: string, item: string }) => {
+  const updateTabs = (data: { action: string, item: string }, isDrop = false) => {
     if (views.find(v => v.name === data.item && v.type === data.action)) {
       toast('Found item')
       return
@@ -64,7 +64,7 @@ const WorkSpace = ({ id }: IWorkSpace) => {
         return <div>Wrong Editor</div>
       }
     }
-    if (active === id) {
+    if (active === id || isDrop) {
       const newView = { comp: getComp(), name: data.item, type: data.action }
       setViews([...views, newView])
     }
@@ -119,9 +119,16 @@ const WorkSpace = ({ id }: IWorkSpace) => {
     </div >
     )
   }
+  const handleDrop = (e: React.DragEvent) => {
+    const data = receiveDrag(e)
+    if (data.action === 'add-ws') {
+      const load = data.data as { type: string, name: string }
+      updateTabs({ action: load.type, item: load.name }, true)
+    }
+  }
   const [titles, bodies] = splitTitleView()
   return (
-    <div className='workspace-main' onClick={changeActive} >
+    <div className='workspace-main' onClick={changeActive} onDragOver={cancelDrag} onDrop={handleDrop} >
       <TabContainer id={id} titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}
         onAction={removeTab} actions={<Actions />}  >
         {bodies}

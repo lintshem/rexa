@@ -72,6 +72,7 @@ const ItemCont = ({ item, items, update, par, modName, isLive = false }: IItemCo
         return styles
     }
     const getArrows = () => {
+        if (isLive) return []
         const arrows: any[] = []
         const positions = ['middle', 'left', 'right', 'top', 'bottom', 'auto']
         for (const dir of (['t', 'b', 'l', 'r'])) {

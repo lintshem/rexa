@@ -3,7 +3,7 @@ import React from "react"
 import { activeModAtom, modulesAtom, modUpdateAtom } from "../store/main"
 import "./ModConfig.scoped.css"
 import Button from "../library/Button"
-import { sendMessage } from "../util/utils"
+import { sendDrag, sendMessage } from "../util/utils"
 import Files from "../components/Files"
 import { RenameField } from "../library/RenameField"
 
@@ -37,13 +37,16 @@ export const ModuleConfig = () => {
     const openLive = () => {
         sendMessage('workspace', { action: 'live', item: name })
     }
+    const sendData = (e: React.DragEvent, type: string) => {
+        sendDrag(e, "add-ws", { name, type })
+    }
     return (
         <div key={name} className="mcc-main" >
             <RenameField name={name} setName={setName} />
             <div className="btn-actions">
-                <Button onClick={openDesign}  >Design</Button>
-                <Button onClick={openCode}  >Code</Button>
-                <Button onClick={openLive}  >Live</Button>
+                <button className="rexa-button " draggable onDragStart={(e) => sendData(e, "design")} onClick={openDesign}   >Design</button>
+                <button className="rexa-button " draggable onDragStart={(e) => sendData(e, "code")} onClick={openCode}  >Code</button>
+                <button className="rexa-button " draggable onDragStart={(e) => sendData(e, "live")} onClick={openLive}  >Live</button>
             </div>
             <Files modName={name} />
         </div>
