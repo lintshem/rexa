@@ -22,6 +22,8 @@ const ModuleItem = ({ mod }: IModItem) => {
 }
 const Explorer = () => {
     const [modules, setModules] = useAtom(modulesAtom)
+    //This line causes rerender due to module rename
+    // eslint-disable-next-line
     const [activeMod, setActiveMod] = useAtom(activeModAtom)
     //This line causes rerender due to module rename
     // eslint-disable-next-line

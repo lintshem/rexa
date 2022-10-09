@@ -2,112 +2,17 @@ import { useAtom, useAtomValue } from 'jotai'
 import React, { useEffect, useState } from 'react'
 import { MdSettings } from 'react-icons/md'
 import { toast } from 'react-toastify'
-import Button from '../library/Button'
 import Overlay from '../library/Overlay'
 import TabContainer from '../library/TabContainer'
 import { AppClass } from '../models/AppClass'
-import { Module } from '../models/Module'
-import { appAtom, /*rootSpacesAtom,*/ savedAppAtom, themeAtom, waSpacesAtom } from '../store/main'
-import { addShortcut, receiveMessage, sendMessage } from '../util/utils'
+import { appAtom, IPace, lastOpenAtom, /*rootSpacesAtom,*/ savedAppAtom, themeAtom, waSpacesAtom } from '../store/main'
 import "./Settings.scoped.css"
 import localforage from 'localforage'
+import moment from "moment"
 
-const AddShortCuts = () => {
-    const saver = () => { console.log('save'); sendMessage('save', {}) }
-    const opener = () => sendMessage('open', {})
-    addShortcut('s', saver, true)
-    addShortcut('o', opener, true)
-}
-AddShortCuts()
-//receiveMessage('save',console.log)
-const AppSet = () => {
-    const [app, setApp] = useAtom(appAtom)
-    const [update, saveUpdate] = useAtom(savedAppAtom)
-    const saveApp = () => {
-        const newApp = { ...app } as any
-        const appStr = JSON.stringify(newApp)
-        console.log(JSON.parse(JSON.stringify(app)))
-        saveUpdate(appStr)
-        toast(`${app.name} saved`)
-    }
-    const openApp = () => {
-        try {
-            const newAppData = JSON.parse(update)
-            const newApp = AppClass.copy(newAppData as AppClass)
-            const modules = newApp.modules.map(m => Module.copy(m))
-            newApp.modules = modules
-            console.log(newApp)
-            setApp(newApp)
-            toast(`${newApp.name} opened!`)
-            sendMessage("settings", { app: newApp })
-        } catch (e) {
-            toast('Could not open')
-        }
-    }
-    useEffect(() => {
-        const clean1 = receiveMessage('save', saveApp)
-        const clean2 = receiveMessage('open', openApp)
-        return () => {
-            clean1()
-            clean2()
-        }
-        //eslint-disable-next-line
-    }, [])
-    return (
-        <div >
-            <Button onClick={saveApp} >Save</Button>
-            <Button onClick={openApp} >Open</Button>
-        </div>
-    )
-}
-const ExportSet = () => {
-
-    return (
-        <div>Exports </div>
-    )
-}
-interface ILayout { name: string, data: { id: string, parent: string, orient: 'h' | 'v' }[] }
-const l1 = {
-    name: 'Ontes',
-    data: [
-        {
-            "id": "seda",
-            "parent": "root",
-            "orient": "h"
-        },
-        {
-            "id": "messa",
-            "parent": "root",
-            "orient": "v"
-        },
-    ]
-} as ILayout
-const l2 = {
-    name: 'Twos',
-    data: [
-        {
-            "id": "seda",
-            "parent": "root",
-            "orient": "h"
-        },
-        {
-            "id": "messa",
-            "parent": "root",
-            "orient": "v"
-        },
-        {
-            "id": "desa",
-            "parent": "messa",
-            "orient": "h"
-        },
-        {
-            "id": "grey",
-            "parent": "messa",
-            "orient": "h"
-        },],
-} as ILayout
+export interface ILayout { name: string, data: { id: string, parent: string, orient: 'h' | 'v' }[] }
 const Layouts = () => {
-    const [lays, setLay] = useState<ILayout[]>([l1, l2])
+    const [lays, setLay] = useState<ILayout[]>([])
     const [name, setName] = useState('')
     const [spaces, setSpaces] = useAtom(waSpacesAtom)
     useEffect(() => {
@@ -115,7 +20,7 @@ const Layouts = () => {
             setLay(await getLay())
         })()
     }, [])
-    const LayRow = ({ data, index }: { data: any, index: number }) => {
+    const LayRow = ({ data, index }: { data: ILayout, index: number }) => {
         const openLay = () => {
             setSpaces(data.data)
         }
@@ -152,7 +57,7 @@ const Layouts = () => {
                 allLay.splice(1, 0, ...otherLay)
             }
             console.log('all lays', allLay)
-            localforage.setItem('layouts', allLay)
+            await localforage.setItem('layouts', allLay)
             setLay(allLay)
             setName('')
         } catch (e) {
@@ -174,12 +79,99 @@ const Layouts = () => {
     return (
         <div className='set-l-main'>
             <h3 className='set-l-header'>LAYOUTS</h3>
-            <div>
-                {lays.map((l, i) => <LayRow data={l} index={i} />)}
-            </div>
             <div className='set-add'>
-                <input className='rexa-input' value={name} onChange={(e) => setName(e.target.value)} placeholder="Layout name" />
+                <input className='rexa-input' value={name} onChange={(e) => setName(e.target.value)} placeholder="New layout name" />
                 <button className='rexa-button' onClick={saveLay} >Save </button>
+            </div>
+            <div>
+                {lays.map((l, i) => <LayRow key={i} data={l} index={i} />)}
+            </div>
+        </div>
+    )
+
+}
+interface IApp { name: string, time: number, app: AppClass, spaces: IPace[] }
+const Apps = () => {
+    const [lays, setApp] = useState<IApp[]>([])
+    const [name, setName] = useState('')
+    const [curApp, setCurApp] = useAtom(appAtom)
+    const [appSpaces, setAppSpaces] = useAtom(waSpacesAtom)
+    const [lastOpen, setLastOpen] = useAtom(lastOpenAtom)
+    // const [apps, setApps] = useAtom(waSpacesAtom)
+    useEffect(() => {
+        (async () => {
+            setApp(await getApp())
+        })()
+    }, [])
+    const AppRow = ({ data, index }: { data: IApp, index: number }) => {
+        const openApp = () => {
+            const newApp = AppClass.copy(data.app)
+            setAppSpaces(data.spaces)
+            setCurApp(newApp)
+            setLastOpen(data.name)
+        }
+        const delApp = async () => {
+            const newLays = [...lays]
+            newLays.splice(index, 1)
+            try {
+                await localforage.setItem('apps', newLays)
+                setApp(newLays)
+            } catch (e) {
+                toast("💀 Deleting failed.")
+            }
+        }
+        const info = moment(data.time).fromNow()
+        return (
+            <div className='set-lay' >
+                <div className='set-info'>{data.name}<span className='set-time-dif'>{info}</span></div>
+                <div className='set-buts'>
+                    <button className='rexa-button set-but' onClick={openApp} >open</button>
+                    <button className='rexa-button set-but' onClick={delApp} >del</button>
+                </div>
+            </div>
+        )
+    }
+    const saveApp = async () => {
+        if (name.length < 3) {
+            toast("🚫Name too short.")
+            return
+        }
+        const newApp = { name, time: Date.now(), app: curApp, spaces: appSpaces } as IApp
+        try {
+            const allApp = [newApp]
+            if ((await localforage.keys()).includes('apps')) {
+                const otherApp = await localforage.getItem('apps') as IApp[]
+                allApp.splice(1, 0, ...otherApp)
+            }
+            await localforage.setItem('apps', JSON.parse(JSON.stringify(allApp)))
+            setApp(allApp)
+            setName('')
+        } catch (e) {
+            toast("💀 Failed to store apps.")
+            console.log(e)
+        }
+    }
+    const getApp = async () => {
+        const allLay = [] as IApp[]
+        try {
+            if ((await localforage.keys()).includes('apps')) {
+                const lays = await localforage.getItem('apps') as IApp[]
+                allLay.splice(0, 1, ...lays)
+            }
+        } catch (e) {
+            console.warn("getting apps failed.")
+        }
+        return allLay
+    }
+    return (
+        <div className='set-l-main'>
+            <h3 className='set-l-header'>APPS</h3>
+            <div className='set-add'>
+                <input className='rexa-input' value={name} onChange={(e) => setName(e.target.value)} placeholder="New app name" />
+                <button className='rexa-button' onClick={saveApp} >Save </button>
+            </div>
+            <div>
+                {lays.map((l, i) => <AppRow key={i} data={l} index={i} />)}
             </div>
         </div>
     )
@@ -202,11 +194,12 @@ const Settings = () => {
             <div className='set-main' >
                 <div className='title'> Settings</div>
                 <TabContainer id='settings' titles={['app', 'Export']} >
-                    <AppSet />
-                    <ExportSet />
+                    <div>One</div>
+                    <div>two</div>
                 </TabContainer>
             </div>
             <Layouts />
+            <Apps />
         </Overlay>
     )
 }

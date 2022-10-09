@@ -9,6 +9,7 @@ import Preview from './Preview'
 import { useAtom } from 'jotai'
 import { activeWSAtom, waSpacesAtom } from '../store/main'
 import { uniqueId } from 'lodash'
+import { EmptyArea } from '../util/SmallComps'
 
 interface IWorkSpace { id: string }
 const WorkSpace = ({ id }: IWorkSpace) => {
@@ -127,12 +128,14 @@ const WorkSpace = ({ id }: IWorkSpace) => {
     }
   }
   const [titles, bodies] = splitTitleView()
+  const isEmpty = bodies.length === 0
   return (
     <div className='workspace-main' onClick={changeActive} onDragOver={cancelDrag} onDrop={handleDrop} >
-      <TabContainer id={id} titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}
+      {!isEmpty && <TabContainer id={id} titles={titles} headerWidth={100} fullWidth style={{ height: '100%' } as any}
         onAction={removeTab} actions={<Actions />}  >
         {bodies}
-      </TabContainer >
+      </TabContainer >}
+      {isEmpty && <EmptyArea message='No WorkTab' />}
     </div >
   )
 }

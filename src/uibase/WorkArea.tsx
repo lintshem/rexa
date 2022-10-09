@@ -8,14 +8,7 @@ import { toast } from 'react-toastify'
 import { activeWSAtom, waSpacesAtom, wsRootOrint } from '../store/main'
 import { useAtom, useAtomValue } from 'jotai'
 import { uniqueId } from 'lodash'
-
-const EmptyArea = () => {
-    return (
-        <div className='wa-empty' >
-            <h2 className='wa-empty-text' >No Workspaces Here yet</h2>
-        </div>
-    )
-}
+import { EmptyArea } from '../util/SmallComps'
 
 interface IWorkArea { id: string, isRoot?: boolean }
 const existingWS: { [id: string]: JSX.Element } = {}
@@ -37,12 +30,12 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
         const works = waPanes.map(p => {
             const isWA = getPanes(p.id).length > 0
             if (isWA) {
-                return <WorkArea id={p.id} />
+                return <WorkArea key={p.id} id={p.id} />
             } else {
                 if (existingWS[p.id]) {
                     return existingWS[p.id]
                 } else {
-                    const ws = <WorkSpace id={p.id} />
+                    const ws = <WorkSpace key={p.id} id={p.id} />
                     existingWS[p.id] = ws
                     return ws;
                 }
@@ -53,9 +46,9 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
         return [<div className='wa-box' style={{ flexDirection: orient === 'h' ? 'row' : 'column' }} >
             <WAConfig orient={orient} />
             {!isEmpty && <Splitter align={orient === 'h' ? 'hor' : 'ver'}  >
-                {works.map(w => <div>{w}</div>)}
+                {works.map((w,i) => <div key={i}>{w}</div>)}
             </Splitter>}
-            {isEmpty && <EmptyArea />}
+            {isEmpty && <EmptyArea message='No Workspaces Here yet' />}
         </div>, isEmpty, works.length]
     }
     const toggleAlign = () => {

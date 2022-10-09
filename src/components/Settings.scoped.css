@@ -7,23 +7,39 @@
 .title {
     text-align: center;
 }
-.set-but{
-    margin:2px;
+
+.set-but {
+    margin: 2px;
 }
-.set-buts{
+
+.set-buts {
     display: flex;
 }
-.set-lay{
+
+.set-lay {
     display: flex;
     justify-content: space-between;
 }
-.set-add{
+
+.set-add {
     display: flex;
 }
-.set-l-header{
+
+.set-l-header {
     text-align: center;
 }
-.set-l-main{
-    border:1px solid var(--c-bord);
+
+.set-l-main {
+    border: 1px solid var(--c-bord);
     padding: 3px;
+}
+
+.set-info {
+    width: 100%;
+    display: flex;
+}
+
+.set-time-dif {
+    text-align: right;
+    width: 100%;
 }

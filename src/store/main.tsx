@@ -38,7 +38,7 @@ const comp3 = new Comp('div', { width: 120, height: 200, background: 'pink' }, [
 comp3.setId('vel')
 mod.addComp(comp3)
 
-const app = new AppClass('Starter', [mod, mod2])
+const app = new AppClass('Starter', [mod, mod2],[])
 export const appAtom = atom(app)
 
 export const modulesAtom = atom(
@@ -59,8 +59,8 @@ export const modUpdateAtom = atom(1)
 export const codeStyleAtom = atomWithStorage('code-style', { fontSize: '16px', })
 export const codeScrollAtom = atomFamily(param => atom(0))
 export const prevChangeAtom = atomFamily(p => atom(0))
-export const defSize = atomWithStorage('def-size', { width: 300, height: 400 })
-export const prevSizeAtom = atomFamily(p => atom({ width: 300, height: 400 }))
+export const defSize = atomWithStorage('def-size', { width: 150, height: 230 })
+export const prevSizeAtom = atomFamily(p => atom({ width: 200, height: 240 }))
 export const activeWSAtom = atom('')
 export const savedAppAtom = atomWithStorage('saved-app', '')
 
@@ -118,12 +118,8 @@ const defWS = [
         "orient": "h"
     }
 ] as IPace[]
-export const oldWS = [
-    { id: 'seda', parent: 'root', orient: 'h' },
-    { id: 'messa', parent: 'root', orient: 'v' },
-    { id: 'desa', parent: 'messa', orient: 'h' },
-    { id: 'grey', parent: 'messa', orient: 'h' },
-] as IPace[]
 export const waSpacesAtom = atom(defWS)
 
 export const wsRootOrint = atom('h' as 'h' | 'v')
+
+export const lastOpenAtom =atomWithStorage('last-Open','')

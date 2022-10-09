@@ -56,7 +56,9 @@ export const useBetterDimensions = (dist = 10) => {
 export const addShortcut = (key: string, callBack: Function, ctrl = false, shift = false) => {
     const handler = (e: KeyboardEvent) => {
         if (e.ctrlKey === ctrl && e.shiftKey === shift && key === e.key) {
-            callBack()
+            callBack(e)
+            e.stopPropagation()
+            e.preventDefault()
         }
     }
     window.document.addEventListener('keydown', handler)

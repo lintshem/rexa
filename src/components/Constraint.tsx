@@ -282,7 +282,7 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
         </div>)
     }
     return (
-        <div ref={ref2} className='out' onClick={() => changeUpdate()}  >
+        <div ref={ref2} className='out' onClick={() => changeUpdate()} style={{ width: styleProps?.width || '', height: styleProps?.height || '' }}  >
             <div className={classes} ref={ref} id={modName + 'root'} {...baseProps} style={styleProps}
                 onClick={setActiveConst}
                 onDrop={drop} onDragOver={e => e.preventDefault()} >

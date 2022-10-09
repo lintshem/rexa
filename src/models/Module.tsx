@@ -2,6 +2,7 @@ import _, { uniqueId } from "lodash"
 import React from "react"
 import Constraint, { ItemMod } from "../components/Constraint"
 import { EditContainer } from "../library/Editables"
+import { isVoidElem } from "../store/main"
 import { getAction, propItems } from "../util/props"
 
 export interface IAction { [key: string]: { func: string, args: string } }
@@ -130,6 +131,22 @@ export class Comp {
         }
         return [styles, other]
     }
+    getStyles(comp: Comp) {
+        const allProps = { ...comp.props.style || {}, ...comp.props }
+        //TODO remove delete after correcting the app
+        delete allProps['style']
+        const styleProps: { [key: string]: any } = {}
+        const otherProps: { [key: string]: any } = {}
+        for (const [key, val] of Object.entries(allProps)) {
+            if (!comp.nonStyleProps.includes(key)) {
+                styleProps[key] = val
+            } else {
+                otherProps[key] = val
+            }
+        }
+        //console.table(styleProps)
+        return [styleProps, otherProps]
+    }
     getLiveChildren(mod: Module) {
         const children = this.children.map(c => {
             if (c instanceof Comp) {
@@ -158,16 +175,28 @@ export class Comp {
                 const Elm = this.elem
                 const [styles, others] = this.propSplit()
                 const acts = mod.getActions(this.actions)
-                return (
-                    <Elm
-                        key={this.id}
-                        {...others}
-                        style={styles}
-                        {...acts}
-                    >
-                        {this.getLiveChildren(mod)}
-                    </Elm>
-                )
+                if (isVoidElem(Elm)) {
+                    return (
+                        <Elm
+                            key={this.id}
+                            {...others}
+                            style={styles}
+                            {...acts}
+                        />
+                    )
+                }
+                else {
+                    return (
+                        <Elm
+                            key={this.id}
+                            {...others}
+                            style={styles}
+                            {...acts}
+                        >
+                            {this.getLiveChildren(mod)}
+                        </Elm>
+                    )
+                }
             } else {
                 const [styles, others] = this.propSplit()
                 const acts = mod.getActions(this.actions)
@@ -179,6 +208,7 @@ export class Comp {
                         childs={this.getLiveChildren(mod)}
                         style={styles}
                         {...acts}
+                        stylingProps={this.getStyles(this)}
                         isLive={true}
                     />
                 )
@@ -193,21 +223,31 @@ export class Comp {
             if (this.elem !== 'const') {
                 const Elm = this.elem
                 const [styles, others] = this.propSplit()
-                return (
-                    <Elm
-                        key={this.id}
-                        {...others}
-                        style={styles}
-                    >
-                        {this.children.map(c => {
-                            if (c instanceof Comp) {
-                                return c.getLive(mod)
-                            } else {
-                                return c
-                            }
-                        })}
-                    </Elm>
-                )
+                if (isVoidElem(Elm)) {
+                    return (
+                        <Elm
+                            key={this.id}
+                            {...others}
+                            style={styles}
+                        />
+                    )
+                } else {
+                    return (
+                        <Elm
+                            key={this.id}
+                            {...others}
+                            style={styles}
+                        >
+                            {this.children.map(c => {
+                                if (c instanceof Comp) {
+                                    return c.getLive(mod)
+                                } else {
+                                    return c
+                                }
+                            })}
+                        </Elm>
+                    )
+                }
             } else {
                 const [styles, others] = this.propSplit()
                 return (
@@ -217,6 +257,7 @@ export class Comp {
                         comp={this}
                         childs={this.getLiveChildren(mod)}
                         style={styles}
+                        stylingProps={this.getStyles(this)}
                         isLive={true}
                     />
                 )

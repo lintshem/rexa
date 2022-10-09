@@ -17,9 +17,10 @@
   display: flex;
 
 }
-.ws-actions>*{
-  border:1px solid var(--c-bord);
-  margin:0px 2px;
-  width:20px;
+
+.ws-actions>* {
+  border: 1px solid var(--c-bord);
+  margin: 0px 2px;
+  width: 20px;
   text-align: center;
 }
