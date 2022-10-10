@@ -43,3 +43,14 @@
     text-align: right;
     width: 100%;
 }
+
+.set-l-body {
+    display: flex;
+    flex-direction: column;
+    max-height: 150px;
+    min-height: 50px;
+    overflow: auto;
+    box-shadow: 1px 1px 3px 3px var(--c-shadow) inset;
+    display: flex;
+    padding: 2px;
+}

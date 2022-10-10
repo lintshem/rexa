@@ -72,7 +72,9 @@ export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = 
         const dragData = receiveDrag(e)
         e.preventDefault()
         e.stopPropagation()
+        console.log("drop")
         if (dragData.action === 'widget') {
+            console.log("drop in widget")
             let newChild
             if (dragData.data === 'text') {
                 newChild = NEW_TEXT + Math.random().toFixed(2)
@@ -94,7 +96,7 @@ export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = 
     }
     if (comp.elem === 'const') {
         return (
-            <Constraint comp={comp} update={randomUpdate} childs={getChildren(comp, true)} modId={modId} stylingProps={getStyles()} />
+            <Constraint key={JSON.stringify(comp)} comp={comp} update={randomUpdate} childs={getChildren(comp, true)} modId={modId} stylingProps={getStyles()} />
         )
     }
     const Component = comp.elem as any
@@ -159,7 +161,7 @@ const Designer = ({ module }: IEditProps) => {
     const updateSize = (e: any, dir: any, a: any, d: any) => {
         setSize({ width: size.width + d.width, height: size.height + d.height })
     }
-   // console.log('redrawing')
+    // console.log('redrawing')
     return (
         <div className='main'  >
             <ContextMenuTrigger id="design-context"  >

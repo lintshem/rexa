@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Drawer from '../components/Drawer'
 import TabContainer from '../library/TabContainer'
 import './WorkSpace.scoped.css'
@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import Coder from './Coder'
 import Preview from './Preview'
 import { useAtom } from 'jotai'
-import { activeWSAtom, waSpacesAtom } from '../store/main'
+import { activeWSAtom, waSpacesAtom, wsViewsAtom } from '../store/main'
 import { uniqueId } from 'lodash'
 import { EmptyArea } from '../util/SmallComps'
 
@@ -24,13 +24,12 @@ const WorkSpace = ({ id }: IWorkSpace) => {
       cleanUp3()
     }
   })
-  interface IView { comp: any, name: string, type: string }
-  const [views, setViews] = useState<IView[]>([])
+  const [views, setViews] = useAtom(wsViewsAtom(id))
   const deleteModule = (deleteName: string) => {
-      console.log(deleteName)
-      const newViews = views.filter(v => v.name !== deleteName)
-      setViews(newViews)
-      console.log('deleting')
+    console.log(deleteName)
+    const newViews = views.filter(v => v.name !== deleteName)
+    setViews(newViews)
+    console.log('deleting')
   }
   const renameTabs = (data: { old: string, new: string }) => {
     const newViews = views.map(v => {
@@ -41,24 +40,24 @@ const WorkSpace = ({ id }: IWorkSpace) => {
     })
     setViews(newViews)
   }
+  const getComp = (type: string, item: string) => {
+    if (type === 'design') {
+      return <Drawer key={item} modName={item} />
+    } else if (type === 'code') {
+      return <Coder key={item} modName={item} />
+    } else if (type === 'live') {
+      return <Preview key={item} modName={item} />
+    } else {
+      return <div>Wrong Editor</div>
+    }
+  }
   const updateTabs = (data: { action: string, item: string }, isDrop = false) => {
     if (views.find(v => v.name === data.item && v.type === data.action)) {
       toast('Found item')
       return
     }
-    const getComp = () => {
-      if (data.action === 'design') {
-        return <Drawer key={data.item} modName={data.item} />
-      } else if (data.action === 'code') {
-        return <Coder key={data.item} modName={data.item} />
-      } else if (data.action === 'live') {
-        return <Preview key={data.item} modName={data.item} />
-      } else {
-        return <div>Wrong Editor</div>
-      }
-    }
     if (active === id || isDrop) {
-      const newView = { comp: getComp(), name: data.item, type: data.action }
+      const newView = { comp: getComp(data.action, data.item), name: data.item, type: data.action }
       setViews([...views, newView])
     }
   }
@@ -79,7 +78,9 @@ const WorkSpace = ({ id }: IWorkSpace) => {
           break;
       }
       titles.push(v.name + pos)
-      bodies.push(v.comp)
+      // v.comp == null after app restore
+      const comp = v.comp === null ? getComp(v.type, v.name) : v.comp
+      bodies.push(comp)
     })
     return [titles, bodies]
   }

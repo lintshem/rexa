@@ -5,12 +5,12 @@ import { toast } from 'react-toastify'
 import Overlay from '../library/Overlay'
 import TabContainer from '../library/TabContainer'
 import { AppClass } from '../models/AppClass'
-import { appAtom, IPace, lastOpenAtom, themeAtom, waSpacesAtom } from '../store/main'
+import { appAtom, IPace, IWsAllViews, lastOpenAtom, themeAtom, waSpacesAtom, wsAllViewsAtom } from '../store/main'
 import "./Settings.scoped.css"
 import localforage from 'localforage'
 import moment from "moment"
 
-const stringifyCyclic = (obj: any) => {
+export const stringifyCyclic = (obj: any) => {
     let cache = [] as any[]
     const res = JSON.stringify(obj, (key, value) => {
         if (typeof value === 'object' && value !== null) {
@@ -96,21 +96,22 @@ const Layouts = () => {
                 <input className='rexa-input' value={name} onChange={(e) => setName(e.target.value)} placeholder="New layout name" />
                 <button className='rexa-button' onClick={saveLay} >Save </button>
             </div>
-            <div>
+            <div className='set-l-body'>
                 {lays.map((l, i) => <LayRow key={i} data={l} index={i} />)}
             </div>
         </div>
     )
 
 }
-interface IApp { name: string, time: number, app: AppClass, spaces: IPace[] }
+interface IApp { name: string, time: number, app: AppClass, spaces: IPace[], wsViews: IWsAllViews }
 const Apps = () => {
     const [lays, setApp] = useState<IApp[]>([])
     const [name, setName] = useState('')
     const [curApp, setCurApp] = useAtom(appAtom)
     const [appSpaces, setAppSpaces] = useAtom(waSpacesAtom)
+    const [wsAllViews, setWsAllViews] = useAtom(wsAllViewsAtom)
+
     const setLastOpen = useSetAtom(lastOpenAtom)
-    // const [apps, setApps] = useAtom(waSpacesAtom)
     useEffect(() => {
         (async () => {
             setApp(await getApp())
@@ -122,6 +123,7 @@ const Apps = () => {
             setAppSpaces(data.spaces)
             setCurApp(newApp)
             setLastOpen(data.name)
+            setWsAllViews(setViews(data.wsViews))
         }
         const delApp = async () => {
             const newLays = [...lays]
@@ -144,12 +146,22 @@ const Apps = () => {
             </div>
         )
     }
+    const setViews = (allViews: IWsAllViews) => {
+        const views = {} as any
+        for (const [key, value] of Object.entries(allViews)) {
+            views[key] = value.map(v => ({ ...v, comp: null }))
+        }
+        return views
+    }
     const saveApp = async () => {
         if (name.length < 3) {
             toast("🚫Name too short.")
             return
         }
-        const newApp = { name, time: Date.now(), app: curApp, spaces: appSpaces } as IApp
+
+        const newApp = { name, time: Date.now(), app: curApp, spaces: appSpaces, wsViews: wsAllViews } as IApp
+        console.log(newApp)
+        // return
         try {
             const allApp = [newApp]
             if ((await localforage.keys()).includes('apps')) {
@@ -157,11 +169,18 @@ const Apps = () => {
                 allApp.splice(1, 0, ...otherApp)
             }
             console.log('allapp', allApp)
-            const cache = [] as any[]
-            await localforage.setItem('apps', JSON.parse(stringifyCyclic(allApp)))
-            cache.length = 0
-            setApp(allApp)
-            setName('')
+            let failed = false
+            try {
+                await localforage.setItem('apps', JSON.parse(JSON.stringify(allApp)))
+            } catch (e) {
+                // await localforage.setItem('apps', JSON.parse(stringifyCyclic(allApp)))
+                failed = true
+                throw new Error("Saving app failed: " + (e as Error).message)
+            }
+            if (!failed) {
+                setApp(allApp)
+                setName('')
+            }
         } catch (e) {
             toast("💀 Failed to store apps.")
             console.log(e)
@@ -186,7 +205,7 @@ const Apps = () => {
                 <input className='rexa-input' value={name} onChange={(e) => setName(e.target.value)} placeholder="New app name" />
                 <button className='rexa-button' onClick={saveApp} >Save </button>
             </div>
-            <div>
+            <div className='set-l-body' >
                 {lays.map((l, i) => <AppRow key={i} data={l} index={i} />)}
             </div>
         </div>

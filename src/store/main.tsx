@@ -50,7 +50,6 @@ export const modulesAtom = atom(
         const newApp = AppClass.copy(app)
         newApp.modules = newVal
         set(appAtom, newApp)
-        console.info('wrote', get(appAtom))
     }
 )
 export const themeAtom = atomWithStorage('theme', 'dark')
@@ -86,11 +85,31 @@ export const sbLeftAtom = atomWithStorage('sb-left', true)
 
 // work-areas spaces 
 export interface IPace { id: string, parent: string, orient: 'h' | 'v' }
+export interface IWsView { comp: any, name: string, type: string }
+export interface IWsAllViews { [key: string]: IWsView[] }
+export const wsAllViewsAtom = atom({} as IWsAllViews)
+export const wsViewsAtom = atomFamily((p: string) => {
+    return atom(
+        get => {
+            const views = get(wsAllViewsAtom)
+            if (views[p]) {
+                return views[p]
+            } else {
+                return []
+            }
+        },
+        (get, set, value: IWsView[]) => {
+            const views = get(wsAllViewsAtom)
+            views[p] = value
+            set(wsAllViewsAtom, { ...views })
+        }
+    )
+})
 const defWS = [
     {
         "id": "seda",
         "parent": "root",
-        "orient": "h"
+        "orient": "h",
     },
 ] as IPace[]
 export const waSpacesAtom = atom(defWS)

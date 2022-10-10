@@ -106,7 +106,7 @@ const ManageMod = ({ mod }: IManageMod) => {
     return (
         <div>
             <div>{focused}</div>{ }
-            <div>
+            <div className='mm-actions'>
                 <button className='rexa-button' onClick={deleteComp} >delete</button>
                 <button className='rexa-button' onClick={copyComp} >copy</button>
                 <button className='rexa-button' onClick={pasteComp} >paste</button>

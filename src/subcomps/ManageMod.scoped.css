@@ -1,0 +1,9 @@
+.mm-actions {
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.mm-actions>* {
+    margin: 2px;
+}
