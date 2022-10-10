@@ -96,7 +96,7 @@ export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = 
     }
     if (comp.elem === 'const') {
         return (
-            <Constraint key={JSON.stringify(comp)} comp={comp} update={randomUpdate} childs={getChildren(comp, true)} modId={modId} stylingProps={getStyles()} />
+            <Constraint comp={comp} update={randomUpdate} childs={getChildren(comp, true)} modId={modId} stylingProps={getStyles()} />
         )
     }
     const Component = comp.elem as any

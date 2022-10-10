@@ -158,8 +158,25 @@ const Apps = () => {
             toast("🚫Name too short.")
             return
         }
+        // constraint layout 
+        const removeCyclic = (app: AppClass) => {
+            const newApp = { ...app }
+            newApp.modules.forEach(m => {
+                m.flatTree().forEach(c => {
+                    if (c?.constraintInfo?.child && c?.constraintInfo?.comp) {
+                        console.log('cyclic', c)
+                        c.constraintInfo.child = 'cyclic removed'
+                        c.constraintInfo.comp = 'cyclic removed' as any
+                    }
 
-        const newApp = { name, time: Date.now(), app: curApp, spaces: appSpaces, wsViews: wsAllViews } as IApp
+                })
+                console.log(m)
+                console.log(JSON.parse(JSON.stringify(m)))
+            })
+            return JSON.parse(JSON.stringify(newApp))
+        }
+        const newApp = { name, time: Date.now(), app: removeCyclic(curApp), spaces: appSpaces, wsViews: wsAllViews } as IApp
+        JSON.stringify(newApp)
         console.log(newApp)
         // return
         try {

@@ -169,6 +169,7 @@ export class ItemMod {
 
 interface IContraint { childs: any[], comp: Comp, modId: string, update?: Function, stylingProps: any[], isLive?: boolean }
 const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, isLive = false }: IContraint) => {
+    console.log(comp)
     const [,] = useAtom(attribAtom)
     const modName = "ss"
     const [NEW_TEXT] = useAtomValue(newTextAtom)
@@ -203,7 +204,8 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
         if (childs && comp) {
             items = childs.map((c: any, i: number) => {
                 const child = comp.children[i]
-                const newChild = new Comp('p', {}, [child]); newChild.setId('nop');
+                const tempId = 'text' + Math.random().toFixed(5)
+                const newChild = new Comp('p', {}, [child]); newChild.setId(tempId);
                 const curComp = (child instanceof Comp) ? child : newChild
                 const constr = curComp.constraintInfo
                 const mod = new ItemMod({
