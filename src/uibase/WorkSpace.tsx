@@ -17,29 +17,21 @@ const WorkSpace = ({ id }: IWorkSpace) => {
   useEffect(() => {
     const cleanUp1 = receiveMessage('workspace', updateTabs)
     const cleanUp2 = receiveMessage('rename-module', renameTabs)
+    const cleanUp3 = receiveMessage('delete-module', deleteModule)
     return () => {
       cleanUp1()
       cleanUp2()
+      cleanUp3()
     }
   })
   interface IView { comp: any, name: string, type: string }
-  const [views, setViews] = useState<IView[]>([
-    {
-      comp: <Preview key="mdtest" modName='ModTest' />,
-      name: 'ModTest',
-      type: 'live',
-    },
-    {
-      comp: <Drawer key="mdtest" modName='ModTest' />,
-      name: 'ModTest',
-      type: 'design',
-    },
-    {
-      comp: <Coder key="modcod" modName='ModTest' />,
-      name: 'ModTest',
-      type: 'code',
-    },
-  ])
+  const [views, setViews] = useState<IView[]>([])
+  const deleteModule = (deleteName: string) => {
+      console.log(deleteName)
+      const newViews = views.filter(v => v.name !== deleteName)
+      setViews(newViews)
+      console.log('deleting')
+  }
   const renameTabs = (data: { old: string, new: string }) => {
     const newViews = views.map(v => {
       if (v.name === data.old) {

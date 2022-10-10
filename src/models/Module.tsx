@@ -320,6 +320,9 @@ export class Module {
         this.name = name;
         this.code = GETCODE(name)
     }
+    rename(newName: string) {
+        this.name = newName;
+    }
     getFiles() {
         return this.files
     }

@@ -7,7 +7,9 @@ import Designer from '../models/Designer'
 import { Comp } from '../models/Module'
 import { focusedCompAtom, modulesAtom } from '../store/main'
 import Attributes from '../subcomps/Attrib'
+import ManageMod from '../subcomps/ManageMod'
 import Actions from '../uibase/Actions'
+
 import "./Drawer.scoped.css"
 
 interface ICompTree { editable: EditContainer, focused: string, setFocused: Function }
@@ -39,10 +41,7 @@ export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
                 comp = { id: `$${compElm.id},${i}` }
                 const elem = getUi(comp.id, pad)
                 elements.push(elem)
-
             }
-
-
         })
         return elements
     }
@@ -78,9 +77,10 @@ const Drawer = ({ modName }: IDrawer) => {
             <div className='wrapper' >
                 <Splitter align='ver' defRatio={[1, 1]}  >
                     <CompTree editable={editable} focused={focused} setFocused={setFocused} />
-                    <TabContainer id={`act-${mod.name}`} titles={['Att', 'Act']}>
+                    <TabContainer id={`act-${mod.name}`} titles={['Att', 'Act','Man']}>
                         <Attributes mod={mod} />
                         <Actions mod={mod} />
+                        <ManageMod mod={mod}  />
                     </TabContainer>
                 </Splitter>
             </div>

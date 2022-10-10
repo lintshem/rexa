@@ -38,7 +38,7 @@ const comp3 = new Comp('div', { width: 120, height: 200, background: 'pink' }, [
 comp3.setId('vel')
 mod.addComp(comp3)
 
-const app = new AppClass('Starter', [mod, mod2],[])
+const app = new AppClass('Starter', [mod, mod2], [])
 export const appAtom = atom(app)
 
 export const modulesAtom = atom(
@@ -85,41 +85,18 @@ export const sbRightAtom = atomWithStorage('sb-right', true)
 export const sbLeftAtom = atomWithStorage('sb-left', true)
 
 // work-areas spaces 
-export interface IPace{ id: string, parent: string, orient: 'h' | 'v' }
+export interface IPace { id: string, parent: string, orient: 'h' | 'v' }
 const defWS = [
     {
         "id": "seda",
         "parent": "root",
         "orient": "h"
     },
-    {
-        "id": "messa",
-        "parent": "root",
-        "orient": "v"
-    },
-    {
-        "id": "desa",
-        "parent": "messa",
-        "orient": "h"
-    },
-    {
-        "id": "grey",
-        "parent": "messa",
-        "orient": "h"
-    },
-    {
-        "id": "14",
-        "parent": "desa",
-        "orient": "h"
-    },
-    {
-        "id": "15",
-        "parent": "desa",
-        "orient": "h"
-    }
 ] as IPace[]
 export const waSpacesAtom = atom(defWS)
 
 export const wsRootOrint = atom('h' as 'h' | 'v')
 
-export const lastOpenAtom =atomWithStorage('last-Open','')
+export const lastOpenAtom = atomWithStorage('last-Open', '')
+interface IClip { comp: Comp, time: number }
+export const clipBoardAtom = atom([] as IClip[])

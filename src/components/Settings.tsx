@@ -1,16 +1,28 @@
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import React, { useEffect, useState } from 'react'
 import { MdSettings } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import Overlay from '../library/Overlay'
 import TabContainer from '../library/TabContainer'
 import { AppClass } from '../models/AppClass'
-import { appAtom, IPace, lastOpenAtom, /*rootSpacesAtom,*/ savedAppAtom, themeAtom, waSpacesAtom } from '../store/main'
+import { appAtom, IPace, lastOpenAtom, themeAtom, waSpacesAtom } from '../store/main'
 import "./Settings.scoped.css"
 import localforage from 'localforage'
 import moment from "moment"
 
-export interface ILayout { name: string, data: { id: string, parent: string, orient: 'h' | 'v' }[] }
+const stringifyCyclic = (obj: any) => {
+    let cache = [] as any[]
+    const res = JSON.stringify(obj, (key, value) => {
+        if (typeof value === 'object' && value !== null) {
+            if (cache.includes(value)) return;
+            cache.push(value);
+        }
+        return value;
+    })
+    cache = null as any
+    return res
+}
+export interface ILayout { name: string, time: number, data: { id: string, parent: string, orient: 'h' | 'v' }[] }
 const Layouts = () => {
     const [lays, setLay] = useState<ILayout[]>([])
     const [name, setName] = useState('')
@@ -34,9 +46,10 @@ const Layouts = () => {
                 toast("💀 Deleting failed.")
             }
         }
+        const info = moment(data.time).fromNow()
         return (
             <div className='set-lay' >
-                <div>{data.name}</div>
+                <div className='set-info'>{data.name}<span className='set-time-dif'>{info}</span></div>
                 <div className='set-buts'>
                     <button className='rexa-button set-but' onClick={openLay} >open</button>
                     <button className='rexa-button set-but' onClick={delLay} >del</button>
@@ -49,7 +62,7 @@ const Layouts = () => {
             toast("🚫Name too short.")
             return
         }
-        const newLay = { name, data: [...spaces] } as ILayout
+        const newLay = { name, time: Date.now(), data: [...spaces] } as ILayout
         try {
             const allLay = [newLay]
             if ((await localforage.keys()).includes('layouts')) {
@@ -96,7 +109,7 @@ const Apps = () => {
     const [name, setName] = useState('')
     const [curApp, setCurApp] = useAtom(appAtom)
     const [appSpaces, setAppSpaces] = useAtom(waSpacesAtom)
-    const [lastOpen, setLastOpen] = useAtom(lastOpenAtom)
+    const setLastOpen = useSetAtom(lastOpenAtom)
     // const [apps, setApps] = useAtom(waSpacesAtom)
     useEffect(() => {
         (async () => {
@@ -143,7 +156,10 @@ const Apps = () => {
                 const otherApp = await localforage.getItem('apps') as IApp[]
                 allApp.splice(1, 0, ...otherApp)
             }
-            await localforage.setItem('apps', JSON.parse(JSON.stringify(allApp)))
+            console.log('allapp', allApp)
+            const cache = [] as any[]
+            await localforage.setItem('apps', JSON.parse(stringifyCyclic(allApp)))
+            cache.length = 0
             setApp(allApp)
             setName('')
         } catch (e) {

@@ -1,14 +1,17 @@
-import { useAtom, useAtomValue } from "jotai"
+import { useAtom } from "jotai"
 import React from "react"
 import { activeModAtom, modulesAtom, modUpdateAtom } from "../store/main"
 import "./ModConfig.scoped.css"
 import { sendDrag, sendMessage } from "../util/utils"
 import Files from "../components/Files"
 import { RenameField } from "../library/RenameField"
+import { MdDelete } from "react-icons/md"
+import { toast } from "react-toastify"
+import { showDialog } from "../util/SmallComps"
 
 
 export const ModuleConfig = () => {
-    const modules = useAtomValue(modulesAtom)
+    const [modules, setModules] = useAtom(modulesAtom)
     const [modAtt, setModAttr] = useAtom(modUpdateAtom)
     const [activeMod, setActiveMod] = useAtom(activeModAtom)
 
@@ -39,8 +42,19 @@ export const ModuleConfig = () => {
     const sendData = (e: React.DragEvent, type: string) => {
         sendDrag(e, "add-ws", { name, type })
     }
+    const deleteMod = () => {
+        const deleteIt = () => {
+            const newMods = modules.filter(m => m.name !== mod.name)
+            sendMessage('delete-module', mod.name)
+            setModules(newMods)
+        }
+        showDialog(deleteIt)
+    }
     return (
         <div key={name} className="mcc-main" >
+            <div className="mc-man" >
+                <MdDelete className="mc-icon" onClick={deleteMod} />
+            </div>
             <RenameField name={name} setName={setName} />
             <div className="btn-actions">
                 <button className="rexa-button " draggable onDragStart={(e) => sendData(e, "design")} onClick={openDesign}   >Design</button>
@@ -49,7 +63,6 @@ export const ModuleConfig = () => {
             </div>
             <Files modName={name} />
         </div>
-
     )
 }
 export default ModuleConfig
