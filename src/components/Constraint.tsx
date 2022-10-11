@@ -7,8 +7,11 @@ import XArrow from 'react-xarrows'
 import { receiveDrag, sendDrag } from '../util/utils'
 import { Comp } from '../models/Module'
 
-interface IItemCont { items: ItemMod[], index: number, item: ItemMod, isLive?: boolean, update: Function, par: DOMRect | null, modName: string, parRef: React.Ref<HTMLDivElement> }
-const ItemCont = ({ item, items, update, par, modName, isLive = false }: IItemCont) => {
+interface IItemCont {
+    items: ItemMod[], index: number, item: ItemMod, isLive?: boolean, update: Function, par: DOMRect | null,
+    modName: string, parRef: React.Ref<HTMLDivElement>, styleProps: { [key: string]: any }
+}
+const ItemCont = ({ item, items, update, par, modName, isLive = false, styleProps }: IItemCont) => {
     const showArrows = useAtomValue(showArrowsAtom)
     const setFocus = useSetAtom(focusedConstAtom('ss'))
     const ref = useRef(null)
@@ -99,8 +102,12 @@ const ItemCont = ({ item, items, update, par, modName, isLive = false }: IItemCo
         if (e.ctrlKey) return true
     }
     // console.log(item.child)
+    const calcStyles = isFocused ? { ...styleProps, width: '100%', height: '100%' } : styleProps
     const id = modName + item.name
     const classes = `cont ${!isLive ? 'cont-extra' : ''} ${(isFocused && !isLive) ? 'cont-focused' : ''}`
+    if (isLive) {
+      //  return item.child
+    }
     return (
         <div draggable className={classes} id={id}
             style={getStyle() as any} ref={ref}
@@ -276,20 +283,21 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
         setFocused(comp?.id)
     }
     const classes = `stage stage-extra ${isFocused ? 'stage-active' : ''}`
-    const [styleProps, baseProps] = stylingProps || []
+    const [styleProps, baseProps] = stylingProps || [{}, {}]
     if (isLive) {
         return (<div className='stage' {...baseProps} style={styleProps} >
             {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} parRef={ref.current}
-                items={items} update={update} par={rect} modName={modId || ''} isLive={isLive} />)}
+                items={items} update={update} par={rect} modName={modId || ''} isLive={isLive} styleProps={styleProps} />)}
         </div>)
     }
+    const sizeProps = { width: styleProps?.width || '', height: styleProps?.height || '' }
     return (
-        <div ref={ref2} className='out' onClick={() => changeUpdate()} style={{ width: styleProps?.width || '', height: styleProps?.height || '' }}  >
-            <div className={classes} ref={ref} id={modName + 'root'} {...baseProps} style={styleProps}
+        <div ref={ref2} className='out' onClick={() => changeUpdate()} style={sizeProps}  >
+            <div className={classes} ref={ref} id={modName + 'root'} {...baseProps} style={{ ...styleProps, width: '100%', height: '100%' }}
                 onClick={setActiveConst}
                 onDrop={drop} onDragOver={e => e.preventDefault()} >
                 {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} parRef={ref.current}
-                    items={items} update={update} par={rect} modName={modId || ''} />)}
+                    items={items} update={update} par={rect} modName={modId || ''} styleProps={styleProps} />)}
             </div>
         </div>
     )

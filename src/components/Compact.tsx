@@ -29,7 +29,7 @@ const Compact = () => {
                 //   updater.update(Math.random() + Math.random())
                 setAttribUpdate(p => p % 100 + 1)
             }
-            
+
         }
         const changeAnchor = (index: number) => {
             con.updateCN(pos, index)
@@ -48,7 +48,8 @@ const Compact = () => {
         const dimName = dim === 'width' ? "w" : "h"
         const [val, setVal] = useState('' + con[dimName])
         const updateVal = (e: React.ChangeEvent<HTMLInputElement>) => {
-            const value = e.target.value
+            let value = e.target.value
+            if (value.endsWith('px')) value = value.replace('px', '')
             setVal(value)
             const valNo = Number(value)
             if (value && valNo) {

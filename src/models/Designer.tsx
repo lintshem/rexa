@@ -102,16 +102,17 @@ export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = 
     const Component = comp.elem as any
     const [styleProps, baseProps] = getStyles()
     //  console.log(comp.id,baseProps,styleProps,comp.props,comp.nonStyleProps )
+    const calcStyles = isFocused ? { ...styleProps, width: '100%', height: '100%' } : styleProps
     let componentParent = null
     if (isVoidElem(comp.elem)) {
-        componentParent = <Component className={classes} {...baseProps} style={styleProps}
+        componentParent = <Component className={classes} {...baseProps} style={calcStyles}
             onClick={clicked}
             onDragOver={dragOver}
             onDrop={drop}
         />
     } else {
         componentParent = (
-            <Component className={classes} {...baseProps} style={styleProps}
+            <Component className={classes} {...baseProps} style={calcStyles}
                 onClick={clicked}
                 onDragOver={dragOver}
                 onDrop={drop}
