@@ -170,22 +170,16 @@ const Apps = () => {
                     }
 
                 })
-                console.log(m)
-                console.log(JSON.parse(JSON.stringify(m)))
             })
             return JSON.parse(JSON.stringify(newApp))
         }
         const newApp = { name, time: Date.now(), app: removeCyclic(curApp), spaces: appSpaces, wsViews: wsAllViews } as IApp
-        JSON.stringify(newApp)
-        console.log(newApp)
-        // return
         try {
             const allApp = [newApp]
             if ((await localforage.keys()).includes('apps')) {
                 const otherApp = await localforage.getItem('apps') as IApp[]
                 allApp.splice(1, 0, ...otherApp)
             }
-            console.log('allapp', allApp)
             let failed = false
             try {
                 await localforage.setItem('apps', JSON.parse(JSON.stringify(allApp)))

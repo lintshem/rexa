@@ -15,7 +15,7 @@ export const showDialog = (action: Function, message: string = 'Are you sure?', 
         <div>{message}</div>
         {options.map((p, i) => {
             return (
-                <div key={p} className='rexa-button' onClick={(i == 0 ? action : undefined) as any}  >{p}</div>
+                <div key={p} className='rexa-button' onClick={(i === 0 ? action : undefined) as any}  >{p}</div>
             )
         })}
     </div>)

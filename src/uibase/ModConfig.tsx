@@ -6,7 +6,6 @@ import { sendDrag, sendMessage } from "../util/utils"
 import Files from "../components/Files"
 import { RenameField } from "../library/RenameField"
 import { MdDelete } from "react-icons/md"
-import { toast } from "react-toastify"
 import { showDialog } from "../util/SmallComps"
 
 

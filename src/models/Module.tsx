@@ -281,6 +281,8 @@ export class Comp {
         c.children = children
         c.actions = comp.actions
         c.isModule = comp.isModule
+        c.constraintInfo = comp.constraintInfo
+        console.log(c, comp.constraintInfo)
         if (comp.module) c.module = Module.copy(comp.module)
         return c
     }
