@@ -267,6 +267,24 @@ export class Comp {
         }
 
     }
+    static findCompParent(item: Comp, id: string, exact = false): null | Comp {
+        const child = item.children.find(d => (d as Comp).id === id)
+        if (child) {
+            if (exact) {
+                return child as Comp
+            } else {
+                return item
+            }
+        }
+        for (let index = 0; index < item.children.length; index++) {
+            const c = item.children[index]
+            if (c instanceof Comp) {
+                const ret = Comp.findCompParent(c, id, exact)
+                if (ret) return ret
+            }
+        }
+        return null
+    }
 
     static copy(comp: Comp) {
         const c = new Comp(comp.elem, comp.props, [])
@@ -282,7 +300,6 @@ export class Comp {
         c.actions = comp.actions
         c.isModule = comp.isModule
         c.constraintInfo = comp.constraintInfo
-        console.log(c, comp.constraintInfo)
         if (comp.module) c.module = Module.copy(comp.module)
         return c
     }

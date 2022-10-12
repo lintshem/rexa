@@ -1,17 +1,23 @@
 import React from 'react'
 import "./ManageMod.scoped.css"
-import { Comp, Module } from '../models/Module'
+import { Comp } from '../models/Module'
 import { useAtom } from 'jotai'
 import { clipBoardAtom, focusedCompAtom, modulesAtom } from '../store/main'
 import { RenameField } from '../library/RenameField'
 import { toast } from 'react-toastify'
 import { showDialog } from '../util/SmallComps'
 
-interface IManageMod { mod: Module }
-const ManageMod = ({ mod }: IManageMod) => {
-    const [focused, setFocused] = useAtom(focusedCompAtom(mod.name))
+interface IManageMod { modName: string }
+const ManageMod = ({ modName }: IManageMod) => {
     const [modules, setModules] = useAtom(modulesAtom)
+    const mod = modules.find(m => m.name === modName)
+    const [focused, setFocused] = useAtom(focusedCompAtom(mod?.name))
     const [clipBoard, setClipBoard] = useAtom(clipBoardAtom)
+    if (!mod) {
+        return (
+            <div>No Module</div>
+        )
+    }
 
     const rename = (name: string) => {
         const newMods = [...modules]
@@ -28,30 +34,13 @@ const ManageMod = ({ mod }: IManageMod) => {
         setFocused(name)
 
     }
-    const findCompParent = (item: Comp, id: string, exact = false): null | Comp => {
-        const child = item.children.find(d => (d as Comp).id === id)
-        if (child) {
-            if (exact) {
-                return child as Comp
-            } else {
-                return item
-            }
-        }
-        for (let index = 0; index < item.children.length; index++) {
-            const c = item.children[index]
-            if (c instanceof Comp) {
-                const ret = findCompParent(c, id, exact)
-                if (ret) return ret
-            }
-        }
-        return null
-    }
+
     const deleteComp = () => {
         const deleteIt = () => {
             const newMods = [...modules]
             newMods.forEach(m => {
                 if (m.name === mod.name) {
-                    const par = findCompParent(mod.tree[0], focused)
+                    const par = Comp.findCompParent(mod.tree[0], focused)
                     if (par) {
                         par.children = par.children.filter(c => (c as Comp).id !== focused)
                         setFocused(par.id)
@@ -67,7 +56,7 @@ const ManageMod = ({ mod }: IManageMod) => {
             const newMods = [...modules]
             newMods.forEach(m => {
                 if (m.name === mod.name) {
-                    const child = findCompParent(mod.tree[0], focused, true)
+                    const child = Comp.findCompParent(mod.tree[0], focused, true)
                     if (child) {
                         const newClip = [...clipBoard]
                         newClip.unshift({ comp: child, time: Date.now() })

@@ -12,8 +12,16 @@ import Actions from '../uibase/Actions'
 
 import "./Drawer.scoped.css"
 
-interface ICompTree { editable: EditContainer, focused: string, setFocused: Function }
-export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
+interface ICompTree { modName: string, focused: string, setFocused: Function }
+export const CompTree = ({ modName, setFocused, focused }: ICompTree) => {
+    const modules = useAtomValue(modulesAtom)
+    const mod = modules.find(m => m.name === modName)
+    if (!mod) {
+        return (
+            <div>No Module</div>
+        )
+    }
+    const editable = mod.tree[0].getEdit()
     const comp = editable.comp
     const getUi = (id: string, pad: number) => {
         return (
@@ -60,27 +68,17 @@ export const CompTree = ({ editable, setFocused, focused }: ICompTree) => {
 
 interface IDrawer { modName: string }
 const Drawer = ({ modName }: IDrawer) => {
-    const modules = useAtomValue(modulesAtom)
-    const mod = modules.find(m => m.name === modName)
-    const [focused, setFocused] = useAtom(focusedCompAtom(mod?.name || ''))
-    if (!mod) {
-        return (
-            <div>
-                No module with this Name
-            </div>
-        )
-    }
-    const editable = mod.tree[0].getEdit()
+    const [focused, setFocused] = useAtom(focusedCompAtom(modName))
     return (
         <Splitter defRatio={[6, 2]}   >
-            <Designer module={mod} />
+            <Designer modName={modName} />
             <div className='wrapper' >
                 <Splitter align='ver' defRatio={[1, 1]}  >
-                    <CompTree editable={editable} focused={focused} setFocused={setFocused} />
-                    <TabContainer id={`act-${mod.name}`} titles={['Att', 'Act','Man']}>
-                        <Attributes mod={mod} />
-                        <Actions mod={mod} />
-                        <ManageMod mod={mod}  />
+                    <CompTree modName={modName} focused={focused} setFocused={setFocused} />
+                    <TabContainer id={`act-${modName}`} titles={['Att', 'Act', 'Man']}>
+                        <Attributes modName={modName} />
+                        <Actions modName={modName} />
+                        <ManageMod modName={modName} />
                     </TabContainer>
                 </Splitter>
             </div>

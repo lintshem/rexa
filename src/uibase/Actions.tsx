@@ -1,14 +1,20 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import React, { useState } from 'react'
 import Popover from '../library/Popover'
-import { Module } from '../models/Module'
-import { prevChangeAtom, focusedCompAtom } from '../store/main'
+import { prevChangeAtom, focusedCompAtom, modulesAtom } from '../store/main'
 import { getAction, IActionRow } from '../util/props'
 import "./Actions.scoped.css"
 
-interface IAction { mod: Module }
-const Actions = ({ mod }: IAction) => {
-    const focused = useAtomValue(focusedCompAtom(mod.name))
+interface IAction { modName: string }
+const Actions = ({ modName }: IAction) => {
+    const modules = useAtomValue(modulesAtom)
+    const mod = modules.find(m => m.name === modName)
+    const focused = useAtomValue(focusedCompAtom(mod?.name))
+    if (!mod) {
+        return (
+            <div>No Module</div>
+        )
+    }
     const comp = mod.getCompFromId(focused)
     if (!comp) {
         return (

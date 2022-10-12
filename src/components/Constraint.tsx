@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import "./Constraint.scoped.css"
 import { useBoundingclientrect } from 'rooks'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom, attribAtom } from '../store/main'
+import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, showArrowsAtom, focusedCompAtom, newTextAtom, attribAtom, compsAtom } from '../store/main'
 import XArrow from 'react-xarrows'
 import { receiveDrag, sendDrag } from '../util/utils'
 import { Comp } from '../models/Module'
@@ -106,7 +106,7 @@ const ItemCont = ({ item, items, update, par, modName, isLive = false, styleProp
     const id = modName + item.name
     const classes = `cont ${!isLive ? 'cont-extra' : ''} ${(isFocused && !isLive) ? 'cont-focused' : ''}`
     if (isLive) {
-      //  return item.child
+        //  return item.child
     }
     return (
         <div draggable className={classes} id={id}
@@ -175,7 +175,7 @@ export class ItemMod {
 }
 
 interface IContraint { childs: any[], comp: Comp, modId: string, update?: Function, stylingProps: any[], isLive?: boolean }
-const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, isLive = false }: IContraint) => {
+const Constraint = ({ childs, comp: oldComp, modId, update: randomUpdate, stylingProps, isLive = false }: IContraint) => {
     // console.log(comp)
     const [,] = useAtom(attribAtom)
     const modName = "ss"
@@ -189,7 +189,9 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
     // eslint-disable-next-line
     const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modName))
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
-    const isFocused = focused === comp.id
+    const isFocused = focused === oldComp.id
+    const [sComp, setSComp] = useAtom(compsAtom(JSON.stringify({ modName: modId, compId: oldComp.id })))
+    const comp = sComp
     // const props = comp.props
 
     const changeUpdate = (forceIt: boolean = false) => {
@@ -204,10 +206,11 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
                 name: modName
             })
         }
-        setItems(getItems())
+        //     setItems(getItems())
     }
     const getItems = () => {
         let items: ItemMod[] = []
+        //const childs = comp.children
         if (childs && comp) {
             items = childs.map((c: any, i: number) => {
                 const child = comp.children[i]
@@ -226,7 +229,8 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
         }
         return items
     }
-    const [items, setItems] = useState(getItems)
+    const items = getItems()
+    //const [items, setItems] = useState(getItems)
     const drop = (e: React.DragEvent) => {
         const dragData = receiveDrag(e)
         e.preventDefault()
@@ -239,7 +243,9 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
             } else {
                 newChild = new Comp(dragData.data, {}, [])
             }
-            comp.addChild(newChild)
+            const newComp = Comp.copy(sComp)
+            newComp.addChild(newChild)
+            setSComp(newComp)
             if (newChild instanceof Comp) {
                 const x = e.clientX - ((rect && rect?.left) || e.clientX);
                 const y = e.clientY - ((rect && rect?.top) || e.clientY);
@@ -248,8 +254,8 @@ const Constraint = ({ childs, comp, modId, update: randomUpdate, stylingProps, i
                 setFocused(newChild.id)
             }
             if (randomUpdate) randomUpdate((p: number) => p % 100 + 1)
-            const newItems = [...items] // getItems()
-            setItems(newItems)
+            const newItems = getItems()
+            //  setItems(newItems)
             setSavedItems(newItems)
         }
         // Reposition const item on drag

@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { atomFamily, atomWithStorage } from 'jotai/utils'
+import { atomFamily, atomWithStorage, selectAtom } from 'jotai/utils'
 import { ItemMod } from "../components/Constraint";
 import { AppClass } from "../models/AppClass";
 import { Comp, Module } from "../models/Module";
@@ -18,27 +18,11 @@ export const isVoidElem = (elem: string) => {
 
 export const newTextAtom = atomWithStorage('newText', 'lorem ipsum')
 const mod2 = new Module('Rexa')
-const compr1 = new Comp('div', { width: 100, height: 50, color: 'white', background: 'blue' }, ['Kate the beaautiful'])
-compr1.setId('root')
-mod2.addComp(compr1)
+const comp1 = new Comp('div', { width: 100, height: 50, color: 'white', background: 'blue' }, ['Kate the beaautiful'])
+comp1.setId('root')
+mod2.addComp(comp1)
 
-const mod = new Module('ModTest')
-const comp6 = new Comp('button', { width: 60, height: 60, background: '' }, ['butons down'])
-comp6.setId('buts')
-comp6.actions['onClick'].func = 'getName'
-const comp0 = new Comp('div', { width: 110, height: 130, background: '' }, ['Firntes', comp6])
-comp0.setId('lsd')
-const comprexa = new Comp('div', {}, [])
-comprexa.setIsModule(true)
-comprexa.module = mod2;
-
-const comp4 = new Comp('const', { width: 120, height: 200 }, ['ok'])
-comp4.setId('desa')
-const comp3 = new Comp('div', { width: 120, height: 200, background: 'pink' }, ['Outer', comprexa, comp4])
-comp3.setId('vel')
-mod.addComp(comp3)
-
-const app = new AppClass('Starter', [mod, mod2], [])
+const app = new AppClass('Starter', [mod2], [])
 export const appAtom = atom(app)
 
 export const modulesAtom = atom(
@@ -52,6 +36,72 @@ export const modulesAtom = atom(
         set(appAtom, newApp)
     }
 )
+export const oneModAtom = atomFamily((p: string) => {
+    const modAtom = atom(
+        (get) => {
+            const mods = get(modulesAtom)
+            console.log('got mod one')
+            return mods.find(m => m.name === p)!
+        },
+        (get, set, mod: Module) => {
+            const newMods = get(modulesAtom)
+            const index = newMods.findIndex(m => m.name === p)
+            newMods[index] = mod
+            set(modulesAtom, newMods)
+        }
+    )
+    return selectAtom(modAtom, ma => ma, (m1, m2) => m1.name === m2.name)
+})
+export const oneModAtom2 = atomFamily((p: string) => atom(
+    (get) => {
+        const mods = get(modulesAtom)
+        console.log('got mod one')
+        return mods.find(m => m.name === p)!
+    },
+    (get, set, mod: Module) => {
+        const newMods = get(modulesAtom)
+        const index = newMods.findIndex(m => m.name === p)
+        newMods[index] = mod
+        set(modulesAtom, newMods)
+    }
+))
+
+//export const oneModAtom = selectAtom(old_oneModAtom, s => s.name)
+
+export const compsAtom = atomFamily((p: string) => atom(
+    (get) => {
+        const { modName, compId }: { modName: string, compId: string } = JSON.parse(p)
+        const mods = [...get(modulesAtom)]
+        const mod = mods.find(m => m.name === modName)!
+        if (!mod) {
+            console.warn('module should exist', modName)
+            return new Comp('loading', {}, [])
+        }
+        const c = mod.flatTree().find(c => c.id === compId)!
+        console.log('Updating')
+        return c
+    },
+    (get, set, comp: Comp) => {
+        const { modName, compId }: { modName: string, compId: string } = JSON.parse(p)
+        const mods = [...get(modulesAtom)]
+        const mod = mods.find(m => m.name === modName)!
+        let par: Comp | null
+        par = Comp.findCompParent(mod.tree[0], comp.id)
+        if (!par) {
+            if (mod.tree[0].id === comp.id)
+                par = mod.tree[0]
+        }
+        if (!par) {
+            console.warn('Should found parent', modName)
+            return
+        }
+        const index = par.children.findIndex(c => (c as any).id === compId)
+        par.children[index] = comp
+        set(modulesAtom, mods)
+        console.log("serttin fppf")
+    }
+))
+
 export const themeAtom = atomWithStorage('theme', 'dark')
 export const activeModAtom = atom('')
 export const modUpdateAtom = atom(1)
@@ -64,17 +114,8 @@ export const activeWSAtom = atom('')
 export const savedAppAtom = atomWithStorage('saved-app', '')
 
 export const focusedConstAtom = atomFamily(p => atom(''))
-const items = [
-    //  ItemMod.Create({ w: 70, h: 130, t: 5, r: 10, name: 'oner' }),
-    // ItemMod.Create({ h: 120, t: 30, l: 15, r: 5, name: 'twos' }).scn([['r', 0]]),
-    // ItemMod.Create({ h: 50, t: 30, b: 15, l: 10, r: 0, name: 'twos-hang' }).scn([['t', 1], ['b', 3], ['r', 3]]),
-    // ItemMod.Create({ w: 120, t: 5, b: 10, r: 10, name: 'fress' }).scn([["r", 0], ['t', 2]]),
-    // ItemMod.Create({ h: 50, b: 10, l: 15, r: 20, name: 'LeftBot' }).scn([['r', 3]]),
-    // ItemMod.Create({ t: 10, b: 13, l: 20, r: 10, name: 'RightBot' }).scn([['l', 1], ['t', 0]]),
-    // ItemMod.Create({ h: 50, t: 30, l: 10, r: 7, name: 'hang-left' }).scn([['b', 1], ['l', 2], ['t', 1], ['r', 5]]),
-] as ItemMod[]
 
-export const constraintItemsAtom = atomFamily(p => atom<ItemMod[]>([...items]))
+export const constraintItemsAtom = atomFamily(p => atom<ItemMod[]>([] as ItemMod[]))
 export const constraintUpdateAtom = atom<{ update: Function, name: string }>({ update: () => console.log('update not set'), name: '' })
 export const showArrowsAtom = atomWithStorage('arrow', true)
 // export const rootSpacesAtom = atom([{ comp: <WorkSpace id={-1}   />, type: 'workspace' }])

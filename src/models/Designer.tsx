@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import "./Designer.scoped.css"
 import { Child, Comp, Module } from './Module'
-import { attribAtom, focusedCompAtom, isVoidElem, newTextAtom, prevChangeAtom, prevSizeAtom } from '../store/main'
+import { attribAtom, compsAtom, focusedCompAtom, isVoidElem, modulesAtom, newTextAtom, prevChangeAtom, prevSizeAtom } from '../store/main'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { receiveDrag } from '../util/utils'
 import { Resizable } from 're-resizable'
@@ -18,13 +18,16 @@ export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = 
     const isFocused = focused === comp.id
     const [resizing, setResizing] = useState(false)
     const prevUpdate = useSetAtom(prevChangeAtom(module.name))
+    const [sComp, setSComp] = useAtom(compsAtom(JSON.stringify({ modName: modId, compId: comp.id })))
     const EditableText = ({ child, index }: { child: Child, index: number }) => {
         const editClicked = (e: React.MouseEvent) => {
             // e.stopPropagation()
         }
         const saveEdit = (e: React.FocusEvent<HTMLDivElement>) => {
-            comp.children[index] = e.currentTarget.textContent || ''
-            prevUpdate(p => p % 100 + 1)
+            const newComp = Comp.copy(sComp)
+            newComp.children[index] = e.currentTarget.textContent || ''
+            setSComp(newComp)
+            // prevUpdate(p => p % 100 + 1)
         }
         return (
             <div contentEditable suppressContentEditableWarning
@@ -96,7 +99,7 @@ export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = 
     }
     if (comp.elem === 'const') {
         return (
-            <Constraint comp={comp} update={randomUpdate} childs={getChildren(comp, true)} modId={modId} stylingProps={getStyles()} />
+            <Constraint comp={comp} update={randomUpdate} childs={getChildren(sComp, true)} modId={modId} stylingProps={getStyles()} />
         )
     }
     const Component = comp.elem as any
@@ -149,13 +152,22 @@ export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = 
 
 }
 
-interface IEditProps {
-    module: Module
+interface IDesign {
+    modName: string
 }
 
-const Designer = ({ module }: IEditProps) => {
+const Designer = ({ modName }: IDesign) => {
+    const modules = useAtomValue(modulesAtom)
+    const mod = modules.find(m => m.name === modName)
     const [,] = useAtom(attribAtom)
-    const [size, setSize] = useAtom(prevSizeAtom('des' + module.name))
+    const [size, setSize] = useAtom(prevSizeAtom('des' + modName))
+    if (!mod) {
+        return (
+            <div>No Module</div>
+        )
+    }
+
+    console.log('reloading designer')
     const getWrappedTree = (module: Module, active = true) => {
         return module.tree.map(c => <Wrapper key={c.id} comp={c} modId={module.name} module={module} />)
     }
@@ -168,7 +180,7 @@ const Designer = ({ module }: IEditProps) => {
             <ContextMenuTrigger id="design-context"  >
                 <WrapResize className='resize-area' defaultSize={size} onResizeStop={updateSize}  >
                     <div className='main-center' >
-                        {getWrappedTree(module)}
+                        {getWrappedTree(mod)}
                     </div>
                 </WrapResize>
             </ContextMenuTrigger>
