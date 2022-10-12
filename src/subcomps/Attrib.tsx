@@ -60,12 +60,12 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
 
     const updateValue = (val: any) => {
         // comp.props[type.name] = val
-        console.log(val)
         const newComp = Comp.copy(sComp)
         newComp.props[type.name] = val
         setSComp(newComp)
-        updateAttrib(Math.random() * 1000)
-        prevUpdate(p => p % 100 + 1)
+        console.log('updatevale', val, newComp)
+        // updateAttrib(Math.random() * 1000)
+        // prevUpdate(p => p % 100 + 1)
     }
     const getValue = (): any => {
         const val = sComp.props[type.name]
@@ -105,7 +105,7 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
     const doubleClick = () => {
         setShowHelper(true)
     }
-    console.log('Arrr reloading', sComp.props, sComp.props[type.name])
+    //   console.log('Arrr reloading',type, sComp.props, sComp.props[type.name])
     return (
         <div className='attrib-item' >
             <div className='at-name' >{type.name}</div>
@@ -121,8 +121,8 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
         </div>
     )
 }, (p1: IAttItem, p2: IAttItem) => {
-    //console.log('testing child')
-    return p1.type.name === p2.type.name
+    console.log('testing child')
+    return p1.type.name === p2.type.name && p1.comp.id === p2.comp.id
 })
 
 const checkedEqual = (m1: Module, m2: Module) => {
@@ -158,11 +158,14 @@ const Attributes = ({ modName }: IAttributes) => {
     )
 }
 const areEqual = (prevProps: IAttributes, nextProps: IAttributes) => {
-    const update = false
-    console.log('testing base')
-    if (prevProps.modName === nextProps.modName) {
-        return true
-    }
-    return update
+    // const update = false
+    // console.log('testing base')
+    // if (prevProps.modName === nextProps.modName) {
+    //     return true
+    // }
+    // return update
+    return true
 }
-export default React.memo(Attributes, areEqual) 
+
+export default   React.memo(Attributes, areEqual) 
+

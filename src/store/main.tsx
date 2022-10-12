@@ -2,7 +2,7 @@ import { atom } from "jotai";
 import { atomFamily, atomWithStorage, selectAtom } from 'jotai/utils'
 import { ItemMod } from "../components/Constraint";
 import { AppClass } from "../models/AppClass";
-import { Comp, Module } from "../models/Module";
+import { Child, Comp, Module } from "../models/Module";
 
 export const basicCompsAtom = atom([
     'const', 'div', 'p', 'button', 'text', 'input', 'img'
@@ -87,16 +87,27 @@ export const compsAtom = atomFamily((p: string) => atom(
         const mod = mods.find(m => m.name === modName)!
         let par: Comp | null
         par = Comp.findCompParent(mod.tree[0], comp.id)
+        // if (!par) {
+        //     if (mod.tree[0].id === comp.id)
+        //         par = mod.tree[0]
+        // }
         if (!par) {
-            if (mod.tree[0].id === comp.id)
-                par = mod.tree[0]
+            if (compId !== mod.tree[0].id) {
+                console.warn('Should found parent', modName, mod)
+                return
+            }
         }
-        if (!par) {
-            console.warn('Should found parent', modName)
-            return
+        // if comp is not root
+        if (par) {
+            const index = par.children.findIndex(c => (c as any).id === compId)
+            console.log("updating set", index, par.children[index])
+            par.children[index] = comp
+        // we are working with the root
+        } else {
+            if (compId === mod.tree[0].id) {
+                mod.tree[0] = comp
+            }
         }
-        const index = par.children.findIndex(c => (c as any).id === compId)
-        par.children[index] = comp
         set(modulesAtom, mods)
         console.log("serttin fppf")
     }
