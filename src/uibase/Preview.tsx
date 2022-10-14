@@ -19,10 +19,10 @@ const Preview = ({ modName }: IPreview) => {
     const [size, setSize] = useAtom(prevSizeAtom(modName))
     const updater = useState(0)[1]
     const [mod, setMod] = useState(modules.find(m => m.name === modName))
-    usePrevChange(modName,modules,setMod)
+    usePrevChange(modName, modules, setMod)
     // eslint-disable-next-line 
     const prevChanged = useAtomValue(prevChangeAtom(modName))
-    if (!mod) {
+    if (!mod || !mod.name) {
         return (
             <div>
                 NO Module with That Name

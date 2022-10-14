@@ -1,14 +1,13 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import React, { useState } from "react"
 import { Comp, CompType } from "../models/Module"
-import { attribAtom, compsAtom, modulesAtom, oneModAtom, oneModAtom2, prevChangeAtom } from "../store/main"
+import { attribAtom, compsAtom, oneModAtom } from "../store/main"
 import './Attrib.scoped.css'
 import { focusedCompAtom } from "../store/main"
 import { SketchPicker } from 'react-color'
 import Popover from "../library/Popover"
 import useDimensions from "react-cool-dimensions"
 import Select from "../library/Select"
-import { selectAtom } from "jotai/utils"
 import { Module } from "../models/Module"
 
 interface IAttItem { type: CompType, mod: Module, comp: Comp }
@@ -16,13 +15,13 @@ interface IAttItem { type: CompType, mod: Module, comp: Comp }
 const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
     const { observe, width } = useDimensions()
     const [showHelper, setShowHelper] = useState(false)
-    const [, updateAttrib] = useAtom(attribAtom)
-    const prevUpdate = useSetAtom(prevChangeAtom(mod.name))
+    // const [, updateAttrib] = useAtom(attribAtom)
+    // const prevUpdate = useSetAtom(prevChangeAtom(mod.name))
     const isHelpable = type.type.split(',').filter(t => !['t', 'n'].includes(t)).length > 0;
     const isNumberType = type.type.split(',').find(t => t === 'n') !== undefined;
     const isCheckType = type.type.split(',').find(t => t === 'b') !== undefined;
     const isTextType = type.type.split(',').find(t => t === 't') !== undefined;
-    const [sComp, setSComp] = useAtom(compsAtom(JSON.stringify({ modName: mod.name, compId: comp.id })))
+    const [sComp, setSComp] = useAtom(compsAtom(`${mod.name},${comp.id}`))
     // console.log("atrrib c", sComp)
     // TODO change of type clears field 
     //const typeIsNum = /^\d+$/.test(comp.props[type.name])
@@ -105,7 +104,7 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
     const doubleClick = () => {
         setShowHelper(true)
     }
-    //   console.log('Arrr reloading',type, sComp.props, sComp.props[type.name])
+    //    console.log('AttribItem reloading',type, sComp.props, sComp.props[type.name])
     return (
         <div className='attrib-item' >
             <div className='at-name' >{type.name}</div>
@@ -121,18 +120,11 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
         </div>
     )
 }, (p1: IAttItem, p2: IAttItem) => {
-    console.log('testing child')
     return p1.type.name === p2.type.name && p1.comp.id === p2.comp.id
 })
-
-const checkedEqual = (m1: Module, m2: Module) => {
-    return m1.name == m2.name
-}
 export interface IAttributes { modName: string }
 const Attributes = ({ modName }: IAttributes) => {
-    const modules = useAtomValue(modulesAtom)
-    // const mod = modules.find(m => m.name === modName)
-    const [mod, setMod] = useAtom(oneModAtom(modName))
+    const mod = useAtomValue(oneModAtom(modName))
     const [focused,] = useAtom(focusedCompAtom(mod?.name))
     const comp = mod.getChildWithId(focused)
     //  const [sComp, setSComp] = useAtom(compsAtom(JSON.stringify({ modName: mod?.name || '', compId: comp?.id || '' })))
@@ -157,15 +149,6 @@ const Attributes = ({ modName }: IAttributes) => {
         </div>
     )
 }
-const areEqual = (prevProps: IAttributes, nextProps: IAttributes) => {
-    // const update = false
-    // console.log('testing base')
-    // if (prevProps.modName === nextProps.modName) {
-    //     return true
-    // }
-    // return update
-    return true
-}
 
-export default   React.memo(Attributes, areEqual) 
+export default React.memo(Attributes)
 

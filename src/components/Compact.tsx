@@ -1,7 +1,9 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import React, { useState } from 'react'
+
 import { SelectWrap } from '../library/Select'
 import { focusedConstAtom, constraintItemsAtom, constraintUpdateAtom, attribAtom } from '../store/main'
+
 import "./Compact.scoped.css"
 
 const Compact = () => {
@@ -10,9 +12,7 @@ const Compact = () => {
     const updater = useAtomValue(constraintUpdateAtom)
     const con = items.find(t => t.name === focused)
     if (!con) {
-        return (
-            <div>No Constraint selected</div>
-        )
+        return <div>No Constraint selected</div>
     }
     const ids = ['root', ...items.map(t => t.name)].filter(id => id !== con.name)
     interface ICmpNode { pos: 'l' | 'r' | 'b' | 't' }
@@ -92,6 +92,16 @@ const Compact = () => {
         </div>
     )
 }
+
+
+// const CompactWrap = () => {
+
+//     return (
+//         <div>
+//             <Compact />
+//         </div>
+//     )
+// }
 
 
 export default Compact

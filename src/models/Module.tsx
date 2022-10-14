@@ -207,9 +207,10 @@ export class Comp {
                         comp={this}
                         childs={this.getLiveChildren(mod)}
                         style={styles}
-                        {...acts}
                         stylingProps={this.getStyles(this)}
                         isLive={true}
+                        modId={mod.name}
+                        {...acts}
                     />
                 )
             }

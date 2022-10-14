@@ -2,7 +2,7 @@ import { atom } from "jotai";
 import { atomFamily, atomWithStorage, selectAtom } from 'jotai/utils'
 import { ItemMod } from "../components/Constraint";
 import { AppClass } from "../models/AppClass";
-import { Child, Comp, Module } from "../models/Module";
+import { Comp, Module } from "../models/Module";
 
 export const basicCompsAtom = atom([
     'const', 'div', 'p', 'button', 'text', 'input', 'img'
@@ -40,7 +40,6 @@ export const oneModAtom = atomFamily((p: string) => {
     const modAtom = atom(
         (get) => {
             const mods = get(modulesAtom)
-            console.log('got mod one')
             return mods.find(m => m.name === p)!
         },
         (get, set, mod: Module) => {
@@ -70,27 +69,28 @@ export const oneModAtom2 = atomFamily((p: string) => atom(
 
 export const compsAtom = atomFamily((p: string) => atom(
     (get) => {
-        const { modName, compId }: { modName: string, compId: string } = JSON.parse(p)
+        const args = p.split(',')
+        const [modName, compId]: [string, string] = [args[0], args[1]]
         const mods = [...get(modulesAtom)]
         const mod = mods.find(m => m.name === modName)!
         if (!mod) {
-            console.warn('module should exist', modName)
-            return new Comp('loading', {}, [])
+            console.warn('module should exist', modName, mods)
+            //  return new Comp('loading', {}, [])
         }
         const c = mod.flatTree().find(c => c.id === compId)!
-        console.log('Updating')
+        if (!c) {
+            console.warn('C not found', c)
+        }
         return c
     },
     (get, set, comp: Comp) => {
-        const { modName, compId }: { modName: string, compId: string } = JSON.parse(p)
+        // const { modName, compId }: { modName: string, compId: string } = JSON.parse(p)
+        const args = p.split(',')
+        const [modName, compId]: [string, string] = [args[0], args[1]]
         const mods = [...get(modulesAtom)]
         const mod = mods.find(m => m.name === modName)!
         let par: Comp | null
         par = Comp.findCompParent(mod.tree[0], comp.id)
-        // if (!par) {
-        //     if (mod.tree[0].id === comp.id)
-        //         par = mod.tree[0]
-        // }
         if (!par) {
             if (compId !== mod.tree[0].id) {
                 console.warn('Should found parent', modName, mod)
@@ -102,14 +102,13 @@ export const compsAtom = atomFamily((p: string) => atom(
             const index = par.children.findIndex(c => (c as any).id === compId)
             console.log("updating set", index, par.children[index])
             par.children[index] = comp
-        // we are working with the root
+            // we are working with the root
         } else {
             if (compId === mod.tree[0].id) {
                 mod.tree[0] = comp
             }
         }
         set(modulesAtom, mods)
-        console.log("serttin fppf")
     }
 ))
 

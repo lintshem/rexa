@@ -21,15 +21,22 @@ const ManageMod = ({ modName }: IManageMod) => {
 
     const rename = (name: string) => {
         const newMods = [...modules]
-        newMods.forEach(m => {
+        for (const m of newMods) {
             if (m.name === mod.name) {
-                m.flatTree().forEach(c => {
+                const allChilds = m.flatTree()
+                const found = allChilds.filter(c => c.id === name)
+                if (found.length > 0) {
+                    toast("😁 ID taken.")
+                    return
+                }
+                allChilds.forEach(c => {
                     if (c.id === focused) {
                         c.id = name;
                     }
                 })
+                break;
             }
-        })
+        }
         setModules(newMods)
         setFocused(name)
 

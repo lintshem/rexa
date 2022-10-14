@@ -11,14 +11,14 @@ import Constraint from '../components/Constraint'
 
 interface IWrapper { comp: Comp, modId: string, module: Module, clickStop?: boolean, isConstChild?: boolean }
 
-export const Wrapper = ({ comp, modId, module, clickStop = true, isConstChild = false }: IWrapper) => {
+export const Wrapper = ({ comp, modId, module,  isConstChild = false }: IWrapper) => {
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const [NEW_TEXT] = useAtomValue(newTextAtom)
     const randomUpdate = useState(12)[1]
     const isFocused = focused === comp.id
     const [resizing, setResizing] = useState(false)
     const prevUpdate = useSetAtom(prevChangeAtom(module.name))
-    const [sComp, setSComp] = useAtom(compsAtom(JSON.stringify({ modName: modId, compId: comp.id })))
+    const [sComp, setSComp] = useAtom(compsAtom(`${modId},${comp.id}`))
     const EditableText = ({ child, index }: { child: Child, index: number }) => {
         const editClicked = (e: React.MouseEvent) => {
             // e.stopPropagation()
@@ -166,8 +166,6 @@ const Designer = ({ modName }: IDesign) => {
             <div>No Module</div>
         )
     }
-
-    console.log('reloading designer')
     const getWrappedTree = (module: Module, active = true) => {
         return module.tree.map(c => <Wrapper key={c.id} comp={c} modId={module.name} module={module} />)
     }

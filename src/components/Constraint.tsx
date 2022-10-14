@@ -37,6 +37,7 @@ const ItemCont = ({ item, items, update, par, modName, isLive = false, styleProp
     const set = (a: number) => a !== -1
     const retBB = (index: number) => items[index].bb
     const makeFocused = (e: React.MouseEvent) => {
+        if (isLive) return
         e.stopPropagation()
         setFocused(item.name)
         setItems([...items])
@@ -50,8 +51,8 @@ const ItemCont = ({ item, items, update, par, modName, isLive = false, styleProp
         if (set(item.t)) styles['top'] = item.t
         if (set(item.l)) styles['left'] = item.l
         if (set(item.r)) styles['right'] = item.r
-        if (set(item.w)) styles['width'] = item.w
-        if (set(item.h)) styles['height'] = item.h
+        if (set(item.w as any)) styles['width'] = item.w as any
+        if (set(item.h as any)) styles['height'] = item.h as any
         const cn = item.cn
         if (set(cn.t) && set(item.t)) styles['top'] = retBB(cn.t).b + item.t
         if (set(cn.b) && set(item.b)) styles['bottom'] = retBB(cn.b).t + item.b
@@ -101,13 +102,12 @@ const ItemCont = ({ item, items, update, par, modName, isLive = false, styleProp
     const dragging = (e: React.MouseEvent) => {
         if (e.ctrlKey) return true
     }
-    // console.log(item.child)
-    const calcStyles = isFocused ? { ...styleProps, width: '100%', height: '100%' } : styleProps
     const id = modName + item.name
     const classes = `cont ${!isLive ? 'cont-extra' : ''} ${(isFocused && !isLive) ? 'cont-focused' : ''}`
     if (isLive) {
         //  return item.child
     }
+    // console.log(item.child)
     return (
         <div draggable className={classes} id={id}
             style={getStyle() as any} ref={ref}
@@ -127,12 +127,13 @@ const getBB = (): IBond => {
     return { t: 0, b: 0, l: 0, r: 0 }
 }
 const getCN = (): IBond => {
+
     return { t: -1, b: -1, l: -1, r: -1 }
 }
 export class ItemMod {
     name: string = ''
-    w: number = -1
-    h: number = -1
+    w: number | string = -1
+    h: number | string = -1
     t: number = -1
     b: number = -1
     l: number = -1
@@ -174,11 +175,11 @@ export class ItemMod {
 
 }
 
-interface IContraint { childs: any[], comp: Comp, modId: string, update?: Function, stylingProps: any[], isLive?: boolean }
-const Constraint = ({ childs, comp: oldComp, modId, update: randomUpdate, stylingProps, isLive = false }: IContraint) => {
+interface IContraints { childs: any[], comp: Comp, modId: string, update?: Function, stylingProps: any[], isLive?: boolean }
+const Constraint = ({ childs, comp: oldComp, modId, update: randomUpdate, stylingProps, isLive = false }: IContraints) => {
     // console.log(comp)
     const [,] = useAtom(attribAtom)
-    const modName = "ss"
+    // const modName = "ss"
     const [NEW_TEXT] = useAtomValue(newTextAtom)
     const ref = useRef(null)
     const ref2 = useRef(null)
@@ -187,23 +188,23 @@ const Constraint = ({ childs, comp: oldComp, modId, update: randomUpdate, stylin
     const [updater, setUpdater] = useAtom(constraintUpdateAtom)
     // reload on compact change of saved items
     // eslint-disable-next-line
-    const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modName))
+    const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modId))
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const isFocused = focused === oldComp.id
-    const [sComp, setSComp] = useAtom(compsAtom(JSON.stringify({ modName: modId, compId: oldComp.id })))
+    const [sComp, setSComp] = useAtom(compsAtom(`${modId},${oldComp.id}`))
     const comp = sComp
     // const props = comp.props
 
     const changeUpdate = (forceIt: boolean = false) => {
-        if (updater.name !== modName || forceIt) {
+        if (updater.name !== modId || forceIt) {
             setUpdater({
                 update: (r: number) => {
-                    console.log('updater', modName, r)
+                    console.log('updater', modId, r)
                     //  if (randomUpdate) randomUpdate((p: number) => p % 100 + 1)
                     update(r)
                     changeUpdate(true)
                 },
-                name: modName
+                name: modId
             })
         }
         //     setItems(getItems())
@@ -299,7 +300,7 @@ const Constraint = ({ childs, comp: oldComp, modId, update: randomUpdate, stylin
     const sizeProps = { width: styleProps?.width || '', height: styleProps?.height || '' }
     return (
         <div ref={ref2} className='out' onClick={() => changeUpdate()} style={sizeProps}  >
-            <div className={classes} ref={ref} id={modName + 'root'} {...baseProps} style={{ ...styleProps, width: '100%', height: '100%' }}
+            <div className={classes} ref={ref} id={modId + 'root'} {...baseProps} style={{ ...styleProps, width: '100%', height: '100%' }}
                 onClick={setActiveConst}
                 onDrop={drop} onDragOver={e => e.preventDefault()} >
                 {items.map((m, i) => <ItemCont key={m.name} item={m} index={i} parRef={ref.current}

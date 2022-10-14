@@ -3,7 +3,7 @@ import { useAtom } from 'jotai'
 import { basicCompsAtom } from '../store/main'
 import { sendDrag } from '../util/utils'
 import "./Rightpane.scoped.css"
-import Compact from '../components/Compact'
+import CompactWrap from '../components/Compact'
 import Splitter from '../library/Resizable'
 
 
@@ -31,7 +31,7 @@ const Rightpane = () => {
     return (
         <Splitter defRatio={[1, 1]} align='ver' >
             <Widgets />
-            <Compact />
+            <CompactWrap />
         </Splitter>
     )
 }
