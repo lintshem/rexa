@@ -22,7 +22,6 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
     const isCheckType = type.type.split(',').find(t => t === 'b') !== undefined;
     const isTextType = type.type.split(',').find(t => t === 't') !== undefined;
     const [sComp, setSComp] = useAtom(compsAtom(`${mod.name},${comp.id}`))
-    // console.log("atrrib c", sComp)
     // TODO change of type clears field 
     //const typeIsNum = /^\d+$/.test(comp.props[type.name])
     const typeIsNum = false
@@ -52,7 +51,6 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
                 <Select items={vals} onSelect={selectItem} />
             )
         } else {
-            console.log(types)
             return <div>TYPE ERROR</div>
         }
     }
@@ -62,7 +60,6 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
         const newComp = Comp.copy(sComp)
         newComp.props[type.name] = val
         setSComp(newComp)
-        console.log('updatevale', val, newComp)
         // updateAttrib(Math.random() * 1000)
         // prevUpdate(p => p % 100 + 1)
     }
@@ -104,7 +101,6 @@ const AttItem = React.memo(({ type, mod, comp }: IAttItem) => {
     const doubleClick = () => {
         setShowHelper(true)
     }
-    //    console.log('AttribItem reloading',type, sComp.props, sComp.props[type.name])
     return (
         <div className='attrib-item' >
             <div className='at-name' >{type.name}</div>
@@ -139,9 +135,6 @@ const Attributes = ({ modName }: IAttributes) => {
         </div>)
     }
     const types = comp.getTypes()
-
-
-    console.log('atrsvs reloading')
     return (
         <div className="attrib-main" >
             <div>{comp.elem}</div>

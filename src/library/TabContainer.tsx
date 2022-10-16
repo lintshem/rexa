@@ -108,7 +108,7 @@ const TabContainer = ({ children, titles, headerWidth = 80, align = 'hor', posit
     return (
         <div style={{ ...style, ...getStyles() }} className={`tabcont-main ${className}`}  >
             {getHeader('start')}
-            <div style={{ flex: 1 }} className='tab-item'  >
+            <div className='tab-item'  >
                 {children[index]}
             </div>
             {getHeader('end')}

@@ -43,7 +43,6 @@ export class Comp {
             if (!this.isModule) {
                 return Comp._drawItem(comp)
             } else {
-                console.log(this.isModule, this)
                 return this.module?.tree[0].getLive(this.module)
             }
         }))
@@ -428,7 +427,7 @@ export class Module {
                         }
                         return this.codeClass[val.func](...baseArgs)
                     } catch (e) {
-                        console.log('Action error for ', this.name, key, e)
+                        console.info('Action error for ', this.name, key, e)
                     }
                 }
             }
@@ -440,7 +439,6 @@ export class Module {
         this.tree.push(comp)
     }
     setProp(compId: ID, prop: string, val: any) {
-        // console.log(prop, val,)
         const compElm = this.getChildWithId(compId)
         if (!compElm) {
             console.warn("setProp ", compId, 'Not exist')

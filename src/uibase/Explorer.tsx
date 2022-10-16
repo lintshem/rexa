@@ -40,7 +40,7 @@ const Explorer = () => {
             return
         }
         const mod = new Module(name)
-        mod.addComp(new Comp('div', { width: "100%", height: "100%" }, []))
+        mod.addComp(new Comp('const', { width: "100%", height: "100%" }, []))
         setName('')
         setModules([...modules, mod])
     }

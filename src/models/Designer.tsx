@@ -11,7 +11,7 @@ import Constraint from '../components/Constraint'
 
 interface IWrapper { comp: Comp, modId: string, module: Module, clickStop?: boolean, isConstChild?: boolean }
 
-export const Wrapper = ({ comp, modId, module,  isConstChild = false }: IWrapper) => {
+export const Wrapper = ({ comp, modId, module, isConstChild = false }: IWrapper) => {
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const [NEW_TEXT] = useAtomValue(newTextAtom)
     const randomUpdate = useState(12)[1]
@@ -75,13 +75,11 @@ export const Wrapper = ({ comp, modId, module,  isConstChild = false }: IWrapper
         const dragData = receiveDrag(e)
         e.preventDefault()
         e.stopPropagation()
-        console.log("drop")
         if (dragData.action === 'widget') {
-            console.log("drop in widget")
             let newChild
             if (dragData.data === 'text') {
                 newChild = NEW_TEXT + Math.random().toFixed(2)
-            } else {
+             } else {
                 newChild = new Comp(dragData.data, {}, [])
             }
             comp.addChild(newChild)
@@ -102,9 +100,9 @@ export const Wrapper = ({ comp, modId, module,  isConstChild = false }: IWrapper
             <Constraint comp={comp} update={randomUpdate} childs={getChildren(sComp, true)} modId={modId} stylingProps={getStyles()} />
         )
     }
+    
     const Component = comp.elem as any
     const [styleProps, baseProps] = getStyles()
-    //  console.log(comp.id,baseProps,styleProps,comp.props,comp.nonStyleProps )
     const calcStyles = isFocused ? { ...styleProps, width: '100%', height: '100%' } : styleProps
     let componentParent = null
     if (isVoidElem(comp.elem)) {
@@ -172,7 +170,6 @@ const Designer = ({ modName }: IDesign) => {
     const updateSize = (e: any, dir: any, a: any, d: any) => {
         setSize({ width: size.width + d.width, height: size.height + d.height })
     }
-    // console.log('redrawing')
     return (
         <div className='main'  >
             <ContextMenuTrigger id="design-context"  >

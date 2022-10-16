@@ -94,10 +94,20 @@ const WorkSpace = ({ id }: IWorkSpace) => {
   }
   const Actions = () => {
     const [paces, setPaces] = useAtom(waSpacesAtom)
+    const getParIndex = () => {
+      const pace = paces.find(p => p.id === id)!
+      return paces.findIndex(p => p.id === pace.parent)!
+    }
     const splitWS = () => {
       const newPaces = [...paces]
-      const newPace = { id: uniqueId(), parent: id, orient: 'h' as 'h' | 'v' }
-      newPaces.push(newPace)
+      const parent = { ...paces[getParIndex()] }
+      const newId = uniqueId('ws')
+      const newPar = { id: newId, parent: parent.id || 'root', orient: 'h' as 'h' | 'v' }
+      const newPace = { id, parent: newId, orient: 'h' as 'h' | 'v' }
+      newPaces.splice(newPaces.findIndex(p => p.id === id), 1, newPar, newPace)
+      // newPaces.push(newPar)
+      // newPaces.push(newPace)
+      console.log(newPaces, paces)
       setPaces(newPaces)
     }
     const closeWS = () => {
@@ -118,6 +128,7 @@ const WorkSpace = ({ id }: IWorkSpace) => {
     if (data.action === 'add-ws') {
       const load = data.data as { type: string, name: string }
       updateTabs({ action: load.type, item: load.name }, true)
+      e.stopPropagation()
     }
   }
   const [titles, bodies] = splitTitleView()

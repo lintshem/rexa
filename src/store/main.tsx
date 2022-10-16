@@ -17,12 +17,8 @@ export const isVoidElem = (elem: string) => {
 }
 
 export const newTextAtom = atomWithStorage('newText', 'lorem ipsum')
-const mod2 = new Module('Rexa')
-const comp1 = new Comp('div', { width: 100, height: 50, color: 'white', background: 'blue' }, ['Kate the beaautiful'])
-comp1.setId('root')
-mod2.addComp(comp1)
 
-const app = new AppClass('Starter', [mod2], [])
+const app = new AppClass('Starter', [], [])
 export const appAtom = atom(app)
 
 export const modulesAtom = atom(
@@ -54,7 +50,6 @@ export const oneModAtom = atomFamily((p: string) => {
 export const oneModAtom2 = atomFamily((p: string) => atom(
     (get) => {
         const mods = get(modulesAtom)
-        console.log('got mod one')
         return mods.find(m => m.name === p)!
     },
     (get, set, mod: Module) => {
@@ -100,7 +95,6 @@ export const compsAtom = atomFamily((p: string) => atom(
         // if comp is not root
         if (par) {
             const index = par.children.findIndex(c => (c as any).id === compId)
-            console.log("updating set", index, par.children[index])
             par.children[index] = comp
             // we are working with the root
         } else {

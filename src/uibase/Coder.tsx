@@ -27,9 +27,18 @@ const Coder = ({ modName }: ICoder) => {
         mod.code = code
         setCodeUpdate(c => c % 100 + 1)
     }
+    const drop = (e: React.DragEvent) => {
+        const data = e.dataTransfer.getData('text')
+        console.log(e, data)
+        const res = JSON.parse(data)
+        console.log(res)
+        e.stopPropagation()
+
+    }
     return (
         <div className='main' ref={observe} >
             <CodeMirror
+                onDrop={drop}
                 lang='javascript'
                 theme={theme === 'dark' ? okaidia : 'light'}
                 value={mod.code}

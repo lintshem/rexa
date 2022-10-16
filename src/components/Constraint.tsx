@@ -241,6 +241,8 @@ const Constraint = ({ childs, comp: oldComp, modId, update: randomUpdate, stylin
             let newChild
             if (dragData.data === 'text') {
                 newChild = NEW_TEXT + Math.random().toFixed(2)
+                console.warn("Constraint doesn't support text Children")
+                return
             } else {
                 newChild = new Comp(dragData.data, {}, [])
             }

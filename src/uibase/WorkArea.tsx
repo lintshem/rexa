@@ -10,6 +10,7 @@ import { useAtom, useAtomValue } from 'jotai'
 import { uniqueId } from 'lodash'
 import { EmptyArea } from '../util/SmallComps'
 
+
 interface IWorkArea { id: string, isRoot?: boolean }
 const existingWS: { [id: string]: JSX.Element } = {}
 const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
@@ -46,7 +47,7 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
         return [<div className='wa-box' style={{ flexDirection: orient === 'h' ? 'row' : 'column' }} >
             <WAConfig orient={orient} />
             {!isEmpty && <Splitter align={orient === 'h' ? 'hor' : 'ver'}  >
-                {works.map((w,i) => <div key={i}>{w}</div>)}
+                {works.map((w, i) => <div key={i}>{w}</div>)}
             </Splitter>}
             {isEmpty && <EmptyArea message='No Workspaces Here yet' />}
         </div>, isEmpty, works.length]
@@ -79,13 +80,17 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
                 setPaces(newPaces)
             } else {
                 toast('🚫 Select WS to use')
-
             }
         }
         const removeWS = () => {
             const index = paces.findIndex(p => p.id === id)
             if (index !== -1) {
                 const newPaces = [...paces]
+                for (const pace of newPaces) {
+                    if (pace.parent === id) {
+                        pace.parent = newPaces[index].parent
+                    }
+                }
                 newPaces.splice(index, 1)
                 setPaces(newPaces)
             } else {
@@ -102,7 +107,6 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
             const newPanes = [...paces]
             paces.forEach((p, i) => {
                 if (p.id === paces[paneIndex].parent) {
-                    console.log(p)
                     newPanes[i].id = id
                 }
             })
@@ -118,7 +122,12 @@ const WorkArea = ({ isRoot = false, id = 'root' }: IWorkArea) => {
         </div>)
     }
     const [paneData, isEmpty, length] = getWorkAreas()
-
+    // return (
+    //     <Box modId='rexa' id='w' direction='column'  >
+    //         <div>One</div>
+    //         <div>Two</div>
+    //     </Box>
+    // )
     return (
         <div className='wa-main' >
             {paneData}
