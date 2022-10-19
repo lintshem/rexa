@@ -109,7 +109,7 @@ const ItemCont = ({ item, items, update, par, modName, isLive = false, styleProp
     }
     // console.log(item.child)
     return (
-        <div draggable className={classes} id={id}
+        <div draggable={!isLive} className={classes} id={id}
             style={getStyle() as any} ref={ref}
             onClick={makeFocused}
             onDrag={dragging}
@@ -188,7 +188,7 @@ const Constraint = ({ childs, comp: oldComp, modId, update: randomUpdate, stylin
     const [updater, setUpdater] = useAtom(constraintUpdateAtom)
     // reload on compact change of saved items
     // eslint-disable-next-line
-    const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modId))
+    // const [savedItems, setSavedItems] = useAtom(constraintItemsAtom(modId))
     const [focused, setFocused] = useAtom(focusedCompAtom(modId))
     const isFocused = focused === oldComp.id
     const [sComp, setSComp] = useAtom(compsAtom(`${modId},${oldComp.id}`))
@@ -259,7 +259,7 @@ const Constraint = ({ childs, comp: oldComp, modId, update: randomUpdate, stylin
             if (randomUpdate) randomUpdate((p: number) => p % 100 + 1)
             const newItems = getItems()
             //  setItems(newItems)
-            setSavedItems(newItems)
+            //   setSavedItems(newItems)
         }
         // Reposition const item on drag
         if (dragData.action === 'dragconst' && ref.current && comp) {

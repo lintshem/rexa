@@ -16,12 +16,12 @@
 
 .cont {
     position: absolute;
-    background: var(--c-d-back);
     min-width: 20px;
     min-height: 30px;
 }
 
 .cont-extra {
+    background: var(--c-d-back);
     border: 1px solid blue;
 }
 

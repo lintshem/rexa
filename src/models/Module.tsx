@@ -169,6 +169,43 @@ export class Comp {
         return children
     }
     getLive(mod: Module): any {
+        const setClassProp = (prop: string, val: string | number | boolean) => {
+            if (mod?.codeClass?.setProp) {
+                const coder = mod.codeClass as { setProp: (id: string, prop: string, val: any) => void }
+                coder.setProp(this.id, prop, val)
+            } else {
+                console.warn('No class', mod.name)
+            }
+        }
+        const getValueBinder = () => {
+            if (this.elem === 'input') {
+                if (['', 'text', "button", "color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number", "password", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week",].includes(this.props.type)) {
+                    return { value: this.props.value || '' }
+                }
+                if (['checkbox', 'radio'].includes(this.props.type)) {
+                    return { checked: this.props.checked }
+                }
+            } else {
+                return {}
+            }
+        }
+        const getBinder = () => {
+            if (['input'].includes(this.elem)) {
+                const binder = (e: React.ChangeEvent) => {
+                    const target = e.target as HTMLInputElement
+                    if (['', 'text', "button", "color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number", "password", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week",].includes(target.type)) {
+                        setClassProp('value', target.value)
+                    }
+                    if (['checkbox', 'radio'].includes(target.type)) {
+                        setClassProp('checked', target.checked)
+                    }
+                }
+                return { onChange: binder }
+            } else {
+                { }
+            }
+
+        }
         if (!this.isModule) {
             if (this.elem !== 'const') {
                 const Elm = this.elem
@@ -181,6 +218,8 @@ export class Comp {
                             {...others}
                             style={styles}
                             {...acts}
+                            {...getValueBinder()}
+                            {...getBinder()}
                         />
                     )
                 }
@@ -191,9 +230,11 @@ export class Comp {
                             {...others}
                             style={styles}
                             {...acts}
+                            {...getValueBinder()}
+                            {...getBinder()}
                         >
                             {this.getLiveChildren(mod)}
-                        </Elm>
+                        </Elm >
                     )
                 }
             } else {

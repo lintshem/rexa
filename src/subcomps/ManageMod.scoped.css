@@ -7,3 +7,13 @@
 .mm-actions>* {
     margin: 2px;
 }
+
+.mm-moves {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.mm-moves>* {
+    margin: 1px 2px;
+}

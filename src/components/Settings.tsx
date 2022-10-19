@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import React, { useEffect, useState } from 'react'
-import { MdSettings } from 'react-icons/md'
+import { MdDelete, MdDownload, MdEdit, MdSettings } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import Overlay from '../library/Overlay'
 import TabContainer from '../library/TabContainer'
@@ -9,19 +9,9 @@ import { appAtom, IPace, IWsAllViews, lastOpenAtom, themeAtom, waSpacesAtom, wsA
 import "./Settings.scoped.css"
 import localforage from 'localforage'
 import moment from "moment"
+import { downloadData, sendStat } from '../util/utils'
 
-export const stringifyCyclic = (obj: any) => {
-    let cache = [] as any[]
-    const res = JSON.stringify(obj, (key, value) => {
-        if (typeof value === 'object' && value !== null) {
-            if (cache.includes(value)) return;
-            cache.push(value);
-        }
-        return value;
-    })
-    cache = null as any
-    return res
-}
+
 export interface ILayout { name: string, time: number, data: { id: string, parent: string, orient: 'h' | 'v' }[] }
 const Layouts = () => {
     const [lays, setLay] = useState<ILayout[]>([])
@@ -117,13 +107,17 @@ const Apps = () => {
             setApp(await getApp())
         })()
     }, [])
+    const reOpenApp = (data: IApp) => {
+        const newApp = AppClass.copy(data.app)
+        setAppSpaces(data.spaces)
+        setCurApp(newApp)
+        setLastOpen(data.name)
+        setWsAllViews(setViews(data.wsViews))
+    }
     const AppRow = ({ data, index }: { data: IApp, index: number }) => {
         const openApp = () => {
-            const newApp = AppClass.copy(data.app)
-            setAppSpaces(data.spaces)
-            setCurApp(newApp)
-            setLastOpen(data.name)
-            setWsAllViews(setViews(data.wsViews))
+            reOpenApp(data)
+            console.log('done')
         }
         const delApp = async () => {
             const newLays = [...lays]
@@ -135,13 +129,17 @@ const Apps = () => {
                 toast("💀 Deleting failed.")
             }
         }
+        const downloadApp = async () => {
+            downloadData(JSON.stringify(data), `rexa-${data.name}`)
+        }
         const info = moment(data.time).fromNow()
         return (
             <div className='set-lay' >
                 <div className='set-info'>{data.name}<span className='set-time-dif'>{info}</span></div>
                 <div className='set-buts'>
-                    <button className='rexa-button set-but' onClick={openApp} >open</button>
-                    <button className='rexa-button set-but' onClick={delApp} >del</button>
+                    <button className='rexa-button set-but' onClick={downloadApp} ><MdDownload /></button>
+                    <button className='rexa-button set-but' onClick={openApp} ><MdEdit /></button>
+                    <button className='rexa-button set-but' onClick={delApp} ><MdDelete /></button>
                 </div>
             </div>
         )
@@ -164,11 +162,9 @@ const Apps = () => {
             newApp.modules.forEach(m => {
                 m.flatTree().forEach(c => {
                     if (c?.constraintInfo?.child && c?.constraintInfo?.comp) {
-                        console.log('cyclic', c)
                         c.constraintInfo.child = 'cyclic removed'
                         c.constraintInfo.comp = 'cyclic removed' as any
                     }
-
                 })
             })
             return JSON.parse(JSON.stringify(newApp))
@@ -209,6 +205,18 @@ const Apps = () => {
         }
         return allLay
     }
+    const uploadApp = async (e: React.ChangeEvent) => {
+        const target = (e.target as HTMLInputElement)
+        if (target.files) {
+            try {
+                const file = target.files[0]
+                const data = JSON.parse(await file.text()) as IApp
+                reOpenApp(data)
+            } catch (e) {
+                toast("😡 Reading file failed")
+            }
+        }
+    }
     return (
         <div className='set-l-main'>
             <h3 className='set-l-header'>APPS</h3>
@@ -218,6 +226,9 @@ const Apps = () => {
             </div>
             <div className='set-l-body' >
                 {lays.map((l, i) => <AppRow key={i} data={l} index={i} />)}
+            </div>
+            <div>
+                <input type="file" onChange={uploadApp} />
             </div>
         </div>
     )

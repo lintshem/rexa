@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import useCoolDimensions from 'react-cool-dimensions'
 
@@ -67,4 +66,14 @@ export const addShortcut = (key: string, callBack: Function, ctrl = false, shift
 
 export const cancelDrag = (e: React.DragEvent) => {
     e.preventDefault()
+}
+export const sendStat = (message: string, duration = 4) => {
+    sendMessage('stat', { message, duration })
+}
+export const downloadData = (data: string, name = 'data.txt', type = 'text/plain') => {
+    const blob = new Blob([data], { type })
+    const a = document.createElement('a')
+    a.download = name
+    a.href = window.URL.createObjectURL(blob)
+    a.click()
 }
